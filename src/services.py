@@ -4,7 +4,7 @@ import requests
 import random
 import datetime
 from typing import Dict, List, Any
-from core import Blockchain, StateManager
+from src.core import Blockchain, StateManager
 
 # Initialize the blockchain instance globally to avoid redundant creations
 blockchain = Blockchain(num_shards=3, difficulty=4, total_supply=1_000_000)
