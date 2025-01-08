@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from .services import QFCOnramper, NFTMarketplace, QKDManager, QuantumAIOptimizer
-from .core import Blockchain, Wallet, Transaction
+from .core import Blockchain
 
 app = Flask(__name__)
 
@@ -16,7 +16,7 @@ def teleport_nft():
     data = request.json
     try:
         nft_marketplace.teleport_nft(data["token_id"], data["sender"], data["recipient"])
-        return jsonify({"success": True, "message": f"NFT teleported successfully."})
+        return jsonify({"success": True, "message": "NFT teleported successfully."})
     except ValueError as e:
         return jsonify({"success": False, "error": str(e)})
 
@@ -25,7 +25,7 @@ def buy_qfc():
     data = request.json
     try:
         onramper.buy_qfc(data["user"], data["fiat_amount"], data["currency"])
-        return jsonify({"success": True, "message": f"Fiat converted to QFC successfully."})
+        return jsonify({"success": True, "message": "Fiat converted to QFC successfully."})
     except ValueError as e:
         return jsonify({"success": False, "error": str(e)})
 
@@ -43,7 +43,7 @@ def teleport_qkd_key():
     data = request.json
     try:
         qkd_manager.teleport_qkd_key(data["sender"], data["recipient"])
-        return jsonify({"success": True, "message": f"QKD key teleported successfully."})
+        return jsonify({"success": True, "message": "QKD key teleported successfully."})
     except ValueError as e:
         return jsonify({"success": False, "error": str(e)})
 

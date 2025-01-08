@@ -4,7 +4,7 @@ import requests
 import random
 import datetime
 from typing import Dict, List, Any
-from .core import Blockchain, Wallet, Transaction
+from .core import Blockchain
 
 app = Flask(__name__)
 
@@ -163,7 +163,7 @@ def teleport_nft():
     try:
         nft_marketplace = NFTMarketplace(blockchain)
         nft_marketplace.teleport_nft(data["token_id"], data["sender"], data["recipient"])
-        return jsonify({"success": True, "message": f"NFT teleported successfully."})
+        return jsonify({"success": True, "message": "NFT teleported successfully."})
     except ValueError as e:
         return jsonify({"success": False, "error": str(e)})
 
@@ -174,6 +174,6 @@ def buy_qfc():
         blockchain = Blockchain(num_shards=3, difficulty=4, total_supply=1_000_000)
         onramper = QFCOnramper(blockchain, analytics=None, compliance=None)
         onramper.buy_qfc(data["user"], data["fiat_amount"], data["currency"])
-        return jsonify({"success": True, "message": f"Fiat converted to QFC successfully."})
+        return jsonify({"success": True, "message": "Fiat converted to QFC successfully."})
     except ValueError as e:
         return jsonify({"success": False, "error": str(e)})

@@ -1,11 +1,9 @@
 import json
 import hashlib
 import time
-import random
 from typing import List, Dict, Optional
 from pqcrypto.sign.dilithium2 import generate_keypair, sign, verify
 import asyncio
-import ipfsapi
 
 # -------------------- Wallet Class --------------------
 class Wallet:
