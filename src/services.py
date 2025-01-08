@@ -4,7 +4,7 @@ import requests
 import random
 import datetime
 from typing import Dict, List, Any
-from .core import Blockchain
+from core import Blockchain
 
 app = Flask(__name__)
 
