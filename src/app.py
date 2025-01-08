@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
-from services import QFCOnramper, NFTMarketplace, QKDManager, QuantumAIOptimizer
-from core import Blockchain, Transaction
+from src.services import QFCOnramper, NFTMarketplace, QKDManager, QuantumAIOptimizer
+from src.core import Blockchain, Transaction
 
 app = Flask(__name__)
 
