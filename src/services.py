@@ -4,7 +4,10 @@ import requests
 import random
 import datetime
 from typing import Dict, List, Any
-from core import Blockchain
+from core import Blockchain, StateManager
+
+# Initialize the blockchain instance globally to avoid redundant creations
+blockchain = Blockchain(num_shards=3, difficulty=4, total_supply=1_000_000)
 
 app = Flask(__name__)
 
@@ -63,7 +66,7 @@ class QuantumAIOptimizer:
 
 # -------------------- QFCOnramper --------------------
 class QFCOnramper:
-    def __init__(self, blockchain, analytics, compliance):
+    def __init__(self, blockchain: Blockchain, analytics: Any = None, compliance: Any = None):
         self.blockchain = blockchain
         self.analytics = analytics
         self.compliance = compliance
@@ -86,9 +89,9 @@ class QFCOnramper:
         if currency not in exchange_rates:
             raise ValueError(f"Unsupported currency: {currency}")
 
-        if not self.compliance.perform_kyc(user, []):
+        if self.compliance and not self.compliance.perform_kyc(user, []):
             raise ValueError("KYC not completed for this user.")
-        if not self.compliance.aml_check({"description": f"{fiat_amount} {currency} purchase"}):
+        if self.compliance and not self.compliance.aml_check({"description": f"{fiat_amount} {currency} purchase"}):
             raise ValueError("Transaction flagged by AML check.")
 
         qfc_amount = fiat_amount / exchange_rates[currency]
@@ -100,7 +103,8 @@ class QFCOnramper:
             raise ValueError("Quantum teleportation of QFC failed.")
 
         self.blockchain.state_manager.update_balance(user, qfc_amount)
-        self.analytics.record_transaction_metric(user, fiat_amount, qfc_amount)
+        if self.analytics:
+            self.analytics.record_transaction_metric(user, fiat_amount, qfc_amount)
         print(f"Successfully purchased {qfc_amount} QFC for {user}.")
         return True
 
@@ -122,7 +126,7 @@ class QFCOnramper:
 
 # -------------------- NFTMarketplace --------------------
 class NFTMarketplace:
-    def __init__(self, blockchain):
+    def __init__(self, blockchain: Blockchain):
         self.blockchain = blockchain
         self.nfts: Dict[str, Dict] = {}
         self.fractional_nfts: Dict[str, Dict] = {}
@@ -171,7 +175,6 @@ def teleport_nft():
 def buy_qfc():
     data = request.json
     try:
-        blockchain = Blockchain(num_shards=3, difficulty=4, total_supply=1_000_000)
         onramper = QFCOnramper(blockchain, analytics=None, compliance=None)
         onramper.buy_qfc(data["user"], data["fiat_amount"], data["currency"])
         return jsonify({"success": True, "message": "Fiat converted to QFC successfully."})
