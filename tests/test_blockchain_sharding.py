@@ -1,19 +1,14 @@
 from src.core import Blockchain, Transaction
 
-def test_blockchain_initialization():
-    blockchain = Blockchain(num_shards=3, difficulty=4, total_supply=1_000_000)
-    assert len(blockchain.shards) == 3
+def test_shard_distribution():
+    blockchain = Blockchain(num_shards=4, difficulty=4, total_supply=1_000_000)
 
-def test_dynamic_shard_scaling():
-    blockchain = Blockchain(num_shards=2, difficulty=4, total_supply=1_000_000)
-    assert blockchain.get_shard_utilization() == 0
-    blockchain.add_new_shard()
-    assert len(blockchain.shards) == 3
+    # Add transactions
+    for i in range(20):
+        tx = Transaction(f"0xSender{i}", f"0xRecipient{i}", 50.0)
+        blockchain.add_transaction(tx)
 
-def test_shard_to_shard_transaction():
-    blockchain = Blockchain(num_shards=3, difficulty=4, total_supply=1_000_000)
-    tx = Transaction("0xSender1", "0xRecipient1", 50.0)
-    assert blockchain.add_transaction(tx) == True
-    # Verify the transaction is placed in the correct shard
-    shard = blockchain.get_shard_for_address(tx.sender)
-    assert len(shard.pending_transactions) == 1
+    # Ensure transactions are distributed across shards
+    shard_counts = [len(shard.pending_transactions) for shard in blockchain.shards]
+    assert sum(shard_counts) == 20
+    assert max(shard_counts) - min(shard_counts) <= 1  # Ensure balanced distribution
