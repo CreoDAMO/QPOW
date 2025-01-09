@@ -1,6 +1,6 @@
 # tests/test_wallet_transaction.py
 import pytest
-from core import Wallet, Transaction
+from src.core import Wallet, Transaction
 
 @pytest.fixture
 def wallet():
