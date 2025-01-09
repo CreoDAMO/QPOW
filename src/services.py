@@ -5,7 +5,10 @@ import random
 import datetime
 from typing import Dict, List, Any
 from src.core import Blockchain, StateManager
+import logging
 
+# Configure logging
+logging.basicConfig(level=logging.ERROR, format='%(asctime)s %(levelname)s %(message)s')
 # Initialize the blockchain instance globally to avoid redundant creations
 blockchain = Blockchain(num_shards=3, difficulty=4, total_supply=1_000_000)
 
@@ -169,7 +172,8 @@ def teleport_nft():
         nft_marketplace.teleport_nft(data["token_id"], data["sender"], data["recipient"])
         return jsonify({"success": True, "message": "NFT teleported successfully."})
     except ValueError as e:
-        return jsonify({"success": False, "error": str(e)})
+        logging.error(f"Error in teleport_nft: {str(e)}")
+        return jsonify({"success": False, "error": "An internal error has occurred."})
 
 @app.route('/onramp/buy', methods=['POST'])
 def buy_qfc():
@@ -179,4 +183,5 @@ def buy_qfc():
         onramper.buy_qfc(data["user"], data["fiat_amount"], data["currency"])
         return jsonify({"success": True, "message": "Fiat converted to QFC successfully."})
     except ValueError as e:
-        return jsonify({"success": False, "error": str(e)})
+        logging.error(f"Error in buy_qfc: {str(e)}")
+        return jsonify({"success": False, "error": "An internal error has occurred."})
