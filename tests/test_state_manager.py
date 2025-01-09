@@ -1,4 +1,3 @@
-# tests/test_state_manager.py
 from src.core import Blockchain, Transaction
 
 def test_wallet_balance_update_after_transaction():
