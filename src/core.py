@@ -22,6 +22,7 @@ class Wallet:
         """Verify a transaction using the wallet's public key."""
         return transaction.verify_signature(self.public_key)
 
+
 # -------------------- StateManager Class --------------------
 class StateManager:
     """
@@ -37,14 +38,12 @@ class StateManager:
         self.wallets[user] = wallet
         return wallet
 
-    def get_wallet(self, user: str) -> Wallet:
+    def get_wallet(self, user: str) -> Optional[Wallet]:
         return self.wallets.get(user)
 
     def get_public_key(self, user: str) -> bytes:
         wallet = self.get_wallet(user)
-        if wallet:
-            return wallet.public_key
-        return b""
+        return wallet.public_key if wallet else b""
 
     def record_teleportation_event(self, source: str, destination: str):
         """Record a quantum teleportation event."""
@@ -53,6 +52,7 @@ class StateManager:
 
     def get_teleportation_records(self) -> Dict[str, float]:
         return self.quantum_teleportation_records
+
 
 # -------------------- Block Class --------------------
 class Block:
@@ -63,8 +63,6 @@ class Block:
         self.nonce = nonce
         self.timestamp = time.time()
         self.metadata = metadata or {}
-        self.quantum_teleportation_data = self.metadata.get("quantum_teleportation", [])
-        self.qkd_keys = self.metadata.get("qkd_keys", {})
         self.hash = self.calculate_hash()
 
     def calculate_hash(self) -> str:
@@ -75,8 +73,6 @@ class Block:
             "nonce": self.nonce,
             "timestamp": self.timestamp,
             "metadata": self.metadata,
-            "quantum_teleportation_data": self.quantum_teleportation_data,
-            "qkd_keys": self.qkd_keys
         }, sort_keys=True)
         return hashlib.sha256(block_data.encode()).hexdigest()
 
@@ -88,6 +84,7 @@ class Block:
 
     def validate_block(self) -> bool:
         return self.hash == self.calculate_hash()
+
 
 # -------------------- Transaction Class --------------------
 class Transaction:
@@ -116,6 +113,7 @@ class Transaction:
         except Exception:
             return False
 
+
 # -------------------- Shard Class --------------------
 class Shard:
     def __init__(self, shard_id: int):
@@ -137,18 +135,11 @@ class Shard:
                 return False
         return True
 
-    async def create_block(self, miner_address: str, state_manager: "StateManager") -> Optional[Block]:
+    async def create_block(self, miner_address: str, state_manager: StateManager) -> Optional[Block]:
         if not self.pending_transactions:
             return None
 
         metadata = {"miner": miner_address, "shard_id": self.shard_id}
-
-        # Attach teleportation events and QKD keys
-        teleportation_records = state_manager.get_teleportation_records()
-        if teleportation_records:
-            metadata["quantum_teleportation"] = teleportation_records
-            state_manager.quantum_teleportation_records = {}
-
         new_block = Block(
             len(self.chain),
             [tx.to_dict() for tx in self.pending_transactions],
@@ -165,6 +156,7 @@ class Shard:
     def utilization(self) -> float:
         """Return shard utilization as a ratio."""
         return len(self.pending_transactions) / 100  # Assume 100 as max pending transactions
+
 
 # -------------------- Blockchain Class --------------------
 class Blockchain:
@@ -217,7 +209,5 @@ class Blockchain:
         if new_block:
             new_block.mine_block(self.difficulty)
             shard.add_block(new_block)
-            self.state_manager.reward_miner(miner_address, 50)
             return new_block
         return None
-  
