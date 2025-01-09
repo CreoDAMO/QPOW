@@ -1,5 +1,5 @@
 # tests/test_state_manager.py
-from core import Blockchain, Transaction
+from src.core import Blockchain, Transaction
 
 def test_wallet_balance_update_after_transaction():
     blockchain = Blockchain(num_shards=3, difficulty=4, total_supply=1_000_000)
