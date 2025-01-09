@@ -1,6 +1,6 @@
 # tests/test_stress_transaction.py
 import time
-from core import Blockchain, Transaction
+from src.core import Blockchain, Transaction
 
 def test_transaction_throughput():
     blockchain = Blockchain(num_shards=3, difficulty=4, total_supply=1_000_000)
