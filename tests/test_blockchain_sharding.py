@@ -1,4 +1,3 @@
-# tests/test_blockchain_sharding.py
 from src.core import Blockchain, Transaction
 
 def test_blockchain_initialization():
