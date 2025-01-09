@@ -1,5 +1,5 @@
 # tests/test_blockchain_sharding.py
-from core import Blockchain, Transaction
+from src.core import Blockchain, Transaction
 
 def test_blockchain_initialization():
     blockchain = Blockchain(num_shards=3, difficulty=4, total_supply=1_000_000)
