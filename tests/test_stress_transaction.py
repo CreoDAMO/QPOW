@@ -1,4 +1,3 @@
-# tests/test_stress_transaction.py
 import time
 from src.core import Blockchain, Transaction
 
@@ -12,3 +11,7 @@ def test_transaction_throughput():
 
     end_time = time.time()
     print(f"Processed 1000 transactions in {end_time - start_time:.2f} seconds")
+
+    # Verify transactions are distributed across shards
+    total_transactions = sum(len(shard.pending_transactions) for shard in blockchain.shards)
+    assert total_transactions == 1000
