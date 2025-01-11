@@ -1,0 +1,20 @@
+sequenceDiagram
+    participant App
+    participant Blockchain
+    participant QuantumServices
+    participant QuantumBridge
+    participant QuantumSmartContract
+    participant QuantumNode
+
+    App ->> Blockchain: Initialize core components
+    Blockchain ->> QuantumServices: Attach services
+    QuantumServices ->> QuantumBridge: Link bridge
+    Blockchain ->> QuantumSmartContract: Deploy contracts
+    App ->> QuantumNode: Start node
+    QuantumNode ->> QuantumNode: Establish peer connections
+    QuantumNode ->> Blockchain: Submit transactions
+    Blockchain ->> QuantumServices: Process transactions
+    QuantumServices ->> QuantumBridge: Validate cross-chain transactions
+    QuantumServices ->> QuantumSmartContract: Execute smart contracts
+    QuantumSmartContract ->> QuantumServices: Contract execution results
+    QuantumServices ->> App: Return API responses
