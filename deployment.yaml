@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quantumfuse-deployment
+  labels:
+    app: quantumfuse
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: quantumfuse
+  template:
+    metadata:
+      labels:
+        app: quantumfuse
+    spec:
+      containers:
+      - name: quantumfuse-container
+        image: quantumfuse/blockchain:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: PYTHONPATH
+          value: "/app/src"
+        volumeMounts:
+        - name: blockchain-data
+          mountPath: /data
+      volumes:
+      - name: blockchain-data
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: quantumfuse-service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8000
+  selector:
+    app: quantumfuse
