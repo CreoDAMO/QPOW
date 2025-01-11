@@ -1,5 +1,5 @@
 import pytest
-from src.quantum_smartcontracts import QuantumSmartContract
+from src.quantum_smart_contracts import QuantumSmartContract
 
 @pytest.fixture
 def smart_contract():
