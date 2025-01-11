@@ -2,6 +2,7 @@ import hashlib
 import time
 import random
 from flask import Flask, jsonify, request, abort
+import logging
 
 # Flask app for API
 app = Flask(__name__)
@@ -137,7 +138,8 @@ def redeem_htlc():
         else:
             return jsonify({"success": False, "message": "Invalid preimage."})
     except TimeoutError as e:
-        return jsonify({"success": False, "error": str(e)}), 400
+        app.logger.error(f"TimeoutError: {str(e)}")
+        return jsonify({"success": False, "error": "A timeout error has occurred."}), 400
 
 
 @app.route('/htlc/check', methods=['GET'])
