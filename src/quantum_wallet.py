@@ -1,4 +1,4 @@
-import hashlib
+from argon2 import PasswordHasher
 from pqcrypto.sign.dilithium2 import generate_keypair, sign, verify
 from firebase_admin import messaging
 from flask import Flask, request, jsonify, abort
@@ -21,14 +21,19 @@ class QuantumWallet:
     """
     def __init__(self, user_id: str, password: str):
         self.user_id = user_id
-        self.password_hash = hashlib.sha256(password.encode()).hexdigest()
+        ph = PasswordHasher()
+        self.password_hash = ph.hash(password)
         self.private_key, self.public_key = generate_keypair()
         self.balance = 0.0
         self.multi_sig_keys = []
 
     def authenticate(self, password: str) -> bool:
         """Verify user authentication with a hashed password."""
-        return hashlib.sha256(password.encode()).hexdigest() == self.password_hash
+        ph = PasswordHasher()
+        try:
+            return ph.verify(self.password_hash, password)
+        except:
+            return False
 
     def add_multi_sig_key(self, public_key: bytes):
         """Add a public key for multi-signature transactions."""
