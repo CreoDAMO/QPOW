@@ -1,6 +1,6 @@
 import pytest
-from src services import QuantumServices
-from src core import Blockchain, StateManager, Transaction
+from src.services import QuantumServices
+from src.core import Blockchain, StateManager, Transaction
 
 @pytest.fixture
 def quantum_services():
