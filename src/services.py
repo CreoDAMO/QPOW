@@ -1,187 +1,135 @@
-from quantum_lib.teleportation import QuantumTeleportation
-from flask import Flask, jsonify, request
-import requests
-import random
-import datetime
-from typing import Dict, List, Any
-from src.core import Blockchain, StateManager
+import asyncio
 import logging
+from typing import Callable, Dict, Any, List
+from quantum_lib.teleportation import QuantumTeleportation
+from .core import Blockchain, StateManager, Wallet, Transaction
+from .onramper import QFCOnramper
+from .nft_marketplace import NFTMarketplace
+from .optimizer import QuantumAIOptimizer
+from .qkd_manager import QKDManager
 
 # Configure logging
-logging.basicConfig(level=logging.ERROR, format='%(asctime)s %(levelname)s %(message)s')
-# Initialize the blockchain instance globally to avoid redundant creations
-blockchain = Blockchain(num_shards=3, difficulty=4, total_supply=1_000_000)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
+logger = logging.getLogger(__name__)
 
-app = Flask(__name__)
-
-# -------------------- QKDManager --------------------
-class QKDManager:
-    def __init__(self):
-        self.qkd_keys: Dict[str, str] = {}
-        self.teleportation = QuantumTeleportation()
-
-    def distribute_key(self, sender: str, recipient: str) -> str:
-        key = f"QKD-{random.randint(1000, 9999)}"
-        self.qkd_keys[(sender, recipient)] = key
-        print(f"QKD key distributed between {sender} and {recipient}.")
-        return key
-
-    def get_key(self, sender: str, recipient: str) -> str:
-        return self.qkd_keys.get((sender, recipient))
-
-    def teleport_qkd_key(self, sender: str, recipient: str) -> bool:
-        key = self.get_key(sender, recipient)
-        if not key:
-            raise ValueError(f"No QKD key found between {sender} and {recipient}")
-
-        entangled_state = self.teleportation.create_entanglement(sender, recipient)
-        if not self.teleportation.validate_teleportation(entangled_state):
-            raise ValueError("Quantum teleportation of QKD key failed")
-
-        print(f"QKD key teleported successfully between {sender} and {recipient}")
-        return True
-
-
-# -------------------- QuantumAIOptimizer --------------------
-class QuantumAIOptimizer:
-    def __init__(self):
-        self.shard_load_history = {}
-
-    def predict_shard_load(self, shard_id: int) -> float:
-        if shard_id not in self.shard_load_history:
-            self.shard_load_history[shard_id] = [random.uniform(0, 1) for _ in range(10)]
-        return round(sum(self.shard_load_history[shard_id]) / len(self.shard_load_history[shard_id]), 2)
-
-    def optimize_shard_allocation(self, transaction_details: List[dict]) -> dict:
-        shard_allocations = {}
-        for tx in transaction_details:
-            least_loaded_shard = min(self.shard_load_history.keys(), key=self.predict_shard_load)
-            shard_allocations[tx["transaction_id"]] = least_loaded_shard
-            self.update_shard_load(least_loaded_shard, 0.1)
-        return shard_allocations
-
-    def update_shard_load(self, shard_id: int, load_increment: float):
-        if shard_id in self.shard_load_history:
-            self.shard_load_history[shard_id].append(load_increment)
-            if len(self.shard_load_history[shard_id]) > 10:
-                self.shard_load_history[shard_id].pop(0)
-
-
-# -------------------- QFCOnramper --------------------
-class QFCOnramper:
-    def __init__(self, blockchain: Blockchain, analytics: Any = None, compliance: Any = None):
+class QuantumServices:
+    def __init__(self, blockchain: Blockchain, state_manager: StateManager):
         self.blockchain = blockchain
-        self.analytics = analytics
-        self.compliance = compliance
+        self.state_manager = state_manager
         self.teleportation = QuantumTeleportation()
-        self.exchange_rates_api = "https://api.exchangeratesapi.io/latest?base=USD"
-        self.supported_currencies = ["USD", "EUR", "JPY"]
-        self.transaction_history: List[Dict] = []
+        self.onramper = QFCOnramper(self.blockchain, analytics=None, compliance=None)
+        self.nft_marketplace = NFTMarketplace(self.blockchain)
+        self.optimizer = QuantumAIOptimizer()
+        self.qkd_manager = QKDManager()
 
-    def fetch_exchange_rates(self) -> Dict[str, float]:
+    async def process_transactions(self, shard_id: int):
+        shard = self.blockchain.shards[shard_id]
+        while True:
+            pending_transactions = shard.pending_transactions
+
+            if not pending_transactions:
+                logger.info(f"No transactions in Shard {shard_id}, waiting...")
+                await asyncio.sleep(1)
+                continue
+
+            logger.info(f"Processing {len(pending_transactions)} transactions in Shard {shard_id}...")
+            tx_details = [
+                {
+                    "transaction_id": tx.calculate_hash(),
+                    "sender": tx.sender,
+                    "recipient": tx.recipient,
+                    "amount": tx.amount,
+                }
+                for tx in pending_transactions
+            ]
+            shard_allocations = self.optimizer.optimize_shard_allocation(tx_details)
+
+            for tx in pending_transactions:
+                target_shard_id = shard_allocations[tx.calculate_hash()]
+                if shard.shard_id == target_shard_id:
+                    self.process_transaction(tx)
+                else:
+                    logger.info(f"Reassigning transaction {tx.calculate_hash()} to Shard {target_shard_id}.")
+                    self.blockchain.shards[target_shard_id].add_transaction(tx)
+                    self.optimizer.update_shard_load(target_shard_id, 0.1)
+
+            shard.pending_transactions = []
+            self.blockchain.save_state()
+            logger.info(f"Transactions in Shard {shard_id} processed and saved.")
+
+    def process_transaction(self, transaction: Transaction):
+        sender_wallet = self.state_manager.get_wallet(transaction.sender)
+        recipient_wallet = self.state_manager.get_wallet(transaction.recipient)
+
+        if not sender_wallet or not recipient_wallet:
+            logger.error(f"Invalid wallets: Sender ({transaction.sender}) or Recipient ({transaction.recipient}).")
+            return
+
+        if not sender_wallet.verify_transaction(transaction):
+            logger.error(f"Invalid transaction signature for {transaction.calculate_hash()}.")
+            return
+
+        if sender_wallet.staked_amount < transaction.amount:
+            logger.error(f"Insufficient balance for transaction: {transaction.sender}.")
+            return
+
+        # Update balances
+        sender_wallet.staked_amount -= transaction.amount
+        recipient_wallet.staked_amount += transaction.amount - transaction.fee
+        self.state_manager.update_balance(transaction.sender, -transaction.amount)
+        self.state_manager.update_balance(transaction.recipient, transaction.amount - transaction.fee)
+
+        # Quantum Key Teleportation
         try:
-            response = requests.get(self.exchange_rates_api)
-            rates = response.json().get("rates", {})
-            return {currency: rates[currency] for currency in self.supported_currencies if currency in rates}
-        except requests.RequestException as e:
-            print(f"Error fetching exchange rates: {e}")
-            return {}
+            self.qkd_manager.teleport_qkd_key(transaction.sender, transaction.recipient)
+        except ValueError as e:
+            logger.error(f"QKD teleportation failed: {e}")
+            return
 
-    def buy_qfc(self, user: str, fiat_amount: float, currency: str) -> bool:
-        exchange_rates = self.fetch_exchange_rates()
-        if currency not in exchange_rates:
-            raise ValueError(f"Unsupported currency: {currency}")
+        logger.info(f"Transaction processed: {transaction.sender} -> {transaction.recipient} ({transaction.amount} QFC).")
 
-        if self.compliance and not self.compliance.perform_kyc(user, []):
-            raise ValueError("KYC not completed for this user.")
-        if self.compliance and not self.compliance.aml_check({"description": f"{fiat_amount} {currency} purchase"}):
-            raise ValueError("Transaction flagged by AML check.")
+    def register_oracle(self, name: str, fetch_data_fn: Callable[[], Dict[str, Any]]):
+        self.blockchain.register_oracle(name, fetch_data_fn)
+        logger.info(f"Oracle {name} registered successfully.")
 
-        qfc_amount = fiat_amount / exchange_rates[currency]
-        self.record_transaction(user, fiat_amount, currency, qfc_amount)
+    def create_quantum_smart_contract(self, contract_id: str, states: list, creator: str, conditions: Dict[str, Callable]):
+        contract = self.blockchain.create_quantum_smart_contract(contract_id, states, creator, conditions)
+        logger.info(f"Quantum smart contract {contract_id} created by {creator}.")
+        return contract
 
-        user_wallet = self.blockchain.create_user(user)
-        entangled_state = self.teleportation.create_entanglement("Onramper", user)
-        if not self.teleportation.validate_teleportation(entangled_state):
-            raise ValueError("Quantum teleportation of QFC failed.")
+    def execute_quantum_smart_contract(self, contract_id: str, from_state: str, to_state: str, oracle_name: str):
+        contract = self.blockchain.get_quantum_smart_contract(contract_id)
+        if not contract:
+            logger.error(f"Smart contract {contract_id} not found.")
+            return
 
-        self.blockchain.state_manager.update_balance(user, qfc_amount)
-        if self.analytics:
-            self.analytics.record_transaction_metric(user, fiat_amount, qfc_amount)
-        print(f"Successfully purchased {qfc_amount} QFC for {user}.")
-        return True
-
-    def record_transaction(self, user: str, fiat_amount: float, currency: str, qfc_amount: float):
-        transaction = {
-            "user": user,
-            "fiat_amount": fiat_amount,
-            "currency": currency,
-            "qfc_amount": qfc_amount,
-            "timestamp": datetime.datetime.now().isoformat(),
-        }
-        self.transaction_history.append(transaction)
-
-    def get_transaction_history(self, user: str = None) -> List[Dict]:
-        if user:
-            return [tx for tx in self.transaction_history if tx["user"] == user]
-        return self.transaction_history
-
-
-# -------------------- NFTMarketplace --------------------
-class NFTMarketplace:
-    def __init__(self, blockchain: Blockchain):
-        self.blockchain = blockchain
-        self.nfts: Dict[str, Dict] = {}
-        self.fractional_nfts: Dict[str, Dict] = {}
-        self.teleportation = QuantumTeleportation()
-
-    def teleport_nft(self, token_id: str, sender: str, recipient: str) -> bool:
-        if token_id not in self.nfts or self.nfts[token_id]["owner"] != sender:
-            raise ValueError(f"Sender {sender} does not own NFT {token_id}")
-
-        sender_wallet = self.blockchain.state_manager.get_wallet(sender)
-        recipient_wallet = self.blockchain.state_manager.get_wallet(recipient)
-
-        entangled_state = self.teleportation.create_entanglement(sender, recipient)
-        if not self.teleportation.validate_teleportation(entangled_state):
-            raise ValueError(f"Quantum teleportation failed for NFT {token_id}")
-
-        self.nfts[token_id]["owner"] = recipient
-        self.blockchain.state_manager.update_ownership(token_id, recipient)
-        print(f"NFT {token_id} teleported from {sender} to {recipient}")
-        return True
+        contract.transition_state_with_oracle(oracle_name, from_state, to_state)
+        logger.info(f"Smart contract {contract_id} transitioned from {from_state} to {to_state} using Oracle {oracle_name}.")
 
     def create_fractional_nft(self, data_id: str, owner: str, metadata: Dict[str, Any], total_units: int):
-        if data_id not in self.fractional_nfts:
-            self.fractional_nfts[data_id] = {
-                "owner": owner,
-                "metadata": metadata,
-                "total_units": total_units,
-                "available_units": total_units,
-                "sale_price": None,
-            }
-            print(f"Fractional NFT {data_id} created by {owner} with {total_units} units")
+        try:
+            self.nft_marketplace.create_fractional_nft(data_id, owner, metadata, total_units)
+            logger.info(f"Fractional NFT {data_id} created by {owner} with {total_units} units.")
+        except ValueError as e:
+            logger.error(f"Failed to create fractional NFT {data_id}: {e}.")
 
+    def teleport_nft(self, token_id: str, sender: str, recipient: str):
+        try:
+            self.nft_marketplace.teleport_nft(token_id, sender, recipient)
+            logger.info(f"NFT {token_id} teleported from {sender} to {recipient}.")
+        except ValueError as e:
+            logger.error(f"Failed to teleport NFT {token_id}: {e}.")
 
-# -------------------- API Routes --------------------
-@app.route('/nft/teleport', methods=['POST'])
-def teleport_nft():
-    data = request.json
-    try:
-        nft_marketplace = NFTMarketplace(blockchain)
-        nft_marketplace.teleport_nft(data["token_id"], data["sender"], data["recipient"])
-        return jsonify({"success": True, "message": "NFT teleported successfully."})
-    except ValueError as e:
-        logging.error(f"Error in teleport_nft: {str(e)}")
-        return jsonify({"success": False, "error": "An internal error has occurred."})
+    def generate_teleportation_metrics(self) -> Dict[str, Any]:
+        return {
+            "qkd_teleportation_success": self.qkd_manager.teleportation.success_count,
+            "qkd_teleportation_failures": self.qkd_manager.teleportation.failure_count,
+            "shard_utilization": {shard.shard_id: shard.utilization() for shard in self.blockchain.shards},
+        }
 
-@app.route('/onramp/buy', methods=['POST'])
-def buy_qfc():
-    data = request.json
-    try:
-        onramper = QFCOnramper(blockchain, analytics=None, compliance=None)
-        onramper.buy_qfc(data["user"], data["fiat_amount"], data["currency"])
-        return jsonify({"success": True, "message": "Fiat converted to QFC successfully."})
-    except ValueError as e:
-        logging.error(f"Error in buy_qfc: {str(e)}")
-        return jsonify({"success": False, "error": "An internal error has occurred."})
+# Run the transaction processing service
+async def run_transaction_processing(services: QuantumServices):
+    logger.info("Starting transaction processing for all shards...")
+    await asyncio.gather(
+        *(services.process_transactions(shard_id) for shard_id in range(len(services.blockchain.shards)))
+    )
