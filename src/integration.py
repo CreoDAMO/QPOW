@@ -1,9 +1,9 @@
 from src.core import Blockchain, StateManager
-from src.wallet import QuantumWallet
+from src.quantum_wallet import QuantumWallet
 from src.services import QuantumServices
-from src.bridge import QuantumBridge
-from src.smart_contracts import QuantumSmartContract
-from src.node import QuantumNode, PeerManager, TransactionPropagator, ConsensusManager
+from src.quantum_bridge import QuantumBridge
+from src.quantum_smart_contract import QuantumSmartContract
+from src.quantum_node import QuantumNode, PeerManager, TransactionPropagator, ConsensusManager
 from src.app import app
 
 # Step 1: Initialize Core Blockchain
