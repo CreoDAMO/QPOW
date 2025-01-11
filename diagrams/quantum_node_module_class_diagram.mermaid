@@ -1,0 +1,44 @@
+classDiagram
+    class PeerManager {
+        - network: INetwork
+        - protocol_host: ProtocolHost
+        - dht: Any
+        - identify: Any
+        + discover_peers(topic: str): List[ID]
+        + connect_to_peers(peer_ids: List[ID])
+        + authenticate_peer(peer_id: ID): bool
+    }
+
+    class TransactionPropagator {
+        - protocol_host: ProtocolHost
+        - gossipsub: Gossipsub
+        + publish_transaction(topic: str, tx_data: bytes)
+        + subscribe_to_transactions(topic: str, callback)
+    }
+
+    class ConsensusManager {
+        - qdpos_manager: QDPoSManager
+        + process_transaction(tx_data: bytes): bool
+        + get_consensus_state(): Dict[str, Any]
+    }
+
+    class NodeManager {
+        - node_configs: dict
+        + register_node(node_id: str, config: NodeConfig)
+        + deregister_node(node_id: str)
+        + get_node_config(node_id: str): NodeConfig
+        + monitor_node_health()
+    }
+
+    class QuantumStorage {
+        - datastore: IDatastore
+        + store_data(key: bytes, value: bytes)
+        + retrieve_data(key: bytes): Tuple[bytes, bool]
+    }
+
+    class QuantumNode {
+        - peer_manager: PeerManager
+        - transaction_propagator: TransactionPropagator
+        - consensus_manager: ConsensusManager
+        + start_node()
+    }
