@@ -1,0 +1,13 @@
+sequenceDiagram
+    participant QuantumBridge
+    participant BlockchainA
+    participant BlockchainB
+
+    QuantumBridge ->> QuantumBridge: Create Entanglement
+    QuantumBridge ->> BlockchainA: Validate Entanglement
+    QuantumBridge ->> BlockchainB: Validate Entanglement
+    BlockchainA ->> QuantumBridge: Entanglement Validated
+    BlockchainB ->> QuantumBridge: Entanglement Validated
+    QuantumBridge ->> QuantumBridge: List Entanglements
+    QuantumBridge ->> BlockchainA: Redeem HTLC
+    BlockchainA ->> QuantumBridge: HTLC Redeemed
