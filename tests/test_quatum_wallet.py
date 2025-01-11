@@ -1,5 +1,5 @@
 import pytest
-from src.wallet import QuantumWallet
+from src.quantum_wallet import QuantumWallet
 
 @pytest.fixture
 def wallet():
