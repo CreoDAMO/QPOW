@@ -7,8 +7,8 @@ on:
     branches: [ "main" ]
 
 permissions:
-  contents: read
-  pull-requests: write
+  contents: read  # Grants read-only permission for contents
+  pull-requests: write  # Enables updating pull request statuses
 
 jobs:
   build-and-test:
@@ -25,13 +25,13 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
-
-    - name: Set PYTHONPATH
-      run: echo "PYTHONPATH=$(pwd)/src" >> $GITHUB_ENV
+        pip install flake8 pytest qiskit pqcrypto requests ipfshttpclient
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - name: Lint with flake8
-      run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+      run: |
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
 
     - name: Run Tests with pytest
-      run: pytest tests --maxfail=5 --disable-warnings --cov=src
+      run: |
+        pytest tests --maxfail=5 --disable-warnings --cov=src
