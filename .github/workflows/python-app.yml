@@ -39,3 +39,7 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # Treat other issues as warnings, customized for QuantumFuse's code complexity and length
         flake8 . --count --exit-zero --max-complexity=15 --max-line-length=127 --statistics
+
+    - name: Run Tests with pytest
+      run: |
+        pytest tests --maxfail=5 --disable-warnings --cov=src
