@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ "main" ]
 
+permissions:
+  contents: read  # Grants read-only permission for contents
+  pull-requests: write  # Enables updating pull request statuses
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -25,7 +29,9 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - name: Lint with flake8
-      run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+      run: |
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
 
     - name: Run Tests with pytest
-      run: pytest tests --maxfail=5 --disable-warnings --cov=src
+      run: |
+        pytest tests --maxfail=5 --disable-warnings --cov=src
