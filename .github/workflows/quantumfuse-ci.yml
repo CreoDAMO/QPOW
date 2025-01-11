@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: ["main"]
 
+permissions:
+  contents: read  # Grants read-only permission for contents
+  pull-requests: write  # Enables updating pull request statuses
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
