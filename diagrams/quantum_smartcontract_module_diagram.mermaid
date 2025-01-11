@@ -1,0 +1,25 @@
+classDiagram
+    class QuantumSmartContract {
+        - contract_id: str
+        - states: List[str]
+        - current_state: str
+        - creator: str
+        - participants: List[str]
+        - did_links: dict
+        - conditions: dict
+        - history: List[dict]
+        - oracles: dict
+        - entangled_qubits: Any
+        - signature: Optional[bytes]
+        + add_participant(participant_address: str, did: str)
+        + set_condition(from_state: str, to_state: str, condition_fn: Callable)
+        + register_oracle(name: str, fetch_data_fn: Callable[[], Any])
+        + transition_state_with_oracle(oracle_name: str, from_state: str, to_state: str)
+        + generate_entanglement()
+        + validate_entanglement(): bool
+        + sign_contract(private_key: bytes)
+        + verify_signature(public_key: bytes): bool
+        + get_contract_details(): dict
+        + export_contract(): str
+        + import_contract(contract_json: str)
+    }
