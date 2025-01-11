@@ -1,0 +1,46 @@
+classDiagram
+    class Blockchain {
+        - num_shards: int
+        - difficulty: int
+        - total_supply: int
+        + shards: List[Shard]
+        + state_manager: StateManager
+        + assign_transaction_to_shard(tx: Transaction)
+        + mine_block(miner: Miner)
+    }
+
+    class Shard {
+        - shard_id: int
+        + chain: List[Block]
+        + add_transaction(tx: Transaction)
+        + mine_block(difficulty: int, miner: str)
+    }
+
+    class Block {
+        - index: int
+        - transactions: List[Transaction]
+        - previous_hash: str
+        - nonce: int
+        - timestamp: float
+        - metadata: Optional[dict]
+        + calculate_hash(): str
+        + mine_block(difficulty: int)
+        + validate_block(): bool
+    }
+
+    class Transaction {
+        - sender: str
+        - recipient: str
+        - amount: float
+        - asset: str
+        - timestamp: float
+        - fee: float
+        - signature: Optional[bytes]
+        + calculate_hash(): str
+        + sign_transaction(private_key: bytes)
+        + verify_signature(public_key: bytes): bool
+    }
+
+    Blockchain o-- Shard
+    Shard o-- Block
+    Blockchain o-- StateManager
