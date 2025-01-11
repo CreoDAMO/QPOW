@@ -121,7 +121,7 @@ def execute_transaction():
         return jsonify({"success": True, "transaction": result})
     except ValueError as e:
         logger.error(f"Transaction error: {str(e)}")
-        return jsonify({"success": False, "error": str(e)}), 400
+        return jsonify({"success": False, "error": "An error occurred during the transaction."}), 400
 
 @app.route('/wallet/balance/<user_id>', methods=['GET'])
 def get_wallet_balance(user_id):
