@@ -1,57 +1,88 @@
 import json
 import hashlib
+import pickle
 import time
+import uuid
+import random
 from typing import List, Dict, Optional
 from pqcrypto.sign.dilithium2 import generate_keypair, sign, verify
+from quantumfuse.modules.qpow import QuantumPoW
+import logging
 import asyncio
+
+# Setup logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
+logger = logging.getLogger(__name__)
+
 
 # -------------------- Wallet Class --------------------
 class Wallet:
     def __init__(self):
         self.private_key, self.public_key = generate_keypair()
+        self.did = DID(self.public_key)
+        self.staked_amount = 0.0
 
     def get_address(self) -> str:
-        """Generate a blockchain address from the public key."""
         return f"0x{self.public_key.hex()}"
 
     def sign_transaction(self, transaction: "Transaction") -> None:
-        """Sign a transaction using the wallet's private key."""
         transaction.sign_transaction(self.private_key)
 
     def verify_transaction(self, transaction: "Transaction") -> bool:
-        """Verify a transaction using the wallet's public key."""
         return transaction.verify_signature(self.public_key)
+
+
+# -------------------- DID Class --------------------
+class DID:
+    def __init__(self, public_key: bytes):
+        self.identifier = f"did:qfc:{uuid.uuid4()}"
+        self.public_key = public_key
+        self.services = {}
+        self.credentials: Dict[str, str] = {}  # Store verifiable credentials
+
+    def add_service(self, name: str, endpoint: str):
+        self.services[name] = endpoint
+
+    def issue_credential(self, action: str, data: str):
+        self.credentials[action] = hashlib.sha256(f"{action}:{data}".encode()).hexdigest()
+
+    def verify_credential(self, action: str, credential: str) -> bool:
+        return self.credentials.get(action) == credential
 
 
 # -------------------- StateManager Class --------------------
 class StateManager:
-    """
-    Manages the state of QFC assets, balances, and quantum teleportation events across the network.
-    """
     def __init__(self, total_supply: int):
         self.assets = {"QFC": {"total_supply": total_supply, "balances": {}}}
         self.wallets: Dict[str, Wallet] = {}
-        self.quantum_teleportation_records = {}
+        self.dids: Dict[str, DID] = {}
 
     def create_wallet(self, user: str) -> Wallet:
         wallet = Wallet()
         self.wallets[user] = wallet
+        self.register_did(wallet)
         return wallet
 
     def get_wallet(self, user: str) -> Optional[Wallet]:
         return self.wallets.get(user)
 
-    def get_public_key(self, user: str) -> bytes:
-        wallet = self.get_wallet(user)
-        return wallet.public_key if wallet else b""
+    def register_did(self, wallet: Wallet):
+        self.dids[wallet.did.identifier] = wallet.did
 
-    def record_teleportation_event(self, source: str, destination: str):
-        """Record a quantum teleportation event."""
-        event_id = f"{source}->{destination}"
-        self.quantum_teleportation_records[event_id] = time.time()
+    def resolve_did(self, identifier: str) -> Optional[DID]:
+        return self.dids.get(identifier)
 
-    def get_teleportation_records(self) -> Dict[str, float]:
-        return self.quantum_teleportation_records
+    def reward_miner(self, miner_address: str, reward_amount: float):
+        self.assets["QFC"]["balances"].setdefault(miner_address, 0)
+        self.assets["QFC"]["balances"][miner_address] += reward_amount
+        logger.info(f"Miner {miner_address} rewarded with {reward_amount} QFC.")
+
+    def validate_transaction(self, transaction: "Transaction") -> bool:
+        sender_balance = self.assets["QFC"]["balances"].get(transaction.sender, 0)
+        if sender_balance < transaction.amount + transaction.fee:
+            logger.warning(f"Transaction failed: Insufficient funds for {transaction.sender}.")
+            return False
+        return True
 
 
 # -------------------- Block Class --------------------
@@ -66,14 +97,7 @@ class Block:
         self.hash = self.calculate_hash()
 
     def calculate_hash(self) -> str:
-        block_data = json.dumps({
-            "index": self.index,
-            "transactions": self.transactions,
-            "previous_hash": self.previous_hash,
-            "nonce": self.nonce,
-            "timestamp": self.timestamp,
-            "metadata": self.metadata,
-        }, sort_keys=True)
+        block_data = json.dumps(self.to_dict(), sort_keys=True)
         return hashlib.sha256(block_data.encode()).hexdigest()
 
     def mine_block(self, difficulty: int):
@@ -81,9 +105,21 @@ class Block:
         while not self.hash.startswith(target):
             self.nonce += 1
             self.hash = self.calculate_hash()
+        logger.info(f"Block mined: {self.hash}")
 
     def validate_block(self) -> bool:
         return self.hash == self.calculate_hash()
+
+    def to_dict(self) -> dict:
+        return {
+            "index": self.index,
+            "transactions": self.transactions,
+            "previous_hash": self.previous_hash,
+            "nonce": self.nonce,
+            "timestamp": self.timestamp,
+            "metadata": self.metadata,
+            "hash": self.hash
+        }
 
 
 # -------------------- Transaction Class --------------------
@@ -99,22 +135,34 @@ class Transaction:
 
     def calculate_hash(self) -> str:
         tx_data = f"{self.sender}{self.recipient}{self.amount}{self.timestamp}"
-        return hashlib.sha3_256(tx_data.encode()).hexdigest()
+        return hashlib.sha256(tx_data.encode()).hexdigest()
 
     def sign_transaction(self, private_key: bytes):
         tx_hash = self.calculate_hash().encode()
         self.signature = sign(tx_hash, private_key)
 
     def verify_signature(self, public_key: bytes) -> bool:
-        tx_hash = self.calculate_hash().encode()
         try:
+            tx_hash = self.calculate_hash().encode()
             verify(tx_hash, self.signature, public_key)
             return True
-        except Exception:
+        except Exception as e:
+            logger.error(f"Signature verification failed: {e}")
             return False
 
+    def to_dict(self) -> dict:
+        return {
+            "sender": self.sender,
+            "recipient": self.recipient,
+            "amount": self.amount,
+            "asset": self.asset,
+            "timestamp": self.timestamp,
+            "fee": self.fee,
+            "signature": self.signature.hex() if self.signature else None
+        }
 
-# -------------------- Shard Class --------------------
+
+# -------------------- Shard Class with Load Balancing --------------------
 class Shard:
     def __init__(self, shard_id: int):
         self.shard_id = shard_id
@@ -152,62 +200,51 @@ class Shard:
 
     def add_transaction(self, transaction: Transaction):
         self.pending_transactions.append(transaction)
+        logger.info(f"Transaction added to Shard {self.shard_id}: {transaction.to_dict()}")
 
     def utilization(self) -> float:
-        """Return shard utilization as a ratio."""
         return len(self.pending_transactions) / 100  # Assume 100 as max pending transactions
 
 
 # -------------------- Blockchain Class --------------------
 class Blockchain:
-    def __init__(self, num_shards: int, difficulty: int, total_supply: int):
+    def __init__(self, num_shards: int, difficulty: int, total_supply: int, state_file: str = "blockchain_state.pkl"):
         self.shards = [Shard(i) for i in range(num_shards)]
         self.num_shards = num_shards
         self.difficulty = difficulty
         self.state_manager = StateManager(total_supply)
+        self.state_file = state_file
 
-    def create_user(self, user: str) -> Wallet:
-        return self.state_manager.create_wallet(user)
+    def save_state(self):
+        with open(self.state_file, 'wb') as f:
+            pickle.dump(self, f)
+        logger.info("Blockchain state saved.")
 
-    def get_shard_for_address(self, address: str) -> Shard:
-        shard_id = int(address[0], 16) % len(self.shards)
-        return self.shards[shard_id]
+    @staticmethod
+    def load_state(state_file: str = "blockchain_state.pkl"):
+        try:
+            with open(state_file, 'rb') as f:
+                return pickle.load(f)
+        except FileNotFoundError:
+            logger.info("No saved state found, starting a new blockchain.")
+            return Blockchain(3, 4, 1_000_000)
 
-    def get_shard_utilization(self) -> float:
-        """Check average shard utilization."""
-        return sum(shard.utilization() for shard in self.shards) / len(self.shards)
+    def assign_transaction_to_shard(self, transaction: Transaction):
+        least_utilized_shard = min(self.shards, key=lambda shard: shard.utilization())
+        least_utilized_shard.add_transaction(transaction)
+        logger.info(f"Transaction assigned to Shard {least_utilized_shard.shard_id}")
 
-    def add_new_shard(self):
-        """Dynamically add a new shard when utilization is high."""
-        new_shard = Shard(len(self.shards))
-        self.shards.append(new_shard)
-        self.num_shards += 1
-        print(f"New shard added: Shard {new_shard.shard_id}")
-
-    def check_and_scale_shards(self):
-        """Monitor and scale shards."""
-        if self.get_shard_utilization() > 0.8:
-            self.add_new_shard()
-
-    def add_transaction(self, transaction: Transaction) -> bool:
-        if self.verify_transaction(transaction):
-            shard = self.get_shard_for_address(transaction.sender)
-            shard.add_transaction(transaction)
-            self.check_and_scale_shards()
-            return True
-        return False
-
-    def verify_transaction(self, transaction: Transaction) -> bool:
-        sender_wallet = self.state_manager.get_wallet(transaction.sender)
-        if sender_wallet:
-            return transaction.verify_signature(sender_wallet.public_key)
-        return False
-
-    async def mine_block(self, miner_address: str) -> Optional[Block]:
-        shard = self.get_shard_for_address(miner_address)
-        new_block = await shard.create_block(miner_address, self.state_manager)
+    async def mine_block(self, miner: Miner) -> Optional[Block]:
+        shard = random.choice(self.shards)
+        new_block = await shard.create_block(miner.address, self.state_manager)
         if new_block:
-            new_block.mine_block(self.difficulty)
+            qpow = QuantumPoW(self.difficulty)
+            nonce, block_hash = qpow.mine(new_block.to_dict())
+            new_block.nonce = nonce
+            new_block.hash = block_hash
             shard.add_block(new_block)
+            green_reward = miner.calculate_green_reward(50)  # Assume 50 is base reward
+            self.state_manager.reward_miner(miner.address, green_reward)
+            self.save_state()
             return new_block
         return None
