@@ -1,0 +1,14 @@
+sequenceDiagram
+    participant App
+    participant QuantumServices
+    participant Blockchain
+    participant QuantumBridge
+    participant QuantumSmartContract
+
+    App ->> QuantumServices: Handle transaction
+    QuantumServices ->> Blockchain: Assign transaction to shard
+    Blockchain ->> QuantumServices: Transaction processed
+    QuantumServices ->> QuantumBridge: Validate cross-chain transaction
+    QuantumServices ->> QuantumSmartContract: Execute smart contract
+    QuantumSmartContract ->> QuantumServices: Contract execution result
+    QuantumServices ->> App: Transaction handling result
