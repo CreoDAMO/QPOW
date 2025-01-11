@@ -33,4 +33,4 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
 
     - name: Run Tests with pytest
-      run: pytest tests --maxfail=5 --disable-warnings --cov=src
+  run: python -m pytest tests --maxfail=5 --disable-warnings --cov=src
