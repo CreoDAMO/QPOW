@@ -1,10 +1,10 @@
 import pytest
 from src.core import Blockchain, StateManager, Transaction
-from src.wallet import QuantumWallet
+from src.quatum_wallet import QuantumWallet
 from src.services import QuantumServices
-from src.bridge import QuantumBridge
-from src.smart_contracts import QuantumSmartContract
-from src.node import PeerManager, TransactionPropagator, ConsensusManager
+from src.quantum_bridge import QuantumBridge
+from src.quantum_smart_contracts import QuantumSmartContract
+from src.quantum_node import PeerManager, TransactionPropagator, ConsensusManager
 from src.app import app
 
 # Initialize fixtures for integration testing
