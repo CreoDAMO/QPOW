@@ -36,9 +36,7 @@ jobs:
       run: make venv install
 
     - name: Run Makefile targets within virtual environment
-      run: |
-        . .venv/bin/activate
-        make format lint test generate-tests coverage docs
+      run: make format lint test generate-tests coverage docs
 
     - name: Upload coverage report
       uses: actions/upload-artifact@v3
@@ -50,8 +48,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: documentation
-        path: docs
+        path: site  # Replace with the correct path if `mkdocs` outputs elsewhere
 
     - name: Clean up
       run: make clean clean-venv
-      
