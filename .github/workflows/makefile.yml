@@ -6,19 +6,27 @@ on:
   pull_request:
     branches: [ "main" ]
 
+permissions: 
+  contents: read  # Restrict to read-only access for repository contents
+  issues: write   # Allow writing to issues if the workflow interacts with them
+  pull-requests: write  # Allow pull request status updates if necessary
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
+    # Step 1: Checkout code
     - name: Checkout Code
       uses: actions/checkout@v3
 
+    # Step 2: Set up Python environment
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: "3.10"
 
+    # Step 3: Cache pip dependencies
     - name: Cache pip dependencies
       uses: actions/cache@v3
       with:
@@ -27,41 +35,52 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-pip-
 
+    # Step 4: Create virtual environment and install dependencies
     - name: Set up and install dependencies
       run: |
         make venv
         make install
 
+    # Step 5: Lint the codebase
     - name: Lint the codebase
       run: make lint
 
+    # Step 6: Run unit tests
     - name: Run unit tests
       run: make test
 
+    # Step 7: Generate unit tests with Pynguin
     - name: Generate unit tests with Pynguin
       run: make generate-tests
 
+    # Step 8: Generate test coverage report
     - name: Generate coverage report
       run: make coverage
 
+    # Step 9: Upload test coverage report as artifact
     - name: Upload coverage report
       uses: actions/upload-artifact@v3
       with:
         name: coverage-report
         path: htmlcov
 
+    # Step 10: Generate documentation with Doxygen
     - name: Generate documentation with Doxygen
       run: make docs
 
+    # Step 11: Upload generated documentation as artifact
     - name: Upload documentation
       uses: actions/upload-artifact@v3
       with:
         name: documentation
         path: docs
 
+    # Step 12: Clean up temporary files
     - name: Clean temporary files
       run: make clean
 
+    # Step 13: Clean virtual environment
+      # Ensure this step always runs, even if prior steps fail
     - name: Clean the virtual environment
       if: always()
       run: make clean-venv
