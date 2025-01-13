@@ -1,7 +1,7 @@
 import json
 import hashlib
 import time
-from typing import List, Dict, Optional
+from typing import List, Optional  # Removed unused Dict import
 from pqc_wrapper import PQCWrapper  # Dynamic cryptography wrapper
 from config_selector import BackendSelector  # Dynamic backend selection
 
@@ -9,6 +9,7 @@ from config_selector import BackendSelector  # Dynamic backend selection
 selector = BackendSelector("config.yaml")
 pqc_backend = selector.get_pqc_backend()
 pqc_wrapper = PQCWrapper(backend=pqc_backend)
+
 
 class Wallet:
     def __init__(self):
@@ -26,7 +27,12 @@ class Wallet:
 
 class StateManager:
     def __init__(self, total_supply: int):
-        self.assets = {"QFC": {"total_supply": total_supply, "balances": {}}}
+        self.assets = {
+            "QFC": {
+                "total_supply": total_supply,
+                "balances": {},
+            }
+        }
 
     def update_balance(self, address: str, amount: float):
         if address not in self.assets["QFC"]["balances"]:
@@ -35,7 +41,8 @@ class StateManager:
 
     def validate_transaction(self, transaction: "Transaction") -> bool:
         sender_balance = self.assets["QFC"]["balances"].get(transaction.sender, 0.0)
-        return sender_balance >= transaction.amount + transaction.fee
+        required_balance = transaction.amount + transaction.fee
+        return sender_balance >= required_balance
 
 
 class Transaction:
@@ -66,7 +73,13 @@ class Transaction:
 
 
 class Block:
-    def __init__(self, index: int, transactions: List[Transaction], previous_hash: str, nonce: int = 0):
+    def __init__(
+        self,
+        index: int,
+        transactions: List[Transaction],
+        previous_hash: str,
+        nonce: int = 0,
+    ):
         self.index = index
         self.transactions = transactions
         self.previous_hash = previous_hash
@@ -75,13 +88,16 @@ class Block:
         self.hash = self.calculate_hash()
 
     def calculate_hash(self) -> str:
-        block_data = json.dumps({
-            "index": self.index,
-            "transactions": [tx.calculate_hash() for tx in self.transactions],
-            "previous_hash": self.previous_hash,
-            "nonce": self.nonce,
-            "timestamp": self.timestamp
-        }, sort_keys=True)
+        block_data = json.dumps(
+            {
+                "index": self.index,
+                "transactions": [tx.calculate_hash() for tx in self.transactions],
+                "previous_hash": self.previous_hash,
+                "nonce": self.nonce,
+                "timestamp": self.timestamp,
+            },
+            sort_keys=True,
+        )
         return hashlib.sha256(block_data.encode()).hexdigest()
 
     def mine_block(self, difficulty: int):
@@ -110,7 +126,10 @@ class Shard:
         for i in range(1, len(self.chain)):
             current_block = self.chain[i]
             previous_block = self.chain[i - 1]
-            if current_block.previous_hash != previous_block.hash or not current_block.validate_block():
+            if (
+                current_block.previous_hash != previous_block.hash
+                or not current_block.validate_block()
+            ):
                 return False
         return True
 
@@ -128,7 +147,9 @@ class Blockchain:
     async def mine_block(self, miner: str) -> Optional[Block]:
         for shard in self.shards:
             latest_block = shard.get_latest_block()
-            new_block = Block(len(shard.chain), shard.pending_transactions, latest_block.hash)
+            new_block = Block(
+                len(shard.chain), shard.pending_transactions, latest_block.hash
+            )
             new_block.mine_block(self.difficulty)
             shard.add_block(new_block)
             shard.pending_transactions = []
