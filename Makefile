@@ -1,4 +1,4 @@
-# Define variables
+# Variables
 PYTHON := python3
 VENV := qpow-venv
 ACTIVATE := . $(VENV)/bin/activate
@@ -19,68 +19,91 @@ ISORT := isort
 help:
 	@echo "Usage: make <target>"
 	@echo ""
+	@echo "Available targets:"
 	@awk '/^[a-zA-Z_-]+:.*?## / {printf "  %-15s %s\n", $$1, substr($$0, index($$0, "## ") + 3)}' $(MAKEFILE_LIST)
+	@echo "  venv                Create the virtual environment"
+	@echo "  install             Install project dependencies"
+	@echo "  check-env           Ensure virtual environment exists"
+	@echo "  run-app             Run the Flask application"
+	@echo "  run-node            Run the Quantum Node"
+	@echo "  lint                Lint the codebase using flake8"
+	@echo "  format              Format code with Black and Isort"
+	@echo "  test                Run tests with pytest"
+	@echo "  generate-tests      Generate unit tests using Pynguin"
+	@echo "  coverage            Generate test coverage report"
+	@echo "  docs                Generate documentation using Doxygen"
+	@echo "  clean               Remove temporary files and directories"
+	@echo "  clean-venv          Remove the virtual environment"
+	@echo "  clean-docs          Remove generated documentation"
 
-# Create virtual environment
-venv:
+# Virtual environment
+venv:  ## Create the virtual environment
 	@echo "Creating virtual environment..."
 	$(PYTHON) -m venv $(VENV) || (echo "Error creating virtual environment" && exit 1)
 
-# Ensure virtual environment exists
-check-env:
+check-env:  ## Ensure virtual environment exists
 	@if [ ! -d "$(VENV)" ]; then \
 		echo "Virtual environment not found. Run 'make venv' first."; \
 		exit 1; \
 	fi
 
 # Install dependencies
-install: venv check-env
+install: venv check-env  ## Install project dependencies
 	@echo "Installing dependencies..."
-	$(ACTIVATE) && pip install -r $(REQUIREMENTS) || (echo "Error installing dependencies" && exit 1)
+	$(ACTIVATE) && pip install --upgrade pip setuptools wheel && pip install -r $(REQUIREMENTS) || (echo "Error installing dependencies" && exit 1)
 
-# Install formatting tools
-install-formatters: check-env
-	@echo "Installing Black and Isort..."
+install-formatters: check-env  ## Install Black and Isort for formatting
+	@echo "Installing formatters (Black and Isort)..."
 	$(ACTIVATE) && pip install $(BLACK) $(ISORT) || (echo "Error installing formatters" && exit 1)
 
-# Lint the codebase
-lint: check-env install
+# Run Flask application
+run-app: check-env install  ## Run the Flask application
+	@echo "Starting the Flask application..."
+	$(ACTIVATE) && python src/app.py
+
+# Run Quantum Node
+run-node: check-env install  ## Run the Quantum Node
+	@echo "Starting the Quantum Node..."
+	$(ACTIVATE) && python src/quantum_node.py
+
+# Code linting
+lint: check-env install  ## Lint the codebase using flake8
 	@echo "Linting the codebase with flake8..."
 	$(ACTIVATE) && $(FLAKE8) . --max-line-length=88 --statistics --verbose || (echo "Linting failed" && exit 1)
 
-# Format code
-format: check-env install-formatters
+# Code formatting
+format: check-env install-formatters  ## Format code with Black and Isort
 	@echo "Formatting code with Black and Isort..."
-	$(ACTIVATE) && $(BLACK) --workers 4 . || (echo "Black formatting failed" && exit 1)
-	$(ACTIVATE) && $(ISORT) . || (echo "Isort formatting failed" && exit 1)
+	$(ACTIVATE) && $(BLACK) . && $(ISORT) . || (echo "Formatting failed" && exit 1)
 
 # Run tests
-test: check-env install
+test: check-env install  ## Run tests with pytest
 	@echo "Running tests with pytest..."
-	$(ACTIVATE) && $(PYTEST) --max-workers=4 tests --disable-warnings --verbose || (echo "Tests failed" && exit 1)
+	$(ACTIVATE) && $(PYTEST) tests --disable-warnings --verbose || (echo "Tests failed" && exit 1)
 
 # Generate tests using Pynguin
-generate-tests: check-env install
+generate-tests: check-env install  ## Generate unit tests using Pynguin
 	@echo "Generating unit tests with Pynguin..."
-	$(ACTIVATE) && $(PYNGUIN) --project-path ./src --output-path $(TEST_OUTPUT_DIR) || (echo "Pynguin failed" && exit 1)
+	$(ACTIVATE) && $(PYNGUIN) --project-path ./src --output-path $(TEST_OUTPUT_DIR) || (echo "Test generation failed" && exit 1)
 
-# Generate coverage report
-coverage: check-env install test
+# Test coverage
+coverage: check-env install test  ## Generate test coverage report
 	@echo "Generating test coverage report..."
-	$(ACTIVATE) && $(PYTEST) --cov=src --cov-report=term-missing --cov-report=html --cov-report=html:$(COVERAGE_DIR) || (echo "Coverage generation failed" && exit 1)
+	$(ACTIVATE) && $(PYTEST) tests --cov=src --cov-report=term-missing --cov-report=html:$(COVERAGE_DIR) || (echo "Coverage generation failed" && exit 1)
 
-# Generate documentation using Doxygen
-docs:
+# Documentation generation
+docs:  ## Generate documentation using Doxygen
 	@echo "Generating documentation with Doxygen..."
 	@if [ ! -f "$(DOXYGEN_CONFIG)" ]; then \
 		echo "Doxygen configuration file ($(DOXYGEN_CONFIG)) not found. Please create it."; \
 		exit 1; \
 	else \
-		doxygen $(DOXYGEN_CONFIG) || (echo "Doxygen failed" && exit 1); \
+		doxygen $(DOXYGEN_CONFIG) || (echo "Documentation generation failed" && exit 1); \
+		echo "Documentation generated in the 'docs' directory."; \
 	fi
 
-# Clean temporary files
-clean:
+# Clean up
+clean:  ## Remove temporary files and directories
 	@echo "Cleaning up temporary files..."
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete
@@ -88,9 +111,11 @@ clean:
 	rm -rf $(COVERAGE_DIR)
 	rm -rf .coverage
 	rm -rf $(TEST_OUTPUT_DIR)
-	killall -9 python || true
 
-# Clean virtual environment
-clean-venv:
+clean-venv:  ## Remove the virtual environment
 	@echo "Removing the virtual environment..."
 	rm -rf $(VENV)
+
+clean-docs:  ## Remove generated documentation
+	@echo "Cleaning up generated documentation..."
+	rm -rf docs
