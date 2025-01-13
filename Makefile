@@ -1,12 +1,17 @@
 # Define variables
 PYTHON := python3
 VENV := qpow-venv
-ACTIVATE := . $(VENV)/bin/activate
+ACTIVATE := source $(VENV)/bin/activate
 REQUIREMENTS := requirements.txt
 FLAKE8 := flake8
 PYTEST := pytest
 PYNGUIN := pynguin
 DOXYGEN_CONFIG := Doxyfile
+COVERAGE_DIR := coverage_html
+TEST_OUTPUT_DIR := tests/generated
+# Add Black and Isort
+BLACK := black
+ISORT := isort
 
 # Default target
 .DEFAULT_GOAL := help
@@ -22,7 +27,7 @@ help:
 	@echo "  run-app             Run the Flask application"
 	@echo "  run-node            Run the Quantum Node"
 	@echo "  lint                Lint the codebase using flake8"
-	@echo "  lint-install        Install flake8 and run linting"
+	@echo "  format              Format code with Black and Isort"
 	@echo "  test                Run tests with pytest"
 	@echo "  generate-tests      Generate unit tests using Pynguin"
 	@echo "  coverage            Generate test coverage report"
@@ -31,10 +36,11 @@ help:
 	@echo "  docs                Generate documentation using Doxygen"
 	@echo "  clean-docs          Remove generated documentation"
 
+
 # Create virtual environment
 venv:
 	@echo "Creating virtual environment..."
-	$(PYTHON) -m venv $(VENV)
+	$(PYTHON) -m venv $(VENV) || (echo "Error creating virtual environment" && exit 1)
 
 # Ensure virtual environment exists
 check-env:
@@ -44,60 +50,62 @@ check-env:
 	fi
 
 # Install dependencies
-install: venv
+install: venv check-env
 	@echo "Installing dependencies..."
-	$(ACTIVATE) && pip install --upgrade pip setuptools wheel && pip install -r $(REQUIREMENTS)
+	$(ACTIVATE) && pip install -r $(REQUIREMENTS) || (echo "Error installing dependencies" && exit 1)
+
+# Install formatting tools
+install-formatters: check-env
+	@echo "Installing Black and Isort..."
+	$(ACTIVATE) && pip install $(BLACK) $(ISORT) || (echo "Error installing formatters" && exit 1)
+
 
 # Run Flask application
-run-app: check-env
+run-app: check-env install
 	@echo "Starting the Flask application..."
 	$(ACTIVATE) && python src/app.py
 
 # Run Quantum Node
-run-node: check-env
+run-node: check-env install
 	@echo "Starting the Quantum Node..."
 	$(ACTIVATE) && python src/quantum_node.py
 
 # Lint the codebase
-lint: check-env
+lint: check-env install
 	@echo "Linting the codebase with flake8..."
-	$(ACTIVATE) && $(FLAKE8) . --max-line-length=88 --statistics --verbose
+	$(ACTIVATE) && $(FLAKE8) . --max-line-length=88 --statistics --verbose || (echo "Linting failed" && exit 1)
 
-# Install flake8 and lint
-lint-install: check-env
-	@echo "Installing flake8..."
-	$(ACTIVATE) && pip install $(FLAKE8)
-	@echo "Linting the codebase with flake8..."
-	$(ACTIVATE) && $(FLAKE8) . --max-line-length=88 --statistics --verbose
+#Format Code
+format: check-env install-formatters
+	@echo "Formatting code with Black and Isort..."
+	$(ACTIVATE) && $(BLACK) . && $(ISORT) . || (echo "Formatting failed" && exit 1)
+
 
 # Run tests
-test: check-env
+test: check-env install
 	@echo "Running tests with pytest..."
-	$(ACTIVATE) && $(PYTEST) tests --disable-warnings
+	$(ACTIVATE) && $(PYTEST) tests --disable-warnings || (echo "Tests failed" && exit 1)
 
 # Generate tests using Pynguin
-generate-tests: check-env
+generate-tests: check-env install
 	@echo "Generating unit tests with Pynguin..."
-	$(ACTIVATE) && $(PYNGUIN) \
-		--project-path ./src \
-		--output-path ./tests/generated \
-		--module-name your.module.name
-	@echo "Generated tests are saved in ./tests/generated."
+	$(ACTIVATE) && $(PYNGUIN) --project-path ./src --output-path $(TEST_OUTPUT_DIR) $@ || (echo "Pynguin failed" && exit 1)
 
 # Generate coverage report
-coverage: check-env
+coverage: check-env install test
 	@echo "Generating test coverage report..."
-	$(ACTIVATE) && $(PYTEST) tests --cov=src --cov-report=term-missing --cov-report=html
+	$(ACTIVATE) && $(PYTEST) tests --cov=src --cov-report=term-missing --cov-report=html --cov-report html:$(COVERAGE_DIR) || (echo "Coverage generation failed" && exit 1)
 
 # Generate documentation using Doxygen
 docs:
 	@echo "Generating documentation with Doxygen..."
-ifndef DOXYGEN_CONFIG
-	@echo "Doxygen configuration file not found. Please create a 'Doxyfile'."
-else
-	doxygen $(DOXYGEN_CONFIG)
-	@echo "Documentation generated in the 'docs' directory."
-endif
+	@if [ ! -f "$(DOXYGEN_CONFIG)" ]; then \
+		echo "Doxygen configuration file ($(DOXYGEN_CONFIG)) not found. Please create it."; \
+		exit 1; \
+	else \
+		doxygen $(DOXYGEN_CONFIG) || (echo "Doxygen failed" && exit 1); \
+		echo "Documentation generated in the 'docs' directory."; \
+	fi
 
 # Clean temporary files
 clean:
@@ -105,9 +113,9 @@ clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete
 	rm -rf .pytest_cache
-	rm -rf coverage_html
+	rm -rf $(COVERAGE_DIR)
 	rm -rf .coverage
-	rm -rf tests/generated
+	rm -rf $(TEST_OUTPUT_DIR)
 
 # Clean virtual environment
 clean-venv:
