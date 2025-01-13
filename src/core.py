@@ -2,11 +2,17 @@ import json
 import hashlib
 import time
 from typing import List, Dict, Optional
-from pqcrypto.sign.dilithium2 import generate_keypair, sign, verify
+from pqc_wrapper import PQCWrapper  # Dynamic cryptography wrapper
+from config_selector import BackendSelector  # Dynamic backend selection
+
+# Initialize backend configuration
+selector = BackendSelector("config.yaml")
+pqc_backend = selector.get_pqc_backend()
+pqc_wrapper = PQCWrapper(backend=pqc_backend)
 
 class Wallet:
     def __init__(self):
-        self.private_key, self.public_key = generate_keypair()
+        self.private_key, self.public_key = pqc_wrapper.generate_keypair()
 
     def get_address(self) -> str:
         return f"0x{self.public_key.hex()}"
@@ -48,14 +54,14 @@ class Transaction:
 
     def sign_transaction(self, private_key: bytes):
         tx_hash = self.calculate_hash().encode()
-        self.signature = sign(tx_hash, private_key)
+        self.signature = pqc_wrapper.sign(tx_hash, private_key)
 
     def verify_signature(self, public_key: bytes) -> bool:
         tx_hash = self.calculate_hash().encode()
         try:
-            verify(tx_hash, self.signature, public_key)
-            return True
-        except Exception:
+            return pqc_wrapper.verify(tx_hash, self.signature, public_key)
+        except Exception as e:
+            print(f"Signature verification failed: {e}")
             return False
 
 
