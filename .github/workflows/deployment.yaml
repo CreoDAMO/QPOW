@@ -22,12 +22,21 @@ spec:
         env:
         - name: PYTHONPATH
           value: "/app/src"
+        - name: CONFIG_PATH
+          value: "/config/config.yaml"
+        - name: PROMETHEUS_METRICS_ENABLED
+          value: "true"
         volumeMounts:
         - name: blockchain-data
           mountPath: /data
+        - name: config-volume
+          mountPath: /config
       volumes:
       - name: blockchain-data
         emptyDir: {}
+      - name: config-volume
+        configMap:
+          name: quantumfuse-config
 ---
 apiVersion: v1
 kind: Service
