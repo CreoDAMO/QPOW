@@ -39,7 +39,7 @@ jobs:
 
     - name: Install formatting tools
       run: |
-        . .venv/bin/activate && pip install black isort
+        . .venv/bin/activate && pip install black isort  #This line is now in the correct place
 
     - name: Format code with Black
       run: |
@@ -82,3 +82,4 @@ jobs:
     - name: Clean the virtual environment
       if: always()
       run: make clean-venv
+      
