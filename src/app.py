@@ -113,7 +113,7 @@ def teleport_qkd_key():
         return jsonify({"success": True, "message": "QKD key teleported successfully."})
     except ValueError as e:
         logger.error(f"Error in teleport_qkd_key: {str(e)}")
-        return jsonify({"success": False, "error": str(e)}), 400
+        return jsonify({"success": False, "error": "An error occurred while teleporting the QKD key."}), 400
 
 
 @app.route('/v1/shard/optimize', methods=['POST'])
@@ -129,7 +129,7 @@ def optimize_shard_allocation():
         return jsonify({"success": True, "shard_allocations": shard_allocations})
     except ValueError as e:
         logger.error(f"Error in optimize_shard_allocation: {str(e)}")
-        return jsonify({"success": False, "error": str(e)}), 400
+        return jsonify({"success": False, "error": "An error occurred while optimizing shard allocation."}), 400
 
 
 @app.route('/v1/health', methods=['GET'])
