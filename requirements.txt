@@ -24,6 +24,7 @@ elasticsearch==8.17.0
 SQLAlchemy==2.0.37
 dataclasses-json==0.6.7
 flake8==7.1.1
+black-isort-hook==0.1.2
 pytest==8.3.4
 pytest-cov==6.0.0
 pytest-asyncio==0.25.2
