@@ -1,10 +1,7 @@
-from typing import Dict, List, Callable
-import time
+from typing import Dict  # Removed unused List, Callable
 import logging
 from src.quantum_wallet import QuantumWallet
 from src.state_manager import StateManager
-from src.quantum_bridge import QuantumBridge
-from src.smart_contract import QuantumSmartContract
 from src.qdpos_manager import QDPoSManager
 import random
 
@@ -12,10 +9,11 @@ import random
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
-# -------------------- QuantumFuse Coin --------------------
 
+# -------------------- QuantumFuse Coin --------------------
 class QuantumFuseCoin:
     """Manage QFC supply and distribution."""
+
     TOTAL_SUPPLY = 1_000_000_000
 
     def __init__(self):
@@ -26,18 +24,22 @@ class QuantumFuseCoin:
             "Public Sale": {"allocation": 0.20},
             "Ecosystem Fund": {"allocation": 0.20},
             "Staking Rewards": {"allocation": 0.15},
-            "Treasury": {"allocation": 0.15}
+            "Treasury": {"allocation": 0.15},
         }
         self.allocations = self.allocate_supply()
 
     def allocate_supply(self) -> Dict[str, int]:
         """Allocate QFC supply."""
-        return {name: int(self.TOTAL_SUPPLY * details["allocation"]) for name, details in self.allocation.items()}
+        return {
+            name: int(self.TOTAL_SUPPLY * details["allocation"])
+            for name, details in self.allocation.items()
+        }
+
 
 # -------------------- Consensus Algorithms --------------------
-
 class QuantumProofOfStake:
     """Quantum Proof-of-Stake (QPoS) system."""
+
     def __init__(self):
         self.validators: Dict[str, QuantumWallet] = {}
         self.total_staked = 0
@@ -57,10 +59,11 @@ class QuantumProofOfStake:
         logger.info(f"Validator {selected} selected.")
         return self.validators[selected]
 
-# -------------------- Green Proof-of-Work (GPoW) --------------------
 
+# -------------------- Green Proof-of-Work (GPoW) --------------------
 class GreenProofOfWork:
     """GPoW system with renewable energy rewards."""
+
     def __init__(self):
         self.energy_use: Dict[str, float] = {}
 
@@ -71,12 +74,16 @@ class GreenProofOfWork:
 
     def adjust_rewards(self, base_reward: float) -> Dict[str, float]:
         """Adjust rewards based on renewable usage."""
-        return {node_id: base_reward * (0.5 + 0.5 * ratio) for node_id, ratio in self.energy_use.items()}
+        return {
+            node_id: base_reward * (0.5 + 0.5 * ratio)
+            for node_id, ratio in self.energy_use.items()
+        }
+
 
 # -------------------- Hybrid Consensus System --------------------
-
 class HybridConsensus:
     """Hybrid model using QPoS, QDPoS, and GPoW."""
+
     def __init__(self, state_manager: StateManager, qdpos_manager: QDPoSManager):
         self.qpos = QuantumProofOfStake()
         self.qdpos_manager = qdpos_manager
@@ -87,7 +94,8 @@ class HybridConsensus:
         """Hybrid transaction validation."""
         validator = self.qpos.select_validator()
         is_valid = self.state_manager.validate_transaction(tx_data)
-        logger.info(f"Transaction validated by {validator.get_address()}: {'Success' if is_valid else 'Failure'}.")
+        status = "Success" if is_valid else "Failure"
+        logger.info(f"Transaction validated by {validator.get_address()}: {status}.")
         return is_valid
 
     def mine_block(self, miner_id: str, reward: float):
