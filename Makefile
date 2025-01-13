@@ -1,4 +1,4 @@
-# Variables
+# Define variables
 PYTHON := python3
 VENV := qpow-venv
 ACTIVATE := . $(VENV)/bin/activate
@@ -9,6 +9,7 @@ PYNGUIN := pynguin
 DOXYGEN_CONFIG := Doxyfile
 COVERAGE_DIR := coverage_html
 TEST_OUTPUT_DIR := tests/generated
+# Add Black and Isort
 BLACK := black
 ISORT := isort
 
@@ -31,79 +32,85 @@ help:
 	@echo "  test                Run tests with pytest"
 	@echo "  generate-tests      Generate unit tests using Pynguin"
 	@echo "  coverage            Generate test coverage report"
-	@echo "  docs                Generate documentation using Doxygen"
 	@echo "  clean               Remove temporary files and directories"
 	@echo "  clean-venv          Remove the virtual environment"
+	@echo "  docs                Generate documentation using Doxygen"
 	@echo "  clean-docs          Remove generated documentation"
 
-# Virtual environment
-venv:  ## Create the virtual environment
+
+# Create virtual environment
+venv:
 	@echo "Creating virtual environment..."
 	$(PYTHON) -m venv $(VENV) || (echo "Error creating virtual environment" && exit 1)
 
-check-env:  ## Ensure virtual environment exists
+# Ensure virtual environment exists
+check-env:
 	@if [ ! -d "$(VENV)" ]; then \
 		echo "Virtual environment not found. Run 'make venv' first."; \
 		exit 1; \
 	fi
 
 # Install dependencies
-install: venv check-env  ## Install project dependencies
+install: venv check-env
 	@echo "Installing dependencies..."
-	$(ACTIVATE) && pip install --upgrade pip setuptools wheel && pip install -r $(REQUIREMENTS) || (echo "Error installing dependencies" && exit 1)
+	$(ACTIVATE) && pip install -r $(REQUIREMENTS) || (echo "Error installing dependencies" && exit 1)
 
-install-formatters: check-env  ## Install Black and Isort for formatting
-	@echo "Installing formatters (Black and Isort)..."
+# Install formatting tools
+install-formatters: check-env
+	@echo "Installing Black and Isort..."
 	$(ACTIVATE) && pip install $(BLACK) $(ISORT) || (echo "Error installing formatters" && exit 1)
 
+
 # Run Flask application
-run-app: check-env install  ## Run the Flask application
+run-app: check-env install
 	@echo "Starting the Flask application..."
 	$(ACTIVATE) && python src/app.py
 
 # Run Quantum Node
-run-node: check-env install  ## Run the Quantum Node
+run-node: check-env install
 	@echo "Starting the Quantum Node..."
 	$(ACTIVATE) && python src/quantum_node.py
 
-# Code linting
-lint: check-env install  ## Lint the codebase using flake8
+# Lint the codebase
+lint: check-env install
 	@echo "Linting the codebase with flake8..."
-	$(ACTIVATE) && $(FLAKE8) . --max-line-length=88 --statistics --verbose || (echo "Linting failed" && exit 1)
+	$(ACTIVATE) && $(FLAKE8) src tests --max-line-length=88 --statistics --verbose || (echo "Linting failed" && exit 1)
 
-# Code formatting
-format: check-env install-formatters  ## Format code with Black and Isort
+# Format Code
+format: check-env install-formatters
 	@echo "Formatting code with Black and Isort..."
-	$(ACTIVATE) && $(BLACK) . && $(ISORT) . || (echo "Formatting failed" && exit 1)
+	$(ACTIVATE) && $(BLACK) src tests || (echo "Black formatting failed" && exit 1)
+	$(ACTIVATE) && $(ISORT) src tests || (echo "Isort formatting failed" && exit 1)
+
 
 # Run tests
-test: check-env install  ## Run tests with pytest
+test: check-env install
 	@echo "Running tests with pytest..."
-	$(ACTIVATE) && $(PYTEST) tests --disable-warnings --verbose || (echo "Tests failed" && exit 1)
+	$(ACTIVATE) && $(PYTEST) tests --disable-warnings || (echo "Tests failed" && exit 1)
 
 # Generate tests using Pynguin
-generate-tests: check-env install  ## Generate unit tests using Pynguin
+generate-tests: check-env install
 	@echo "Generating unit tests with Pynguin..."
-	$(ACTIVATE) && $(PYNGUIN) --project-path ./src --output-path $(TEST_OUTPUT_DIR) || (echo "Test generation failed" && exit 1)
+	$(ACTIVATE) && $(PYNGUIN) --project-path ./src --output-path $(TEST_OUTPUT_DIR) || (echo "Pynguin failed" && exit 1)
 
-# Test coverage
-coverage: check-env install test  ## Generate test coverage report
+# Generate coverage report
+coverage: check-env install test
 	@echo "Generating test coverage report..."
-	$(ACTIVATE) && $(PYTEST) tests --cov=src --cov-report=term-missing --cov-report=html:$(COVERAGE_DIR) || (echo "Coverage generation failed" && exit 1)
+	$(ACTIVATE) && $(PYTEST) tests --cov=src --cov-report=term-missing --cov-report=html --cov-report html:$(COVERAGE_DIR) || (echo "Coverage generation failed" && exit 1)
 
-# Documentation generation
-docs:  ## Generate documentation using Doxygen
+# Generate documentation using Doxygen
+docs:
 	@echo "Generating documentation with Doxygen..."
 	@if [ ! -f "$(DOXYGEN_CONFIG)" ]; then \
 		echo "Doxygen configuration file ($(DOXYGEN_CONFIG)) not found. Please create it."; \
 		exit 1; \
 	else \
-		doxygen $(DOXYGEN_CONFIG) || (echo "Documentation generation failed" && exit 1); \
+		doxygen $(DOXYGEN_CONFIG) || (echo "Doxygen failed" && exit 1); \
 		echo "Documentation generated in the 'docs' directory."; \
 	fi
 
-# Clean up
-clean:  ## Remove temporary files and directories
+# Clean temporary files
+clean:
 	@echo "Cleaning up temporary files..."
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete
@@ -112,10 +119,12 @@ clean:  ## Remove temporary files and directories
 	rm -rf .coverage
 	rm -rf $(TEST_OUTPUT_DIR)
 
-clean-venv:  ## Remove the virtual environment
+# Clean virtual environment
+clean-venv:
 	@echo "Removing the virtual environment..."
 	rm -rf $(VENV)
 
-clean-docs:  ## Remove generated documentation
+# Clean documentation
+clean-docs:
 	@echo "Cleaning up generated documentation..."
 	rm -rf docs
