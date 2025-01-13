@@ -1,7 +1,7 @@
 # Define variables
 PYTHON := python3
 VENV := qpow-venv
-ACTIVATE := source $(VENV)/bin/activate
+ACTIVATE := . $(VENV)/bin/activate
 REQUIREMENTS := requirements.txt
 FLAKE8 := flake8
 PYTEST := pytest
