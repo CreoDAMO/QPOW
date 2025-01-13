@@ -1,0 +1,84 @@
+name: Makefile CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout code
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    # Step 2: Set up Python environment
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    # Step 3: Cache pip dependencies
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    # Step 4: Create virtual environment and install dependencies
+    - name: Install dependencies
+      run: |
+        make venv
+        make install
+
+    # Step 5: Auto-format code
+    - name: Format code
+      run: make format
+
+    # Step 6: Lint codebase
+    - name: Lint the codebase
+      run: make lint
+
+    # Step 7: Run unit tests
+    - name: Run unit tests
+      run: make test
+
+    # Step 8: Generate unit tests with Pynguin
+    - name: Generate unit tests with Pynguin
+      run: make generate-tests
+
+    # Step 9: Generate test coverage report
+    - name: Generate coverage report
+      run: make coverage
+
+    # Step 10: Upload test coverage report
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: coverage_html
+
+    # Step 11: Generate documentation with Doxygen
+    - name: Generate documentation
+      run: make docs
+
+    # Step 12: Upload generated documentation
+    - name: Upload documentation
+      uses: actions/upload-artifact@v3
+      with:
+        name: documentation
+        path: docs
+
+    # Step 13: Clean temporary files
+    - name: Clean up
+      run: make clean clean-venv
