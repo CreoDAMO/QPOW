@@ -24,6 +24,7 @@ jobs:
       run: |
         make venv
         make install
+        shell bash
 
     - name: Lint the code
       run: make lint
