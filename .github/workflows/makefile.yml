@@ -1,111 +1,73 @@
-# Define variables
-PYTHON := python3
-VENV := qpow-venv
-ACTIVATE := . $(VENV)/bin/activate
-REQUIREMENTS := requirements.txt
-FLAKE8 := flake8
-BLACK := black
-ISORT := isort
-PYTEST := pytest
-PYNGUIN := pynguin
-DOXYGEN_CONFIG := Doxyfile
-COVERAGE_DIR := coverage_html
-TEST_OUTPUT_DIR := tests/generated
+name: Makefile CI
 
-# Default target
-.DEFAULT_GOAL := help
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
 
-# Help
-help:
-	@echo "Usage: make <target>"
-	@echo ""
-	@echo "Available targets:"
-	@awk '/^[a-zA-Z_-]+:.*?## / {printf "  %-15s %s\n", $$1, substr($$0, index($$0, "## ") + 3)}' $(MAKEFILE_LIST)
+permissions:
+  contents: read
+  pull-requests: write
 
-# Create virtual environment
-venv:  ## Create the virtual environment
-	@echo "Creating virtual environment..."
-	$(PYTHON) -m venv $(VENV)
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-# Ensure virtual environment exists
-check-env:  ## Ensure virtual environment exists
-	@if [ ! -d "$(VENV)" ]; then \
-		echo "Virtual environment not found. Run 'make venv' first."; \
-		exit 1; \
-	fi
+    steps:
+    # Step 1: Checkout code
+    - name: Checkout Code
+      uses: actions/checkout@v3
 
-# Install dependencies
-install: venv check-env  ## Install project dependencies
-	@echo "Installing dependencies..."
-	$(ACTIVATE) && pip install -r $(REQUIREMENTS)
+    # Step 2: Set up Python
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
 
-# Install formatting tools
-install-formatters: check-env  ## Install Black and Isort
-	@echo "Installing Black and Isort..."
-	$(ACTIVATE) && pip install $(BLACK) $(ISORT)
+    # Step 3: Cache pip dependencies
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
 
-# Run Flask application
-run-app: check-env install  ## Run the Flask application
-	@echo "Starting the Flask application..."
-	$(ACTIVATE) && python src/app.py
+    # Step 4: Create Virtual Environment and Install Dependencies
+    - name: Install Dependencies
+      run: make venv install install-formatters
 
-# Run Quantum Node
-run-node: check-env install  ## Run the Quantum Node
-	@echo "Starting the Quantum Node..."
-	$(ACTIVATE) && python src/quantum_node.py
+    # Step 5: Lint, Format, and Run Tests Sequentially
+    - name: Lint the Codebase
+      run: make lint
 
-# Lint the codebase
-lint: check-env install  ## Lint the codebase using flake8
-	@echo "Linting the codebase with flake8..."
-	$(ACTIVATE) && $(FLAKE8) src tests --max-line-length=88 --statistics --verbose
+    - name: Format the Codebase
+      run: make format
 
-# Format code
-format: check-env install-formatters  ## Format code with Black and Isort
-	@echo "Formatting code with Black and Isort..."
-	$(ACTIVATE) && $(BLACK) src tests
-	$(ACTIVATE) && $(ISORT) src tests
+    - name: Run Tests
+      run: make test
 
-# Run tests
-test: check-env install  ## Run tests with pytest
-	@echo "Running tests with pytest..."
-	$(ACTIVATE) && $(PYTEST) tests --disable-warnings
+    # Step 6: Generate Coverage Report and Upload Artifacts
+    - name: Generate Coverage Report
+      run: make coverage
 
-# Generate tests using Pynguin
-generate-tests: check-env install  ## Generate unit tests using Pynguin
-	@echo "Generating unit tests with Pynguin..."
-	$(ACTIVATE) && $(PYNGUIN) --project-path ./src --output-path $(TEST_OUTPUT_DIR)
+    - name: Upload Coverage Report
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: coverage_html
 
-# Generate coverage report
-coverage: check-env install test  ## Generate test coverage report
-	@echo "Generating test coverage report..."
-	$(ACTIVATE) && $(PYTEST) tests --cov=src --cov-report=term-missing --cov-report=html --cov-report html:$(COVERAGE_DIR)
+    # Step 7: Generate and Upload Documentation
+    - name: Generate Documentation
+      run: make docs
 
-# Generate documentation using Doxygen
-docs:  ## Generate documentation using Doxygen
-	@echo "Generating documentation with Doxygen..."
-	@if [ ! -f "$(DOXYGEN_CONFIG)" ]; then \
-		echo "Doxygen configuration file ($(DOXYGEN_CONFIG)) not found. Please create it."; \
-		exit 1; \
-	else \
-		doxygen $(DOXYGEN_CONFIG); \
-	fi
+    - name: Upload Documentation
+      uses: actions/upload-artifact@v3
+      with:
+        name: documentation
+        path: docs
 
-# Clean temporary files
-clean:  ## Remove temporary files and directories
-	@echo "Cleaning up temporary files..."
-	find . -type d -name "__pycache__" -exec rm -rf {} +
-	find . -type f -name "*.pyc" -delete
-	rm -rf .pytest_cache
-	rm -rf $(COVERAGE_DIR)
-	rm -rf .coverage
-	rm -rf $(TEST_OUTPUT_DIR)
-
-# Clean virtual environment
-clean-venv:  ## Remove the virtual environment
-	@echo "Removing the virtual environment..."
-	rm -rf $(VENV)
-
-# Clean documentation
-clean-docs:  ## Remove generated documentation
-	@echo "Cleaning up generated documentation..."
-	rm -rf docs
+    # Step 8: Clean Temporary Files
+    - name: Clean Temporary Files
+      run: make clean clean-venv
