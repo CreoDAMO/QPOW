@@ -12,9 +12,8 @@ permissions:
   pull-requests: write
 
 jobs:
-  build:
+  lint-and-format:
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout Code
       uses: actions/checkout@v3
@@ -32,23 +31,72 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-pip-
 
-    - name: Create Virtual Environment and Install Dependencies
+    - name: Install Dependencies
+      run: make venv install install-formatters
+
+    - name: Lint code
+      run: make lint
+
+    - name: Format code
+      run: make format
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install Dependencies
       run: make venv install
 
-    - name: Run Makefile targets within virtual environment
-      run: make format lint test generate-tests coverage docs
+    - name: Run Tests
+      run: make test
 
-    - name: Upload coverage report
+    - name: Generate Tests
+      run: make generate-tests
+
+    - name: Generate Coverage Report
+      run: make coverage
+
+    - name: Upload Coverage Report
       uses: actions/upload-artifact@v3
       with:
         name: coverage-report
         path: coverage_html
 
-    - name: Upload documentation
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Generate Documentation
+      run: make docs
+
+    - name: Upload Documentation
       uses: actions/upload-artifact@v3
       with:
         name: documentation
-        path: site  # Replace with the correct path if `mkdocs` outputs elsewhere
+        path: docs
 
-    - name: Clean up
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Clean Up Temporary Files
       run: make clean clean-venv
