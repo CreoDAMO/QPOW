@@ -3,6 +3,10 @@ PYTHON := python3
 VENV := qpow-venv
 ACTIVATE := . $(VENV)/bin/activate
 REQUIREMENTS := requirements.txt
+FLAKE8 := flake8
+PYTEST := pytest
+PYNGUIN := pynguin
+DOXYGEN_CONFIG := Doxyfile
 
 # Default target
 .DEFAULT_GOAL := help
@@ -18,6 +22,7 @@ help:
 	@echo "  run-app             Run the Flask application"
 	@echo "  run-node            Run the Quantum Node"
 	@echo "  lint                Lint the codebase using flake8"
+	@echo "  lint-install        Install flake8 and run linting"
 	@echo "  test                Run tests with pytest"
 	@echo "  generate-tests      Generate unit tests using Pynguin"
 	@echo "  coverage            Generate test coverage report"
@@ -56,17 +61,24 @@ run-node: check-env
 # Lint the codebase
 lint: check-env
 	@echo "Linting the codebase with flake8..."
-	$(ACTIVATE) && flake8 . --max-line-length=88 --statistics
+	$(ACTIVATE) && $(FLAKE8) . --max-line-length=88 --statistics
+
+# Install flake8 and lint
+lint-install: check-env
+	@echo "Installing flake8..."
+	$(ACTIVATE) && pip install $(FLAKE8)
+	@echo "Linting the codebase with flake8..."
+	$(ACTIVATE) && $(FLAKE8) . --max-line-length=88 --statistics
 
 # Run tests
 test: check-env
 	@echo "Running tests with pytest..."
-	$(ACTIVATE) && pytest tests --disable-warnings
+	$(ACTIVATE) && $(PYTEST) tests --disable-warnings
 
 # Generate tests using Pynguin
 generate-tests: check-env
 	@echo "Generating unit tests with Pynguin..."
-	$(ACTIVATE) && pynguin \
+	$(ACTIVATE) && $(PYNGUIN) \
 		--project-path ./src \
 		--output-path ./tests/generated \
 		--module-name your.module.name
@@ -75,7 +87,7 @@ generate-tests: check-env
 # Generate coverage report
 coverage: check-env
 	@echo "Generating test coverage report..."
-	$(ACTIVATE) && pytest tests --cov=src --cov-report=term-missing --cov-report=html
+	$(ACTIVATE) && $(PYTEST) tests --cov=src --cov-report=term-missing --cov-report=html
 
 # Generate documentation using Doxygen
 docs:
