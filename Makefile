@@ -61,14 +61,14 @@ run-node: check-env
 # Lint the codebase
 lint: check-env
 	@echo "Linting the codebase with flake8..."
-	$(ACTIVATE) && $(FLAKE8) . --max-line-length=88 --statistics
+	$(ACTIVATE) && $(FLAKE8) . --max-line-length=88 --statistics --verbose
 
 # Install flake8 and lint
 lint-install: check-env
 	@echo "Installing flake8..."
 	$(ACTIVATE) && pip install $(FLAKE8)
 	@echo "Linting the codebase with flake8..."
-	$(ACTIVATE) && $(FLAKE8) . --max-line-length=88 --statistics
+	$(ACTIVATE) && $(FLAKE8) . --max-line-length=88 --statistics --verbose
 
 # Run tests
 test: check-env
