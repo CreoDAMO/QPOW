@@ -20,7 +20,7 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    # Step 2: Set up Python environment
+    # Step 2: Set up Python
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
@@ -35,50 +35,39 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-pip-
 
-    # Step 4: Create virtual environment and install dependencies
-    - name: Install dependencies
-      run: |
-        make venv
-        make install
+    # Step 4: Create Virtual Environment and Install Dependencies
+    - name: Install Dependencies
+      run: make venv install install-formatters
 
-    # Step 5: Auto-format code
-    - name: Format code
-      run: make format
-
-    # Step 6: Lint codebase
-    - name: Lint the codebase
+    # Step 5: Lint, Format, and Run Tests Sequentially
+    - name: Lint the Codebase
       run: make lint
 
-    # Step 7: Run unit tests
-    - name: Run unit tests
+    - name: Format the Codebase
+      run: make format
+
+    - name: Run Tests
       run: make test
 
-    # Step 8: Generate unit tests with Pynguin
-    - name: Generate unit tests with Pynguin
-      run: make generate-tests
-
-    # Step 9: Generate test coverage report
-    - name: Generate coverage report
+    # Step 6: Generate and Upload Artifacts
+    - name: Generate Coverage Report
       run: make coverage
 
-    # Step 10: Upload test coverage report
-    - name: Upload coverage report
+    - name: Upload Coverage Report
       uses: actions/upload-artifact@v3
       with:
         name: coverage-report
         path: coverage_html
 
-    # Step 11: Generate documentation with Doxygen
-    - name: Generate documentation
+    - name: Generate Documentation
       run: make docs
 
-    # Step 12: Upload generated documentation
-    - name: Upload documentation
+    - name: Upload Documentation
       uses: actions/upload-artifact@v3
       with:
         name: documentation
         path: docs
 
-    # Step 13: Clean temporary files
-    - name: Clean up
+    # Step 7: Clean Up
+    - name: Clean Temporary Files
       run: make clean clean-venv
