@@ -1,7 +1,7 @@
 # Define variables
 PYTHON := python3
 VENV := qpow-venv
-ACTIVATE := source $(VENV)/bin/activate
+ACTIVATE := . $(VENV)/bin/activate
 REQUIREMENTS := requirements.txt
 
 # Default target
@@ -14,6 +14,7 @@ help:
 	@echo "Available targets:"
 	@echo "  venv                Create the virtual environment"
 	@echo "  install             Install project dependencies"
+	@echo "  check-env           Ensure virtual environment exists"
 	@echo "  run-app             Run the Flask application"
 	@echo "  run-node            Run the Quantum Node"
 	@echo "  lint                Lint the codebase using flake8"
@@ -30,33 +31,40 @@ venv:
 	@echo "Creating virtual environment..."
 	$(PYTHON) -m venv $(VENV)
 
+# Ensure virtual environment exists
+check-env:
+	@if [ ! -d "$(VENV)" ]; then \
+		echo "Virtual environment not found. Run 'make venv' first."; \
+		exit 1; \
+	fi
+
 # Install dependencies
 install: venv
 	@echo "Installing dependencies..."
 	$(ACTIVATE) && pip install --upgrade pip setuptools wheel && pip install -r $(REQUIREMENTS)
 
 # Run Flask application
-run-app: install
+run-app: check-env
 	@echo "Starting the Flask application..."
 	$(ACTIVATE) && python src/app.py
 
 # Run Quantum Node
-run-node: install
+run-node: check-env
 	@echo "Starting the Quantum Node..."
 	$(ACTIVATE) && python src/quantum_node.py
 
 # Lint the codebase
-lint:
+lint: check-env
 	@echo "Linting the codebase with flake8..."
 	$(ACTIVATE) && flake8 . --max-line-length=88 --statistics
 
 # Run tests
-test:
+test: check-env
 	@echo "Running tests with pytest..."
 	$(ACTIVATE) && pytest tests --disable-warnings
 
 # Generate tests using Pynguin
-generate-tests: install
+generate-tests: check-env
 	@echo "Generating unit tests with Pynguin..."
 	$(ACTIVATE) && pynguin \
 		--project-path ./src \
@@ -65,7 +73,7 @@ generate-tests: install
 	@echo "Generated tests are saved in ./tests/generated."
 
 # Generate coverage report
-coverage:
+coverage: check-env
 	@echo "Generating test coverage report..."
 	$(ACTIVATE) && pytest tests --cov=src --cov-report=term-missing --cov-report=html
 
