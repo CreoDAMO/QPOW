@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ "main" ]
 
-permissions: 
+permissions:
   contents: read
   issues: write
   pull-requests: write
@@ -32,43 +32,21 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-pip-
 
-    - name: Set up and install dependencies
+    - name: Set up environment
       run: |
         make venv
         make install
 
-    - name: Install formatting tools
+    - name: Run Makefile targets within virtual environment
       run: |
-        . .venv/bin/activate && pip install black isort  #This line is now in the correct place
-
-    - name: Format code with Black
-      run: |
-        . .venv/bin/activate && black .
-
-    - name: Sort imports with isort
-      run: |
-        . .venv/bin/activate && isort .
-
-    - name: Lint the codebase
-      run: make lint
-
-    - name: Run unit tests
-      run: make test
-
-    - name: Generate unit tests with Pynguin
-      run: make generate-tests
-
-    - name: Generate coverage report
-      run: make coverage
+        . .venv/bin/activate
+        make format lint test generate-tests coverage docs
 
     - name: Upload coverage report
       uses: actions/upload-artifact@v3
       with:
         name: coverage-report
-        path: htmlcov
-
-    - name: Generate documentation with Doxygen
-      run: make docs
+        path: coverage_html #Corrected path
 
     - name: Upload documentation
       uses: actions/upload-artifact@v3
@@ -76,10 +54,6 @@ jobs:
         name: documentation
         path: docs
 
-    - name: Clean temporary files
-      run: make clean
-
-    - name: Clean the virtual environment
-      if: always()
-      run: make clean-venv
+    - name: Clean up
+      run: make clean clean-venv
       
