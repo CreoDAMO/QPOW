@@ -97,7 +97,7 @@ def distribute_qkd_key():
         return jsonify({"success": True, "message": f"QKD key distributed: {key}"})
     except ValueError as e:
         logger.error(f"Error in distribute_qkd_key: {str(e)}")
-        return jsonify({"success": False, "error": str(e)}), 400
+        return jsonify({"success": False, "error": "An error occurred while distributing the QKD key."}), 400
 
 
 @app.route('/v1/qkd/teleport', methods=['POST'])
