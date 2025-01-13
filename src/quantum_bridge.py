@@ -2,10 +2,15 @@ import hashlib
 import time
 import random
 from flask import Flask, jsonify, request, abort
+from quantum_bridge_wrapper import QuantumBridgeWrapper  # Import the dynamic quantum bridge wrapper
 import logging
 
 # Flask app for API
 app = Flask(__name__)
+
+# Instantiate the Quantum Bridge Wrapper
+quantum_backend = "qiskit"  # Set the default backend (can be overridden by configuration)
+bridge_wrapper = QuantumBridgeWrapper(backend=quantum_backend)
 
 # -------------------- Hash Time Locked Contract (HTLC) --------------------
 class HashTimeLockedContract:
@@ -39,35 +44,36 @@ class QuantumBridge:
     """
     The Quantum Bridge facilitates cross-chain asset transfers and state synchronization using quantum entanglement.
     """
-    def __init__(self):
+    def __init__(self, quantum_bridge_wrapper: QuantumBridgeWrapper):
         self.entanglements = {}
+        self.quantum_bridge_wrapper = quantum_bridge_wrapper
 
     def create_entanglement(self, chain_a: str, chain_b: str) -> str:
         """
-        Create an entanglement between two blockchain networks.
+        Create an entanglement between two blockchain networks using the quantum bridge wrapper.
         """
-        entanglement_id = hashlib.sha256(f"{chain_a}-{chain_b}-{time.time()}".encode()).hexdigest()
-        self.entanglements[entanglement_id] = {"chains": (chain_a, chain_b), "created_at": time.time()}
+        entanglement_id = self.quantum_bridge_wrapper.create_entanglement()
+        self.entanglements[entanglement_id] = {
+            "chains": (chain_a, chain_b),
+            "created_at": time.time()
+        }
         return entanglement_id
 
     def validate_entanglement(self, entanglement_id: str) -> bool:
         """
-        Validate an entanglement using probabilistic quantum principles.
+        Validate an entanglement using the quantum bridge wrapper.
         """
         if entanglement_id not in self.entanglements:
             return False
-
-        # Simulate entanglement validation success (e.g., measurement fidelity)
-        validation_probability = random.uniform(0.8, 1.0)  # Example: 80%-100% success rate
-        return random.random() <= validation_probability
+        return self.quantum_bridge_wrapper.validate_entanglement(entanglement_id)
 
     def list_entanglements(self) -> dict:
         """List all active entanglements."""
         return self.entanglements
 
 
-# Instantiate the bridge
-bridge = QuantumBridge()
+# Instantiate the Quantum Bridge
+bridge = QuantumBridge(quantum_bridge_wrapper=bridge_wrapper)
 
 # -------------------- Flask API Endpoints --------------------
 
@@ -176,4 +182,3 @@ if __name__ == '__main__':
     import os
     debug_mode = os.getenv('FLASK_DEBUG', 'False').lower() in ['true', '1', 't']
     app.run(debug=debug_mode)
-                 
