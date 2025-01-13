@@ -81,7 +81,7 @@ def buy_qfc():
         return jsonify({"success": True, "message": "Fiat converted to QFC successfully."})
     except ValueError as e:
         logger.error(f"Error in buy_qfc: {str(e)}")
-        return jsonify({"success": False, "error": str(e)}), 400
+        return jsonify({"success": False, "error": "An error occurred while processing your request."}), 400
 
 
 @app.route('/v1/qkd/distribute', methods=['POST'])
