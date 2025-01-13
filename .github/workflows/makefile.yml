@@ -1,0 +1,53 @@
+name: Makefile CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    - name: Install dependencies
+      run: |
+        make venv
+        make install
+
+    - name: Lint the code
+      run: make lint
+
+    - name: Run unit tests
+      run: make test
+
+    - name: Run Pynguin to generate tests
+      run: make generate-tests
+
+    - name: Generate coverage report
+      run: make coverage
+
+    - name: Generate documentation
+      run: make docs
+
+    - name: Upload Documentation
+      uses: actions/upload-artifact@v3
+      with:
+        name: documentation
+        path: docs
+
+    - name: Clean temporary files
+      run: make clean
+
+    - name: Clean the virtual environment
+      run: make clean-venv
