@@ -2,6 +2,9 @@ import asyncio
 import logging
 from typing import Callable, Dict, Any, List
 from quantum_lib.teleportation import QuantumTeleportation
+from backend_selector import BackendSelector  # BackendSelector for dynamic backend selection
+from pqc_wrapper import PQCWrapper  # Wrapper for dynamic cryptographic operations
+from quantum_bridge_wrapper import QuantumBridgeWrapper  # Wrapper for dynamic quantum operations
 from .core import Blockchain, StateManager, Wallet, Transaction
 from .onramper import QFCOnramper
 from .nft_marketplace import NFTMarketplace
@@ -12,10 +15,26 @@ from .qkd_manager import QKDManager
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
 logger = logging.getLogger(__name__)
 
+
 class QuantumServices:
-    def __init__(self, blockchain: Blockchain, state_manager: StateManager):
+    """
+    QuantumServices manages core blockchain services, quantum teleportation,
+    fractional NFTs, and cryptographic backends dynamically via BackendSelector.
+    """
+    def __init__(self, blockchain: Blockchain, state_manager: StateManager, config_file: str = "config.yaml"):
+        # Load backend configuration
+        self.backend_selector = BackendSelector(config_file=config_file)
+        self.pqc_backend = self.backend_selector.get_pqc_backend()  # Get cryptographic backend
+        self.quantum_backend = self.backend_selector.get_quantum_backend()  # Get quantum backend
+
+        # Initialize wrappers for PQC and quantum operations
+        self.pqc_wrapper = PQCWrapper(backend=self.pqc_backend)
+        self.quantum_bridge_wrapper = QuantumBridgeWrapper(backend=self.quantum_backend)
+
         self.blockchain = blockchain
         self.state_manager = state_manager
+
+        # Initialize other services
         self.teleportation = QuantumTeleportation()
         self.onramper = QFCOnramper(self.blockchain, analytics=None, compliance=None)
         self.nft_marketplace = NFTMarketplace(self.blockchain)
@@ -126,6 +145,7 @@ class QuantumServices:
             "qkd_teleportation_failures": self.qkd_manager.teleportation.failure_count,
             "shard_utilization": {shard.shard_id: shard.utilization() for shard in self.blockchain.shards},
         }
+
 
 # Run the transaction processing service
 async def run_transaction_processing(services: QuantumServices):
