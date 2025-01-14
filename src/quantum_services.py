@@ -61,7 +61,8 @@ class QuantumServices:
                 continue
 
             logger.info(
-                f"Processing {len(pending_transactions)} transactions in Shard {shard_id}..."
+                f"Processing {len(pending_transactions)} transactions in "
+                f"Shard {shard_id}..."
             )
             tx_details = [
                 {
@@ -99,8 +100,8 @@ class QuantumServices:
 
         if not sender_wallet or not recipient_wallet:
             logger.error(
-                f"Invalid wallets: Sender ({transaction.sender}) "
-                f"or Recipient ({transaction.recipient})."
+                f"Invalid wallets: Sender ({transaction.sender}) or "
+                f"Recipient ({transaction.recipient})."
             )
             return
 
@@ -166,7 +167,8 @@ class QuantumServices:
                 data_id, owner, metadata, total_units
             )
             logger.info(
-                f"Fractional NFT {data_id} created by {owner} with {total_units} units."
+                f"Fractional NFT {data_id} created by {owner} with "
+                f"{total_units} units."
             )
         except ValueError as e:
             logger.error(f"Failed to create fractional NFT {data_id}: {e}.")
@@ -188,5 +190,8 @@ class QuantumServices:
 async def run_transaction_processing(services: QuantumServices):
     logger.info("Starting transaction processing for all shards...")
     await asyncio.gather(
-        *(services.process_transactions(shard_id) for shard_id in range(len(services.blockchain.shards)))
+        *(
+            services.process_transactions(shard_id)
+            for shard_id in range(len(services.blockchain.shards))
+        )
     )
