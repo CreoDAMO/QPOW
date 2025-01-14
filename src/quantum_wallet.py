@@ -7,10 +7,12 @@ from firebase_admin import messaging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
+
 class QuantumWallet:
     """
     A secure wallet supporting post-quantum cryptography with advanced features.
     """
+
     def __init__(self, user_id: str, password: str, pqc_backend: str = "pqclean"):
         self.user_id = user_id
         self.ph = PasswordHasher()
@@ -39,7 +41,10 @@ class QuantumWallet:
         tx_data = f"{self.user_id}->{recipient}:{amount}".encode()
         signature = self.pqc.sign(tx_data, self.private_key)
         self.balance -= amount
-        return {"transaction": tx_data.decode(), "signature": signature.hex()}
+        return {
+            "transaction": tx_data.decode(),
+            "signature": signature.hex(),
+        }
 
     def verify_transaction(self, tx_data: bytes, signature: bytes, public_key: bytes) -> bool:
         """Verify transaction using the selected PQC backend."""
@@ -53,7 +58,7 @@ class QuantumWallet:
         """Send a notification about a transaction."""
         notification = messaging.Message(
             notification=messaging.Notification(title="Quantum Wallet", body=message),
-            topic=self.user_id
+            topic=self.user_id,
         )
         try:
             messaging.send(notification)
