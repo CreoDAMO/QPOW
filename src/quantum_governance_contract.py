@@ -20,7 +20,8 @@ class QuantumGovernanceContract:
         self.votes: Dict[str, Dict[str, bool]] = {}
         # Mapping of proposal IDs to voter addresses and their votes
 
-        self.quantum_random_oracle = QuantumRandomOracleContract(f"{contract_id}_oracle", creator)
+        self.quantum_random_oracle = QuantumRandomOracleContract
+        (f"{contract_id}_oracle", creator)
         self.quantum_secure_manager = QuantumSecureManager()
         self.quantum_resource_manager = QuantumResourceManager()
         self.quantum_simulator = QuantumSimulator()
