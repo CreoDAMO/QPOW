@@ -38,6 +38,8 @@ def validate_request(data, required_fields):
             abort(400, description=f"Missing required field: {field}")
 
 
+# -------------------- Middleware --------------------
+
 @app.before_request
 def check_api_key():
     """
@@ -65,11 +67,17 @@ def teleport_nft():
             f"NFT {data['token_id']} teleported from "
             f"{data['sender']} to {data['recipient']}."
         )
-        return jsonify({"success": True, "message": "NFT teleported successfully."})
+        return jsonify({
+            "success": True,
+            "message": "NFT teleported successfully."
+        })
     except ValueError as e:
         logger.error(f"Error in teleport_nft: {str(e)}")
         return (
-            jsonify({"success": False, "error": "An error occurred while processing your request."}),
+            jsonify({
+                "success": False,
+                "error": "An error occurred while processing your request."
+            }),
             400,
         )
 
@@ -87,11 +95,17 @@ def buy_qfc():
             f"User {data['user']} bought {data['fiat_amount']} "
             f"{data['currency']} worth of QFC."
         )
-        return jsonify({"success": True, "message": "Fiat converted to QFC successfully."})
+        return jsonify({
+            "success": True,
+            "message": "Fiat converted to QFC successfully."
+        })
     except ValueError as e:
         logger.error(f"Error in buy_qfc: {str(e)}")
         return (
-            jsonify({"success": False, "error": "An error occurred while processing your request."}),
+            jsonify({
+                "success": False,
+                "error": "An error occurred while processing your request."
+            }),
             400,
         )
 
@@ -109,11 +123,17 @@ def distribute_qkd_key():
             f"QKD key distributed between {data['sender']} "
             f"and {data['recipient']}."
         )
-        return jsonify({"success": True, "message": f"QKD key distributed: {key}"})
+        return jsonify({
+            "success": True,
+            "message": f"QKD key distributed: {key}"
+        })
     except ValueError as e:
         logger.error(f"Error in distribute_qkd_key: {str(e)}")
         return (
-            jsonify({"success": False, "error": "An error occurred while distributing the QKD key."}),
+            jsonify({
+                "success": False,
+                "error": "An error occurred while distributing the QKD key."
+            }),
             400,
         )
 
@@ -131,11 +151,17 @@ def teleport_qkd_key():
             f"QKD key teleported between {data['sender']} "
             f"and {data['recipient']}."
         )
-        return jsonify({"success": True, "message": "QKD key teleported successfully."})
+        return jsonify({
+            "success": True,
+            "message": "QKD key teleported successfully."
+        })
     except ValueError as e:
         logger.error(f"Error in teleport_qkd_key: {str(e)}")
         return (
-            jsonify({"success": False, "error": "An error occurred while teleporting the QKD key."}),
+            jsonify({
+                "success": False,
+                "error": "An error occurred while teleporting the QKD key."
+            }),
             400,
         )
 
@@ -152,11 +178,17 @@ def optimize_shard_allocation():
             data["transaction_details"]
         )
         logger.info(f"Shard allocations: {shard_allocations}")
-        return jsonify({"success": True, "shard_allocations": shard_allocations})
+        return jsonify({
+            "success": True,
+            "shard_allocations": shard_allocations
+        })
     except ValueError as e:
         logger.error(f"Error in optimize_shard_allocation: {str(e)}")
         return (
-            jsonify({"success": False, "error": "An error occurred while optimizing shard allocation."}),
+            jsonify({
+                "success": False,
+                "error": "An error occurred while optimizing shard allocation."
+            }),
             400,
         )
 
@@ -166,7 +198,10 @@ def health_check():
     """
     Health check endpoint.
     """
-    return jsonify({"status": "Healthy", "timestamp": time.time()}), 200
+    return jsonify({
+        "status": "Healthy",
+        "timestamp": time.time()
+    }), 200
 
 
 # -------------------- Error Handlers --------------------
