@@ -13,9 +13,12 @@ class QuantumGovernanceContract:
     def __init__(self, contract_id: str, creator: str):
         self.contract_id = contract_id
         self.creator = creator
-        self.authorized_voters: Dict[str, bytes] = {}  # Mapping of voter addresses to public keys
-        self.proposals: Dict[str, Dict[str, Any]] = {}  # Mapping of proposal IDs to proposal details
-        self.votes: Dict[str, Dict[str, bool]] = {}  # Mapping of proposal IDs to voter addresses and their votes
+        self.authorized_voters: Dict[str, bytes] = {}
+        # Mapping of voter addresses to public keys
+        self.proposals: Dict[str, Dict[str, Any]] = {}
+        # Mapping of proposal IDs to proposal details
+        self.votes: Dict[str, Dict[str, bool]] = {}
+        # Mapping of proposal IDs to voter addresses and their votes
 
         self.quantum_random_oracle = QuantumRandomOracleContract(f"{contract_id}_oracle", creator)
         self.quantum_secure_manager = QuantumSecureManager()
