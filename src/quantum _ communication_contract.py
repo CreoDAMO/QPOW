@@ -1,4 +1,4 @@
-from pqcrypto.sign.dilithium2 import sign, verify
+from pqcrypto.sign.dilithium2 import verify
 from quantum_bridge_wrapper import QuantumBridgeWrapper
 import time
 from typing import Dict, List
