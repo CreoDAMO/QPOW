@@ -27,7 +27,6 @@ quantum_ai_optimizer = QuantumAIOptimizer()
 
 # -------------------- Helper Functions --------------------
 
-
 def validate_request(data, required_fields):
     """
     Validate that the required fields exist in the request data.
@@ -36,7 +35,6 @@ def validate_request(data, required_fields):
         if field not in data:
             logger.error(f"Missing required field: {field}")
             abort(400, description=f"Missing required field: {field}")
-
 
 # -------------------- Middleware --------------------
 
@@ -51,7 +49,6 @@ def check_api_key():
             logger.warning("Unauthorized access attempt detected.")
             abort(401, description="Unauthorized")
 
-
 # -------------------- API Routes --------------------
 
 @app.route("/v1/nft/teleport", methods=["POST"])
@@ -62,7 +59,9 @@ def teleport_nft():
     data = request.json
     validate_request(data, ["token_id", "sender", "recipient"])
     try:
-        nft_marketplace.teleport_nft(data["token_id"], data["sender"], data["recipient"])
+        nft_marketplace.teleport_nft(
+            data["token_id"], data["sender"], data["recipient"]
+        )
         logger.info(
             f"NFT {data['token_id']} teleported from "
             f"{data['sender']} to {data['recipient']}."
@@ -74,10 +73,7 @@ def teleport_nft():
     except ValueError as e:
         logger.error(f"Error in teleport_nft: {str(e)}")
         return (
-            jsonify({
-                "success": False,
-                "error": "An error occurred while processing your request."
-            }),
+            jsonify({"success": False, "error": "An error occurred while processing your request."}),
             400,
         )
 
@@ -102,10 +98,7 @@ def buy_qfc():
     except ValueError as e:
         logger.error(f"Error in buy_qfc: {str(e)}")
         return (
-            jsonify({
-                "success": False,
-                "error": "An error occurred while processing your request."
-            }),
+            jsonify({"success": False, "error": "An error occurred while processing your request."}),
             400,
         )
 
@@ -130,10 +123,7 @@ def distribute_qkd_key():
     except ValueError as e:
         logger.error(f"Error in distribute_qkd_key: {str(e)}")
         return (
-            jsonify({
-                "success": False,
-                "error": "An error occurred while distributing the QKD key."
-            }),
+            jsonify({"success": False, "error": "An error occurred while distributing the QKD key."}),
             400,
         )
 
@@ -158,10 +148,7 @@ def teleport_qkd_key():
     except ValueError as e:
         logger.error(f"Error in teleport_qkd_key: {str(e)}")
         return (
-            jsonify({
-                "success": False,
-                "error": "An error occurred while teleporting the QKD key."
-            }),
+            jsonify({"success": False, "error": "An error occurred while teleporting the QKD key."}),
             400,
         )
 
@@ -185,10 +172,7 @@ def optimize_shard_allocation():
     except ValueError as e:
         logger.error(f"Error in optimize_shard_allocation: {str(e)}")
         return (
-            jsonify({
-                "success": False,
-                "error": "An error occurred while optimizing shard allocation."
-            }),
+            jsonify({"success": False, "error": "An error occurred while optimizing shard allocation."}),
             400,
         )
 
@@ -198,11 +182,7 @@ def health_check():
     """
     Health check endpoint.
     """
-    return jsonify({
-        "status": "Healthy",
-        "timestamp": time.time()
-    }), 200
-
+    return jsonify({"status": "Healthy", "timestamp": time.time()}), 200
 
 # -------------------- Error Handlers --------------------
 
@@ -240,7 +220,6 @@ def handle_internal_server_error(error):
     """
     logger.critical(f"Internal Server Error: {error}")
     return jsonify({"success": False, "error": "Internal server error occurred."}), 500
-
 
 # -------------------- Main Function --------------------
 if __name__ == "__main__":
