@@ -94,7 +94,8 @@ def create_entanglement():
             abort(400, description=f"Missing required field: {field}")
 
     entanglement_id = bridge.create_entanglement(
-        data["chain_a"], data["chain_b"]
+        data["chain_a"], 
+        data["chain_b"]
     )
     return jsonify({"success": True, "entanglement_id": entanglement_id})
 
