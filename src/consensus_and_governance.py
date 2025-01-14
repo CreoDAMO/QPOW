@@ -5,7 +5,6 @@ from src.state_manager import StateManager
 from src.qdpos_manager import QDPoSManager
 import random
 import hashlib
-import time
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s: %(message)s")
