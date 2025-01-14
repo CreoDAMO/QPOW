@@ -24,8 +24,8 @@ class QuantumServices:
 
     def __init__(
         self, 
-        blockchain: Blockchain, 
-        state_manager: StateManager, 
+        blockchain: Blockchain,
+        state_manager: StateManager,
         config_file: str = "config.yaml"
     ):
         # Load backend configuration
