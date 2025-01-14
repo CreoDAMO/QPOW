@@ -1,6 +1,6 @@
 import time
 from flask import Flask, jsonify, request, abort
-from quantum_bridge_wrapper import QuantumBridgeWrapper  # Import the quantum bridge wrapper
+from quantum_bridge_wrapper import QuantumBridgeWrapper
 
 # Flask app for API
 app = Flask(__name__)
@@ -111,8 +111,7 @@ def validate_entanglement():
 
     if is_valid:
         return jsonify({"success": True, "message": "Entanglement validated successfully."})
-    else:
-        return jsonify({"success": False, "message": "Entanglement validation failed."})
+    return jsonify({"success": False, "message": "Entanglement validation failed."})
 
 
 @app.route("/bridge/entanglements", methods=["GET"])
@@ -139,16 +138,12 @@ def redeem_htlc():
     asset_id = data["asset_id"]
     provided_preimage = data["provided_preimage"]
 
-    # Simulated HTLC storage
-    htlc_contract = HashTimeLockedContract(
-        asset_id, "example_preimage", timeout=300
-    )  # Timeout in 5 minutes
+    htlc_contract = HashTimeLockedContract(asset_id, "example_preimage", timeout=300)
 
     try:
         if htlc_contract.redeem(provided_preimage):
             return jsonify({"success": True, "message": "HTLC redeemed successfully."})
-        else:
-            return jsonify({"success": False, "message": "Invalid preimage."})
+        return jsonify({"success": False, "message": "Invalid preimage."})
     except TimeoutError as e:
         app.logger.error(f"TimeoutError: {str(e)}")
         return jsonify({"success": False, "error": "A timeout error has occurred."}), 400
@@ -163,15 +158,11 @@ def check_htlc_status():
     if not asset_id:
         abort(400, description="Missing required query parameter: asset_id")
 
-    # Simulated HTLC status check
-    htlc_contract = HashTimeLockedContract(
-        asset_id, "example_preimage", timeout=300
-    )  # Timeout in 5 minutes
+    htlc_contract = HashTimeLockedContract(asset_id, "example_preimage", timeout=300)
 
     if htlc_contract.is_expired():
         return jsonify({"success": False, "status": "expired"})
-    else:
-        return jsonify({"success": True, "status": "active"})
+    return jsonify({"success": True, "status": "active"})
 
 
 # -------------------- Error Handlers --------------------
@@ -188,6 +179,5 @@ def not_found_error(error):
 # -------------------- Main Function --------------------
 if __name__ == "__main__":
     import os
-
     debug_mode = os.getenv("FLASK_DEBUG", "False").lower() in ["true", "1", "t"]
     app.run(debug=debug_mode)
