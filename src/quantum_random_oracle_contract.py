@@ -23,7 +23,7 @@ class QuantumRandomOracleContract:
         self.identity_manager = IdentityManager()
         self.quantum_storage = QuantumStorage()
         self.quantum_services = QuantumServices()
-
+        
     def authorize_user(self, user_address: str, public_key: bytes):
         """Authorize a user to access the Quantum Random Oracle."""
         if user_address in self.authorized_users:
