@@ -7,6 +7,7 @@ from identity_manager import IdentityManager
 from quantum_storage import QuantumStorage
 from quantum_services import QuantumServices
 
+
 class QuantumRandomOracleContract:
     def __init__(self, contract_id: str, creator: str):
         self.contract_id = contract_id
@@ -63,7 +64,8 @@ class QuantumRandomOracleContract:
         public_key = self.authorized_users[user_address]
 
         # Construct the data to be verified
-        data = f"{request_id}:{request_details['random_number']}:{request_details['timestamp']}".encode()
+        data = f"{request_id}:{request_details['random_number']}:" \
+               f"{request_details['timestamp']}".encode()
 
         # Verify the signature using the user's public key
         return verify(data, signature, public_key)
@@ -74,7 +76,8 @@ class QuantumRandomOracleContract:
             raise ValueError(f"Request {request_id} not found in the history.")
 
         request_details = self.request_history[request_id]
-        data = f"{request_id}:{request_details['random_number']}:{request_details['timestamp']}".encode()
+        data = f"{request_id}:{request_details['random_number']}:" \
+               f"{request_details['timestamp']}".encode()
         return sign(data, private_key)
 
     def get_contract_details(self) -> Dict[str, Any]:
