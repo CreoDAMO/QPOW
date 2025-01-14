@@ -27,7 +27,6 @@ quantum_ai_optimizer = QuantumAIOptimizer()
 
 # -------------------- Helper Functions --------------------
 
-
 def validate_request(data, required_fields):
     """
     Validate that the required fields exist in the request data.
@@ -36,7 +35,6 @@ def validate_request(data, required_fields):
         if field not in data:
             logger.error(f"Missing required field: {field}")
             abort(400, description=f"Missing required field: {field}")
-
 
 # -------------------- Middleware --------------------
 
@@ -51,16 +49,9 @@ def check_api_key():
             logger.warning("Unauthorized access attempt detected.")
             abort(401, description="Unauthorized")
 
-
 # -------------------- API Routes --------------------
 
-@app.route("/v1/onramp/buy", methods=["POST"])
-def buy_qfc():
-    """
-    Buy QFC tokens using fiat currency.
-    """
-    data = request.json
-    validate_request(data, ["user", "fiat_amount", "c@app.route("/v1/nft/teleport", methods=["POST"])
+@app.route("/v1/nft/teleport", methods=["POST"])
 def teleport_nft():
     """
     Teleport an NFT from one user to another.
@@ -89,9 +80,22 @@ def teleport_nft():
                 "error": "An error occurred while processing your request."
             }),
             400,
-    )urrency"])
+        )
+
+
+@app.route("/v1/onramp/buy", methods=["POST"])
+def buy_qfc():
+    """
+    Buy QFC tokens using fiat currency.
+    """
+    data = request.json
+    validate_request(data, ["user", "fiat_amount", "currency"])
     try:
-        onramper.buy_qfc(data["user"], data["fiat_amount"], data["currency"])
+        onramper.buy_qfc(
+            data["user"],
+            data["fiat_amount"],
+            data["currency"],
+        )
         logger.info(
             f"User {data['user']} bought {data['fiat_amount']} "
             f"{data['currency']} worth of QFC."
@@ -119,7 +123,10 @@ def distribute_qkd_key():
     data = request.json
     validate_request(data, ["sender", "recipient"])
     try:
-        key = qkd_manager.distribute_key(data["sender"], data["recipient"])
+        key = qkd_manager.distribute_key(
+            data["sender"],
+            data["recipient"],
+        )
         logger.info(
             f"QKD key distributed between {data['sender']} "
             f"and {data['recipient']}."
@@ -147,7 +154,10 @@ def teleport_qkd_key():
     data = request.json
     validate_request(data, ["sender", "recipient"])
     try:
-        qkd_manager.teleport_qkd_key(data["sender"], data["recipient"])
+        qkd_manager.teleport_qkd_key(
+            data["sender"],
+            data["recipient"],
+        )
         logger.info(
             f"QKD key teleported between {data['sender']} "
             f"and {data['recipient']}."
