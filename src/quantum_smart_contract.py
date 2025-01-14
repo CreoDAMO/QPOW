@@ -1,7 +1,6 @@
 from qiskit import QuantumCircuit, Aer, execute
 from pqcrypto.sign.dilithium2 import sign, verify
 from quantum_bridge_wrapper import QuantumBridgeWrapper
-import hashlib
 import json
 import time
 from typing import Callable, Dict, List, Any
@@ -26,12 +25,9 @@ class QuantumSmartContract:
         self.oracles: Dict[str, Callable] = {}  # Registered oracles
         self.signature = None  # Digital signature for contract verification
         self.quantum_bridge = QuantumBridgeWrapper(backend=quantum_backend)
-        self.entangled_qubits = None  # Quantum entanglement representation
-        self.resources: Dict[str, Any] = {}  # For distributed computing or resource allocation
+        self.entangled_qubits = None
+        self.resources: Dict[str, Any] = {}
 
-    # ---------------------------
-    # Core Functionality
-    # ---------------------------
     def add_participant(self, participant_address: str, did: str):
         """Add a participant to the contract with their DID."""
         if participant_address in self.participants:
@@ -57,13 +53,13 @@ class QuantumSmartContract:
             raise ValueError(f"No condition defined for state transition from {from_state} to {to_state}.")
         if condition_fn(data):
             self.current_state = to_state
-            self.history.append({"from": from_state, "to": to_state, "timestamp": time.time(), "oracle": oracle_name})
+            self.history.append({
+                "from": from_state, "to": to_state, "timestamp": time.time(),
+                "oracle": oracle_name
+            })
         else:
             raise ValueError("Condition not met for state transition.")
 
-    # ---------------------------
-    # Quantum-Specific Extensions
-    # ---------------------------
     def generate_entanglement(self):
         """Generate quantum entanglement using the Quantum Bridge Wrapper."""
         self.entangled_qubits = self.quantum_bridge.create_entanglement()
@@ -84,43 +80,20 @@ class QuantumSmartContract:
         """Verify the contract's signature using the public key."""
         if not self.signature:
             raise ValueError("No signature found for the contract.")
-        try:
-            data = json.dumps(self.get_contract_details(), sort_keys=True).encode()
-            verify(data, self.signature, public_key)
-            return True
-        except Exception as e:
-            raise ValueError(f"Signature verification failed: {str(e)}")
+        data = json.dumps(self.get_contract_details(), sort_keys=True).encode()
+        verify(data, self.signature, public_key)
+        return True
 
-    # ---------------------------
-    # Real-World Use Cases
-    # ---------------------------
     def allocate_resources(self, task_id: str, resource_type: str, amount: int):
         """Allocate resources such as quantum computing or sensor bandwidth."""
         if task_id in self.resources:
             raise ValueError(f"Task {task_id} already has resources allocated.")
         self.resources[task_id] = {"type": resource_type, "amount": amount, "timestamp": time.time()}
-        self.history.append({"event": "resource_allocation", "task_id": task_id, "details": self.resources[task_id]})
+        self.history.append({
+            "event": "resource_allocation", "task_id": task_id, "details": self.resources[task_id]
+        })
         return f"Allocated {amount} units of {resource_type} for task {task_id}."
 
-    def collect_sensor_data(self, sensor_id: str):
-        """Simulate data collection from quantum sensors."""
-        if sensor_id not in self.resources:
-            raise ValueError(f"Sensor {sensor_id} is not registered.")
-        data = f"Data from sensor {sensor_id} collected at {time.time()}."
-        self.history.append({"event": "sensor_data_collection", "sensor_id": sensor_id, "data": data})
-        return data
-
-    def enable_quantum_ai(self, model_id: str, input_data: Any):
-        """Simulate quantum AI model inference."""
-        if model_id not in self.resources:
-            raise ValueError(f"Model {model_id} is not registered.")
-        result = f"Quantum AI inference result for model {model_id} with input: {input_data}."
-        self.history.append({"event": "quantum_ai_inference", "model_id": model_id, "result": result})
-        return result
-
-    # ---------------------------
-    # Utilities
-    # ---------------------------
     def get_contract_details(self) -> Dict[str, Any]:
         """Retrieve the current contract details."""
         return {
@@ -130,16 +103,3 @@ class QuantumSmartContract:
             "history": self.history,
             "resources": self.resources,
         }
-
-    def export_contract(self) -> str:
-        """Export the contract to JSON for storage or transmission."""
-        return json.dumps(self.get_contract_details(), indent=4)
-
-    def import_contract(self, contract_json: str):
-        """Import contract details from JSON."""
-        details = json.loads(contract_json)
-        self.contract_id = details["contract_id"]
-        self.current_state = details["state"]
-        self.participants = details["participants"]
-        self.history = details["history"]
-        self.resources = details["resources"]
