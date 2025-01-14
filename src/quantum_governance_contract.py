@@ -8,6 +8,7 @@ from identity_manager import IdentityManager
 from quantum_storage import QuantumStorage
 from quantum_services import QuantumServices
 
+
 class QuantumGovernanceContract:
     def __init__(self, contract_id: str, creator: str):
         self.contract_id = contract_id
