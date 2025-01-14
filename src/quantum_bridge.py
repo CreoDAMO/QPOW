@@ -1,22 +1,21 @@
-import hashlib
 import time
-import random
 from flask import Flask, jsonify, request, abort
-from quantum_bridge_wrapper import QuantumBridgeWrapper  # Import the dynamic quantum bridge wrapper
-import logging
+from quantum_bridge_wrapper import QuantumBridgeWrapper  # Import the quantum bridge wrapper
 
 # Flask app for API
 app = Flask(__name__)
 
 # Instantiate the Quantum Bridge Wrapper
-quantum_backend = "qiskit"  # Set the default backend (can be overridden by configuration)
+quantum_backend = "qiskit"  # Set the default backend
 bridge_wrapper = QuantumBridgeWrapper(backend=quantum_backend)
+
 
 # -------------------- Hash Time Locked Contract (HTLC) --------------------
 class HashTimeLockedContract:
     """
     A Hash Time Locked Contract (HTLC) implementation for secure asset swaps.
     """
+
     def __init__(self, asset_id: str, hash_preimage: str, timeout: float):
         self.asset_id = asset_id
         self.hash_preimage = hash_preimage
@@ -35,27 +34,30 @@ class HashTimeLockedContract:
         return False
 
     def is_expired(self) -> bool:
-        """Check if the HTLC contract has expired."""
+        """
+        Check if the HTLC contract has expired.
+        """
         return time.time() > self.timeout
 
 
 # -------------------- Quantum Bridge --------------------
 class QuantumBridge:
     """
-    The Quantum Bridge facilitates cross-chain asset transfers and state synchronization using quantum entanglement.
+    The Quantum Bridge facilitates cross-chain asset transfers and state synchronization.
     """
+
     def __init__(self, quantum_bridge_wrapper: QuantumBridgeWrapper):
         self.entanglements = {}
         self.quantum_bridge_wrapper = quantum_bridge_wrapper
 
     def create_entanglement(self, chain_a: str, chain_b: str) -> str:
         """
-        Create an entanglement between two blockchain networks using the quantum bridge wrapper.
+        Create an entanglement between two blockchain networks.
         """
         entanglement_id = self.quantum_bridge_wrapper.create_entanglement()
         self.entanglements[entanglement_id] = {
             "chains": (chain_a, chain_b),
-            "created_at": time.time()
+            "created_at": time.time(),
         }
         return entanglement_id
 
@@ -68,16 +70,18 @@ class QuantumBridge:
         return self.quantum_bridge_wrapper.validate_entanglement(entanglement_id)
 
     def list_entanglements(self) -> dict:
-        """List all active entanglements."""
+        """
+        List all active entanglements.
+        """
         return self.entanglements
 
 
 # Instantiate the Quantum Bridge
 bridge = QuantumBridge(quantum_bridge_wrapper=bridge_wrapper)
 
-# -------------------- Flask API Endpoints --------------------
 
-@app.route('/bridge/entangle', methods=['POST'])
+# -------------------- Flask API Endpoints --------------------
+@app.route("/bridge/entangle", methods=["POST"])
 def create_entanglement():
     """
     API endpoint to create an entanglement between two chains.
@@ -89,11 +93,11 @@ def create_entanglement():
         if field not in data:
             abort(400, description=f"Missing required field: {field}")
 
-    entanglement_id = bridge.create_entanglement(data['chain_a'], data['chain_b'])
+    entanglement_id = bridge.create_entanglement(data["chain_a"], data["chain_b"])
     return jsonify({"success": True, "entanglement_id": entanglement_id})
 
 
-@app.route('/bridge/validate', methods=['POST'])
+@app.route("/bridge/validate", methods=["POST"])
 def validate_entanglement():
     """
     API endpoint to validate an existing entanglement.
@@ -111,7 +115,7 @@ def validate_entanglement():
         return jsonify({"success": False, "message": "Entanglement validation failed."})
 
 
-@app.route('/bridge/entanglements', methods=['GET'])
+@app.route("/bridge/entanglements", methods=["GET"])
 def list_entanglements():
     """
     API endpoint to list all active entanglements.
@@ -120,7 +124,7 @@ def list_entanglements():
     return jsonify({"success": True, "entanglements": entanglements})
 
 
-@app.route('/htlc/redeem', methods=['POST'])
+@app.route("/htlc/redeem", methods=["POST"])
 def redeem_htlc():
     """
     API endpoint to redeem an HTLC contract.
@@ -136,7 +140,9 @@ def redeem_htlc():
     provided_preimage = data["provided_preimage"]
 
     # Simulated HTLC storage
-    htlc_contract = HashTimeLockedContract(asset_id, "example_preimage", timeout=300)  # Timeout in 5 minutes
+    htlc_contract = HashTimeLockedContract(
+        asset_id, "example_preimage", timeout=300
+    )  # Timeout in 5 minutes
 
     try:
         if htlc_contract.redeem(provided_preimage):
@@ -148,7 +154,7 @@ def redeem_htlc():
         return jsonify({"success": False, "error": "A timeout error has occurred."}), 400
 
 
-@app.route('/htlc/check', methods=['GET'])
+@app.route("/htlc/check", methods=["GET"])
 def check_htlc_status():
     """
     API endpoint to check the status of an HTLC contract.
@@ -158,7 +164,9 @@ def check_htlc_status():
         abort(400, description="Missing required query parameter: asset_id")
 
     # Simulated HTLC status check
-    htlc_contract = HashTimeLockedContract(asset_id, "example_preimage", timeout=300)  # Timeout in 5 minutes
+    htlc_contract = HashTimeLockedContract(
+        asset_id, "example_preimage", timeout=300
+    )  # Timeout in 5 minutes
 
     if htlc_contract.is_expired():
         return jsonify({"success": False, "status": "expired"})
@@ -167,18 +175,19 @@ def check_htlc_status():
 
 
 # -------------------- Error Handlers --------------------
-
 @app.errorhandler(400)
 def bad_request_error(error):
     return jsonify({"success": False, "error": error.description}), 400
+
 
 @app.errorhandler(404)
 def not_found_error(error):
     return jsonify({"success": False, "error": error.description}), 404
 
-# -------------------- Main Function --------------------
 
-if __name__ == '__main__':
+# -------------------- Main Function --------------------
+if __name__ == "__main__":
     import os
-    debug_mode = os.getenv('FLASK_DEBUG', 'False').lower() in ['true', '1', 't']
+
+    debug_mode = os.getenv("FLASK_DEBUG", "False").lower() in ["true", "1", "t"]
     app.run(debug=debug_mode)
