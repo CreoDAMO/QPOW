@@ -54,7 +54,13 @@ def check_api_key():
 
 # -------------------- API Routes --------------------
 
-@app.route("/v1/nft/teleport", methods=["POST"])
+@app.route("/v1/onramp/buy", methods=["POST"])
+def buy_qfc():
+    """
+    Buy QFC tokens using fiat currency.
+    """
+    data = request.json
+    validate_request(data, ["user", "fiat_amount", "c@app.route("/v1/nft/teleport", methods=["POST"])
 def teleport_nft():
     """
     Teleport an NFT from one user to another.
@@ -62,7 +68,11 @@ def teleport_nft():
     data = request.json
     validate_request(data, ["token_id", "sender", "recipient"])
     try:
-        nft_marketplace.teleport_nft(data["token_id"], data["sender"], data["recipient"])
+        nft_marketplace.teleport_nft(
+            data["token_id"],
+            data["sender"],
+            data["recipient"],
+        )
         logger.info(
             f"NFT {data['token_id']} teleported from "
             f"{data['sender']} to {data['recipient']}."
@@ -79,16 +89,7 @@ def teleport_nft():
                 "error": "An error occurred while processing your request."
             }),
             400,
-        )
-
-
-@app.route("/v1/onramp/buy", methods=["POST"])
-def buy_qfc():
-    """
-    Buy QFC tokens using fiat currency.
-    """
-    data = request.json
-    validate_request(data, ["user", "fiat_amount", "currency"])
+    )urrency"])
     try:
         onramper.buy_qfc(data["user"], data["fiat_amount"], data["currency"])
         logger.info(
