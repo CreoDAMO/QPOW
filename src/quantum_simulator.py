@@ -1,17 +1,21 @@
+import logging
 from qiskit import QuantumCircuit, Aer, execute
 from src.quantum_bridge import QuantumBridgeWrapper
-import logging
 
-simulator = Aer.get_backend('qasm_simulator')
+simulator = Aer.get_backend("qasm_simulator")
 
 
 class QuantumSimulationManager:
+    """Simulate quantum communication and secure interactions."""
+
     def __init__(self):
         self.logger = self._setup_logger()
         self.quantum_bridge = QuantumBridgeWrapper(backend="qiskit")
 
     def _setup_logger(self):
-        logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+        logging.basicConfig(
+            level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+        )
         return logging.getLogger(__name__)
 
     def quantum_secure_communication(self):
