@@ -1,9 +1,9 @@
+import logging
 from src.quantum_secure_manager import QuantumSecureManager
 from src.analytics_manager import AnalyticsManager
 from src.blockchain.blockchain_api import BlockchainAPI
 from src.asset_manager import AssetManager
 from src.multiplayer_manager import MultiplayerManager
-import logging
 
 
 class ARVREnvironment:
@@ -20,7 +20,9 @@ class ARVREnvironment:
         self.multiplayer_manager = MultiplayerManager()
 
     def _setup_logger(self):
-        logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+        logging.basicConfig(
+            level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+        )
         return logging.getLogger(__name__)
 
     def record_interaction_on_blockchain(self, interaction_data):
