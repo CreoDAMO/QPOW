@@ -27,6 +27,7 @@ quantum_ai_optimizer = QuantumAIOptimizer()
 
 # -------------------- Helper Functions --------------------
 
+
 def validate_request(data, required_fields):
     """
     Validate that the required fields exist in the request data.
@@ -59,9 +60,7 @@ def teleport_nft():
     data = request.json
     validate_request(data, ["token_id", "sender", "recipient"])
     try:
-        nft_marketplace.teleport_nft(
-            data["token_id"], data["sender"], data["recipient"]
-        )
+        nft_marketplace.teleport_nft(data["token_id"], data["sender"], data["recipient"])
         logger.info(
             f"NFT {data['token_id']} teleported from "
             f"{data['sender']} to {data['recipient']}."
