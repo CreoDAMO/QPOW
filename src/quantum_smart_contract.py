@@ -12,7 +12,7 @@ class QuantumSmartContract:
     """
 
     def __init__(
-        self, contract_id: str, states: List[str], creator: str, 
+        self, contract_id: str, states: List[str], creator: str,
         quantum_backend: str = "qiskit"
     ):
         self.contract_id = contract_id
@@ -32,7 +32,7 @@ class QuantumSmartContract:
     def add_participant(self, participant_address: str, did: str):
         """Add a participant to the contract with their DID."""
         if participant_address in self.participants:
-            raise ValueError(f"Participant {participant_address} already added.")
+            raise ValueError(f"Participant {participant_address} already exists.")
         self.participants.append(participant_address)
         self.did_links[participant_address] = did
 
@@ -44,6 +44,25 @@ class QuantumSmartContract:
         """Register an oracle to fetch external data."""
         self.oracles[name] = fetch_data_fn
 
+    def transition_state(self, from_state: str, to_state: str, data: Any = None):
+        """Transition the contract state, optionally using provided data."""
+        condition_fn = self.conditions.get((from_state, to_state))
+        if not condition_fn:
+            raise ValueError(
+                f"No condition for transition from {from_state} to {to_state}."
+            )
+        if condition_fn(data):
+            self.current_state = to_state
+            self.history.append({
+                "from": from_state,
+                "to": to_state,
+                "timestamp": time.time(),
+                "data": data  # Include the data used for the transition
+            })
+        else:
+            raise ValueError("Condition not met for state transition.")
+
+
     def transition_state_with_oracle(
         self, oracle_name: str, from_state: str, to_state: str
     ):
@@ -51,19 +70,8 @@ class QuantumSmartContract:
         if oracle_name not in self.oracles:
             raise ValueError(f"Oracle {oracle_name} is not registered.")
         data = self.oracles[oracle_name]()
-        condition_fn = self.conditions.get((from_state, to_state))
-        if not condition_fn:
-            raise ValueError(f"No condition for transition from {from_state} to {to_state}.")
-        if condition_fn(data):
-            self.current_state = to_state
-            self.history.append({
-                "from": from_state, 
-                "to": to_state,
-                "timestamp": time.time(), 
-                "oracle": oracle_name
-            })
-        else:
-            raise ValueError("Condition not met for state transition.")
+        self.transition_state(from_state, to_state, data)  # Use the generic transition_state
+
 
     def generate_entanglement(self):
         """Generate quantum entanglement using the Quantum Bridge Wrapper."""
@@ -86,13 +94,13 @@ class QuantumSmartContract:
         if not self.signature:
             raise ValueError("No signature found for the contract.")
         data = json.dumps(self.get_contract_details(), sort_keys=True).encode()
-        verify(data, self.signature, public_key)
-        return True
+        return verify(data, self.signature, public_key)  # Return the verification result
+
 
     def allocate_resources(self, task_id: str, resource_type: str, amount: int):
         """Allocate resources like quantum computing or sensor bandwidth."""
         if task_id in self.resources:
-            raise ValueError(f"Task {task_id} already has resources allocated.")
+            raise ValueError(f"Resources already allocated for task {task_id}.")  # More specific error message
         self.resources[task_id] = {
             "type": resource_type,
             "amount": amount,
@@ -114,3 +122,5 @@ class QuantumSmartContract:
             "history": self.history,
             "resources": self.resources,
         }
+
+                         
