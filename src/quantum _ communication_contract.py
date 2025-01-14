@@ -1,4 +1,3 @@
-from pqcrypto.sign.dilithium2 import sign, verify
 from quantum_bridge_wrapper import QuantumBridgeWrapper
 import time
 from typing import Dict, List
@@ -44,8 +43,8 @@ class QuantumCommunicationContract:
             "recipient": recipient,
             "timestamp": time.time()
         })
-        return f"Key distributed between {sender} 
-        and {recipient}"
+        return f"Key distributed between {sender} and 
+        {recipient}"
 
     def verify_signature(self, message: bytes, signature: bytes, public_key: bytes) -> bool:
         try:
