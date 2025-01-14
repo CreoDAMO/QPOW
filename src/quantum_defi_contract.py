@@ -1,5 +1,4 @@
-from typing import Dict, Any, Callable
-from pqcrypto.kem.kyber512 import encrypt, decrypt
+from typing import Dict, Any
 from quantum_random_oracle import QuantumRandomOracleContract
 from quantum_secure_manager import QuantumSecureManager
 from quantum_resource_manager import QuantumResourceManager
@@ -8,14 +7,15 @@ from identity_manager import IdentityManager
 from quantum_storage import QuantumStorage
 from quantum_services import QuantumServices
 
+
 class QuantumDeFiContract:
     def __init__(self, contract_id: str, creator: str):
         self.contract_id = contract_id
         self.creator = creator
         self.authorized_users: Dict[str, bytes] = {}  # Mapping of user addresses to public keys
         self.assets: Dict[str, float] = {}  # Mapping of asset symbols to total supply
-        self.loans: Dict[str, Dict[str, float]] = {}  # Mapping of user addresses to their loan details
-        self.collateral: Dict[str, Dict[str, float]] = {}  # Mapping of user addresses to their collateral details
+        self.loans: Dict[str, Dict[str, float]] = {}  # Mapping of user addresses to loan details
+        self.collateral: Dict[str, Dict[str, float]] = {}  # Mapping of user addresses to collateral details
         self.interest_rates: Dict[str, float] = {}  # Mapping of asset symbols to interest rates
         self.liquidation_thresholds: Dict[str, float] = {}  # Mapping of asset symbols to liquidation thresholds
         self.transaction_history: Dict[str, Dict[str, Any]] = {}  # Mapping of transaction IDs to transaction details
@@ -45,9 +45,7 @@ class QuantumDeFiContract:
         self.assets[asset_symbol] += amount
 
         # Record the deposit transaction
-        transaction_id = self._record_transaction(
-            user_address, "deposit", asset_symbol, amount
-        )
+        transaction_id = self._record_transaction(user_address, "deposit", asset_symbol, amount)
         return transaction_id
 
     def withdraw_asset(self, user_address: str, asset_symbol: str, amount: float):
@@ -61,9 +59,7 @@ class QuantumDeFiContract:
         self.assets[asset_symbol] -= amount
 
         # Record the withdrawal transaction
-        transaction_id = self._record_transaction(
-            user_address, "withdraw", asset_symbol, amount
-        )
+        transaction_id = self._record_transaction(user_address, "withdraw", asset_symbol, amount)
         return transaction_id
 
     def borrow_asset(self, user_address: str, asset_symbol: str, amount: float):
@@ -83,9 +79,7 @@ class QuantumDeFiContract:
         self.assets[asset_symbol] -= amount
 
         # Record the borrow transaction
-        transaction_id = self._record_transaction(
-            user_address, "borrow", asset_symbol, amount
-        )
+        transaction_id = self._record_transaction(user_address, "borrow", asset_symbol, amount)
         return transaction_id
 
     def repay_loan(self, user_address: str, asset_symbol: str, amount: float):
@@ -103,14 +97,10 @@ class QuantumDeFiContract:
         self.assets[asset_symbol] += amount
 
         # Record the repayment transaction
-        transaction_id = self._record_transaction(
-            user_address, "repay", asset_symbol, amount
-        )
+        transaction_id = self._record_transaction(user_address, "repay", asset_symbol, amount)
         return transaction_id
 
-    def _record_transaction(
-        self, user_address: str, action: str, asset_symbol: str, amount: float
-    ) -> str:
+    def _record_transaction(self, user_address: str, action: str, asset_symbol: str, amount: float) -> str:
         """Record a DeFi transaction in the contract's history."""
         transaction_id = self.quantum_services.generate_transaction_id()
         self.transaction_history[transaction_id] = {
