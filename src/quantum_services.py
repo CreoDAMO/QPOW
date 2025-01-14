@@ -23,7 +23,7 @@ class QuantumServices:
     """
 
     def __init__(
-        self, 
+        self,
         blockchain: Blockchain,
         state_manager: StateManager,
         config_file: str = "config.yaml"
