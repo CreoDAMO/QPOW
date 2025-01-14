@@ -6,7 +6,8 @@ class QuantumMagneticStabilizer:
     def __init__(self):
         self.stability_factor = 1.0
 
-    def optimize_stability(self):
+    def optimize_stability(self) -> str:
+        """Optimize magnetic stability."""
         self.stability_factor *= 1.05  # Example optimization
         return f"Stability optimized to factor {self.stability_factor:.2f}"
 
@@ -16,16 +17,18 @@ class PlasmaDiagnostics:
         self.core_temperature = 50_000_000  # Example temperature in Kelvins
 
     def measure_core_temperature(self) -> float:
+        """Measure core plasma temperature."""
         return self.core_temperature
 
 
 class QuantumFuseAI:
     def analyze_stability(self, temperature: float, impurity_level: float) -> float:
+        """Analyze plasma stability."""
         stability_index = 0.95 if impurity_level < 0.02 else 0.75
-        stability_score = temperature * stability_index
-        return stability_score
+        return temperature * stability_index
 
-    def optimize_performance(self):
+    def optimize_performance(self) -> str:
+        """Optimize AI performance."""
         return "AI performance optimization complete."
 
 
@@ -36,7 +39,7 @@ class GridStabilityEvent:
         self.cause = cause
         self.mitigation_actions = actions
 
-    def __str__(self):
+    def __str__(self) -> str:
         actions = ", ".join(self.mitigation_actions)
         return (
             f"Event at {self.time}, Location: {self.location}, Cause: {self.cause}, "
@@ -53,14 +56,17 @@ class FusionReactor:
         self.magnetic_stabilizer = QuantumMagneticStabilizer()
 
     def generate_energy(self, usage_hours: float) -> float:
+        """Generate energy based on usage hours."""
         effective_output = self.energy_output * (1.0 - self.tungsten_impurity_level)
         return effective_output * usage_hours
 
     def monitor_plasma(self) -> float:
+        """Monitor plasma stability."""
         temperature = self.diagnostics.measure_core_temperature()
         return self.ai_monitor.analyze_stability(temperature, self.tungsten_impurity_level)
 
     def optimize_performance(self) -> str:
+        """Optimize reactor performance."""
         ai_optimization = self.ai_monitor.optimize_performance()
         stability_optimization = self.magnetic_stabilizer.optimize_stability()
         return f"{ai_optimization} {stability_optimization}"
@@ -68,23 +74,6 @@ class FusionReactor:
     def log_grid_stability_event(
         self, cause: str, location: str, actions: List[str]
     ) -> GridStabilityEvent:
+        """Log a grid stability event."""
         event_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         return GridStabilityEvent(event_time, location, cause, actions)
-
-
-# Usage Example
-if __name__ == "__main__":
-    fusion_reactor = FusionReactor()
-    energy_generated = fusion_reactor.generate_energy(5)
-    stability_score = fusion_reactor.monitor_plasma()
-    performance_optimized = fusion_reactor.optimize_performance()
-    stability_event = fusion_reactor.log_grid_stability_event(
-        cause="Overload",
-        location="Grid Sector 7",
-        actions=["Reduce load", "Activate backup generators", "Divert power"],
-    )
-
-    print(f"Energy Generated: {energy_generated} MJ")
-    print(f"Plasma Stability Score: {stability_score}")
-    print(f"Performance Optimization: {performance_optimized}")
-    print(f"Stability Event: {stability_event}")
