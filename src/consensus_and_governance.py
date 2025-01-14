@@ -4,12 +4,47 @@ from src.quantum_wallet import QuantumWallet
 from src.state_manager import StateManager
 from src.qdpos_manager import QDPoSManager
 import random
+import hashlib
+import time
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 
+# -------------------- Quantum Proof-of-Work (QPOW) --------------------
+class QuantumProofOfWork:
+    """Quantum Proof-of-Work (QPOW) with quantum randomness and dynamic difficulty."""
+
+    def __init__(self):
+        self.mining_rewards = {}
+
+    @staticmethod
+    def generate_nonce() -> int:
+        """Generate a quantum random nonce."""
+        return random.randint(0, 2**32 - 1)  # Replace with QRNG in production
+
+    def validate_nonce(self, block_hash: str, nonce: int, difficulty: int) -> bool:
+        """Validate nonce based on difficulty."""
+        target = "0" * difficulty
+        hash_result = hashlib.sha256(
+            f"{block_hash}{nonce}".encode()
+        ).hexdigest()
+        return hash_result.startswith(target)
+
+    def mine_block(self, block_data: str, difficulty: int) -> Dict:
+        """Perform QPOW mining."""
+        nonce = self.generate_nonce()
+        while not self.validate_nonce(block_data, nonce, difficulty):
+            nonce = self.generate_nonce()
+        block_hash = hashlib.sha256(
+            f"{block_data}{nonce}".encode()
+        ).hexdigest()
+        logger.info(f"Block mined with nonce {nonce} and hash {block_hash}.")
+        return {"hash": block_hash, "nonce": nonce}
+
+
+# -------------------- Quantum Proof-of-Stake (QPoS) --------------------
 class QuantumProofOfStake:
     """Quantum Proof-of-Stake (QPoS) system."""
 
@@ -22,7 +57,9 @@ class QuantumProofOfStake:
         wallet.balance -= stake
         self.validators[wallet.get_address()] = wallet
         self.total_staked += stake
-        logger.info(f"Validator {wallet.get_address()} registered with stake {stake}.")
+        logger.info(
+            f"Validator {wallet.get_address()} registered with stake {stake} QFC."
+        )
 
     def select_validator(self) -> QuantumWallet:
         """Select a validator proportional to stake."""
@@ -33,8 +70,31 @@ class QuantumProofOfStake:
         return self.validators[selected]
 
 
+# -------------------- Quantum Delegated Proof-of-Stake (QDPoS) --------------------
+class QuantumDelegatedProofOfStake:
+    """Quantum Delegated Proof-of-Stake (QDPoS) system."""
+
+    def __init__(self, state_manager: StateManager):
+        self.state_manager = state_manager
+        self.delegates: Dict[str, str] = {}  # Token holders delegating to validators
+
+    def register_delegate(self, holder_address: str, validator_address: str):
+        """Register a delegate."""
+        self.delegates[holder_address] = validator_address
+        logger.info(
+            f"Delegate {holder_address} supports validator {validator_address}."
+        )
+
+    def validate_block(self, block_data: str) -> bool:
+        """Validate a block."""
+        validator_address = random.choice(list(self.delegates.values()))
+        logger.info(f"Block validated by {validator_address}.")
+        return self.state_manager.validate_transaction({"data": block_data})
+
+
+# -------------------- Green Proof-of-Work (GPoW) --------------------
 class GreenProofOfWork:
-    """GPoW system with renewable energy rewards."""
+    """Green Proof-of-Work (GPoW) system incentivizing renewable energy."""
 
     def __init__(self):
         self.energy_use: Dict[str, float] = {}
@@ -42,7 +102,9 @@ class GreenProofOfWork:
     def register_node(self, node_id: str, renewable_ratio: float):
         """Register a node."""
         self.energy_use[node_id] = renewable_ratio
-        logger.info(f"Node {node_id} registered with renewable ratio {renewable_ratio}.")
+        logger.info(
+            f"Node {node_id} registered with renewable ratio {renewable_ratio}."
+        )
 
     def adjust_rewards(self, base_reward: float) -> Dict[str, float]:
         """Adjust rewards based on renewable usage."""
@@ -52,80 +114,34 @@ class GreenProofOfWork:
         }
 
 
+# -------------------- Hybrid Consensus System --------------------
 class HybridConsensus:
-    """Hybrid model using QPoS, QDPoS, GPoW, and QPoW."""
+    """Hybrid model combining QPOW, QPOS, QDPoS, and GPoW."""
 
     def __init__(self, state_manager: StateManager, qdpos_manager: QDPoSManager):
+        self.qpow = QuantumProofOfWork()
         self.qpos = QuantumProofOfStake()
-        self.qdpos_manager = qdpos_manager
+        self.qdpos = QuantumDelegatedProofOfStake(state_manager)
         self.gpow = GreenProofOfWork()
         self.state_manager = state_manager
 
     def validate_transaction(self, tx_data: Dict) -> bool:
-        """Hybrid transaction validation."""
+        """Hybrid transaction validation using QPoS and QDPoS."""
         validator = self.qpos.select_validator()
         is_valid = self.state_manager.validate_transaction(tx_data)
-        status = "Success" if is_valid else "Failure"
-        logger.info(f"Transaction validated by {validator.get_address()}: {status}.")
+        logger.info(
+            f"Transaction validated by {validator.get_address()}: "
+            f"{'Success' if is_valid else 'Failure'}."
+        )
         return is_valid
 
-    def mine_block(self, miner_id: str, reward: float):
-        """Mine a block using GPoW."""
+    def mine_block(
+        self, block_data: str, miner_id: str, difficulty: int, reward: float
+    ):
+        """Mine a block using QPOW and GPoW."""
+        mined_block = self.qpow.mine_block(block_data, difficulty)
         rewards = self.gpow.adjust_rewards(reward)
         final_reward = rewards.get(miner_id, 0)
-        logger.info(f"Block mined by {miner_id}, reward: {final_reward}.")
-
-# Consensus Mechanisms Overview
-
-def consensus_mechanisms_overview():
-    """Provides an overview of the consensus mechanisms used in QuantumFuse."""
-
-    mechanisms = {
-        "Quantum Proof-of-Work (QPoW)": [
-            "QPoW integrates quantum technology to optimize traditional Proof-of-Work mechanisms:",
-            "- Quantum Random Number Generators (QRNG):",
-            "  Uses quantum randomness to create unpredictable and unforgeable nonces.",
-            "  Guarantees fairness and eliminates vulnerabilities associated with pseudo-random number generation.",
-            "- Dynamic Difficulty Adjustment:",
-            "  Adapts mining difficulty in real-time based on network performance and quantum states.",
-            "  Ensures energy efficiency by scaling requirements proportionally to the network load.",
-        ],
-        "Quantum Proof-of-Stake (QPoS)": [
-            "QPoS introduces stake-based consensus to reduce energy consumption while maintaining security:",
-            "- Stake-Based Validator Selection:",
-            "  Validators are selected proportionally to their QFC holdings.",
-            "  Promotes decentralization while ensuring economic commitment.",
-            "- Quantum Staking Rewards:",
-            "  Stakers earn rewards through quantum teleportation-enhanced distribution mechanisms.",
-            "  Includes penalties for malicious behavior, such as double-signing or inactivity.",
-        ],
-        "Quantum Delegated Proof-of-Stake (QDPoS)": [
-            "QDPoS builds on QPoS by introducing delegation and governance:",
-            "- Delegation:",
-            "  Token holders delegate their stake to trusted validators.",
-            "  Increases participation by allowing non-technical users to contribute.",
-            "- Governance:",
-            "  Validators are elected through a voting system enabled by decentralized identifiers (DIDs).",
-            "  Supports on-chain proposals and upgrades for continuous improvement.",
-        ],
-        "Green Proof-of-Work (GPoW)": [
-            "GPoW integrates renewable energy incentives into the mining process:",
-            "- Renewable Energy Verification:",
-            "  Nodes submit renewable energy certificates for eligibility.",
-            "  Ensures that mining operations prioritize sustainability.",
-            "- Green Mining Rewards:",
-            "  Rewards are dynamically adjusted based on a node’s renewable energy usage ratio.",
-            "  Promotes eco-friendly blockchain adoption.",
-        ],
-    }
-
-    for mechanism, details in mechanisms.items():
-        print(mechanism)
-        for line in details:
-            print("\t" + line)
-        print()  # Add a blank line for spacing
-
-
-# Example call to print consensus mechanisms overview
-if __name__ == "__main__":
-    consensus_mechanisms_overview()
+        logger.info(
+            f"Block mined: {mined_block['hash']}, reward to {miner_id}: {final_reward}."
+        )
