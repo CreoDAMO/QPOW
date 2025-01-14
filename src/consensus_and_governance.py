@@ -49,7 +49,7 @@ class QuantumProofOfStake:
         wallet.balance -= stake
         self.validators[wallet.get_address()] = wallet
         self.total_staked += stake
-        logger.info(f"Validator {wallet.get_address()} registered with stake {stake} QFC.")
+        logger.info(f"Validator {wallet.get_address()} registered with stake {stake}.")
 
     def select_validator(self) -> QuantumWallet:
         """Select a validator proportional to stake."""
