@@ -63,7 +63,9 @@ class FusionReactor:
     def monitor_plasma(self) -> float:
         """Monitor plasma stability."""
         temperature = self.diagnostics.measure_core_temperature()
-        return self.ai_monitor.analyze_stability(temperature, self.tungsten_impurity_level)
+        return self.ai_monitor.analyze_stability(
+            temperature, self.tungsten_impurity_level
+        )
 
     def optimize_performance(self) -> str:
         """Optimize reactor performance."""
