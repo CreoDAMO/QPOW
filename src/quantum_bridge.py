@@ -43,7 +43,7 @@ class HashTimeLockedContract:
 # -------------------- Quantum Bridge --------------------
 class QuantumBridge:
     """
-    The Quantum Bridge facilitates cross-chain asset transfers and state 
+    The Quantum Bridge facilitates cross-chain asset transfers and state
     synchronization.
     """
 
