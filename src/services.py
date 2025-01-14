@@ -22,7 +22,12 @@ class QuantumServices:
     fractional NFTs, and cryptographic backends dynamically via BackendSelector.
     """
 
-    def __init__(self, blockchain: Blockchain, state_manager: StateManager, config_file: str = "config.yaml"):
+    def __init__(
+        self, 
+        blockchain: Blockchain, 
+        state_manager: StateManager, 
+        config_file: str = "config.yaml"
+    ):
         # Load backend configuration
         self.backend_selector = BackendSelector(config_file=config_file)
         self.pqc_backend = self.backend_selector.get_pqc_backend()
@@ -37,7 +42,9 @@ class QuantumServices:
 
         # Initialize other services
         self.teleportation = QuantumTeleportation()
-        self.onramper = QFCOnramper(self.blockchain, analytics=None, compliance=None)
+        self.onramper = QFCOnramper(
+            self.blockchain, analytics=None, compliance=None
+        )
         self.nft_marketplace = NFTMarketplace(self.blockchain)
         self.optimizer = QuantumAIOptimizer()
         self.qkd_manager = QKDManager()
@@ -55,7 +62,9 @@ class QuantumServices:
                 await asyncio.sleep(1)
                 continue
 
-            logger.info(f"Processing {len(pending_transactions)} transactions in Shard {shard_id}...")
+            logger.info(
+                f"Processing {len(pending_transactions)} transactions in Shard {shard_id}..."
+            )
             tx_details = [
                 {
                     "transaction_id": tx.calculate_hash(),
@@ -73,7 +82,8 @@ class QuantumServices:
                     self.process_transaction(tx)
                 else:
                     logger.info(
-                        f"Reassigning transaction {tx.calculate_hash()} to Shard {target_shard_id}."
+                        f"Reassigning transaction {tx.calculate_hash()} "
+                        f"to Shard {target_shard_id}."
                     )
                     self.blockchain.shards[target_shard_id].add_transaction(tx)
                     self.optimizer.update_shard_load(target_shard_id, 0.1)
@@ -90,22 +100,31 @@ class QuantumServices:
         recipient_wallet = self.state_manager.get_wallet(transaction.recipient)
 
         if not sender_wallet or not recipient_wallet:
-            logger.error(f"Invalid wallets: Sender ({transaction.sender}) or Recipient ({transaction.recipient}).")
+            logger.error(
+                f"Invalid wallets: Sender ({transaction.sender}) "
+                f"or Recipient ({transaction.recipient})."
+            )
             return
 
         if not sender_wallet.verify_transaction(transaction):
-            logger.error(f"Invalid transaction signature for {transaction.calculate_hash()}.")
+            logger.error(
+                f"Invalid transaction signature for {transaction.calculate_hash()}."
+            )
             return
 
         if sender_wallet.staked_amount < transaction.amount:
-            logger.error(f"Insufficient balance for transaction: {transaction.sender}.")
+            logger.error(
+                f"Insufficient balance for transaction: {transaction.sender}."
+            )
             return
 
         # Update balances
         sender_wallet.staked_amount -= transaction.amount
         recipient_wallet.staked_amount += transaction.amount - transaction.fee
         self.state_manager.update_balance(transaction.sender, -transaction.amount)
-        self.state_manager.update_balance(transaction.recipient, transaction.amount - transaction.fee)
+        self.state_manager.update_balance(
+            transaction.recipient, transaction.amount - transaction.fee
+        )
 
         # Quantum Key Teleportation
         try:
@@ -115,7 +134,8 @@ class QuantumServices:
             return
 
         logger.info(
-            f"Transaction processed: {transaction.sender} -> {transaction.recipient} ({transaction.amount} QFC)."
+            f"Transaction processed: {transaction.sender} -> "
+            f"{transaction.recipient} ({transaction.amount} QFC)."
         )
 
     def register_oracle(self, name: str, fetch_data_fn: Callable[[], Dict[str, Any]]):
@@ -131,17 +151,25 @@ class QuantumServices:
         """
         Create a new quantum smart contract.
         """
-        contract = self.blockchain.create_quantum_smart_contract(contract_id, states, creator, conditions)
+        contract = self.blockchain.create_quantum_smart_contract(
+            contract_id, states, creator, conditions
+        )
         logger.info(f"Quantum smart contract {contract_id} created by {creator}.")
         return contract
 
-    def create_fractional_nft(self, data_id: str, owner: str, metadata: Dict[str, Any], total_units: int):
+    def create_fractional_nft(
+        self, data_id: str, owner: str, metadata: Dict[str, Any], total_units: int
+    ):
         """
         Create a fractional NFT with metadata.
         """
         try:
-            self.nft_marketplace.create_fractional_nft(data_id, owner, metadata, total_units)
-            logger.info(f"Fractional NFT {data_id} created by {owner} with {total_units} units.")
+            self.nft_marketplace.create_fractional_nft(
+                data_id, owner, metadata, total_units
+            )
+            logger.info(
+                f"Fractional NFT {data_id} created by {owner} with {total_units} units."
+            )
         except ValueError as e:
             logger.error(f"Failed to create fractional NFT {data_id}: {e}.")
 
@@ -152,7 +180,9 @@ class QuantumServices:
         return {
             "qkd_teleportation_success": self.qkd_manager.teleportation.success_count,
             "qkd_teleportation_failures": self.qkd_manager.teleportation.failure_count,
-            "shard_utilization": {shard.shard_id: shard.utilization() for shard in self.blockchain.shards},
+            "shard_utilization": {
+                shard.shard_id: shard.utilization() for shard in self.blockchain.shards
+            },
         }
 
 
