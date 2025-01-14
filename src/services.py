@@ -42,9 +42,7 @@ class QuantumServices:
 
         # Initialize other services
         self.teleportation = QuantumTeleportation()
-        self.onramper = QFCOnramper(
-            self.blockchain, analytics=None, compliance=None
-        )
+        self.onramper = QFCOnramper(self.blockchain, analytics=None, compliance=None)
         self.nft_marketplace = NFTMarketplace(self.blockchain)
         self.optimizer = QuantumAIOptimizer()
         self.qkd_manager = QKDManager()
