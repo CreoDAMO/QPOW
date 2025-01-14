@@ -1,17 +1,9 @@
-from src.core import Blockchain, StateManager
-from src.services import QuantumServices
-from src.quantum_bridge import QuantumBridge
 from src.quantum_smart_contract import QuantumSmartContract
-from src.quantum_node import QuantumNode, PeerManager, TransactionPropagator, ConsensusManager
-from src.quantum_resource_manager import QuantumResourceManager
-from src.quantum_secure_manager import QuantumSecureManager
 from src.quantum_interface import QuantumInterface, get_quantum_adapter
 from src.app import app
 
 import asyncio
 import threading
-from hypercorn.asyncio import serve
-from hypercorn.config import Config
 
 
 # -------------------- Initialize Quantum Backend --------------------
@@ -47,13 +39,8 @@ def initialize_smart_contracts(adapter: QuantumInterface):
 
 # -------------------- Setup Flask App --------------------
 def setup_app(
-    blockchain,
-    state_manager,
-    quantum_services,
-    quantum_bridge,
-    smart_contracts,
-    quantum_resource_manager,
-    quantum_secure_manager,
+    blockchain, state_manager, quantum_services, quantum_bridge, 
+    smart_contracts, quantum_resource_manager, quantum_secure_manager
 ):
     """
     Set up the Flask app with initialized components.
@@ -68,6 +55,59 @@ def setup_app(
 
 
 # -------------------- Main Integration --------------------
+def initialize_blockchain():
+    """Placeholder for initializing the blockchain."""
+    from src.core import Blockchain, StateManager
+    blockchain = Blockchain()
+    state_manager = StateManager()
+    return blockchain, state_manager
+
+
+def initialize_quantum_services(blockchain, state_manager):
+    """Placeholder for initializing quantum services."""
+    from src.services import QuantumServices
+    return QuantumServices(blockchain, state_manager)
+
+
+def initialize_quantum_bridge():
+    """Placeholder for initializing the quantum bridge."""
+    from src.quantum_bridge import QuantumBridge
+    return QuantumBridge()
+
+
+def initialize_quantum_node():
+    """Placeholder for initializing the quantum node."""
+    from src.quantum_node import QuantumNode
+    return QuantumNode()
+
+
+def initialize_quantum_resource_manager():
+    """Placeholder for initializing the quantum resource manager."""
+    from src.quantum_resource_manager import QuantumResourceManager
+    return QuantumResourceManager()
+
+
+def initialize_quantum_secure_manager():
+    """Placeholder for initializing the quantum secure manager."""
+    from src.quantum_secure_manager import QuantumSecureManager
+    return QuantumSecureManager()
+
+
+def run_app():
+    """Run the Flask application."""
+    from hypercorn.asyncio import serve
+    from hypercorn.config import Config
+
+    config = Config()
+    config.bind = ["0.0.0.0:8000"]
+    asyncio.run(serve(app, config))
+
+
+def run_node(node):
+    """Run the Quantum Node."""
+    node.run()
+
+
 if __name__ == "__main__":
     # Initialize components
     blockchain, state_manager = initialize_blockchain()
