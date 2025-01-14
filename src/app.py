@@ -10,13 +10,16 @@ import time
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
+
 # -------------------- Initialize Flask App --------------------
 app = Flask(__name__)
 CORS(app)
 
+
 # -------------------- Load Configuration --------------------
 DEBUG_MODE = os.getenv("FLASK_DEBUG", "False").lower() in ["true", "1", "t"]
 API_KEY = os.getenv("API_KEY", "default-api-key")
+
 
 # -------------------- Core Components --------------------
 blockchain = Blockchain(num_shards=3, difficulty=4, total_supply=1_000_000)
@@ -25,8 +28,8 @@ onramper = QFCOnramper(blockchain, analytics=None, compliance=None)
 qkd_manager = QKDManager()
 quantum_ai_optimizer = QuantumAIOptimizer()
 
-# -------------------- Helper Functions --------------------
 
+# -------------------- Helper Functions --------------------
 def validate_request(data, required_fields):
     """
     Validate that the required fields exist in the request data.
@@ -36,8 +39,8 @@ def validate_request(data, required_fields):
             logger.error(f"Missing required field: {field}")
             abort(400, description=f"Missing required field: {field}")
 
-# -------------------- Middleware --------------------
 
+# -------------------- Middleware --------------------
 @app.before_request
 def check_api_key():
     """
@@ -49,8 +52,8 @@ def check_api_key():
             logger.warning("Unauthorized access attempt detected.")
             abort(401, description="Unauthorized")
 
-# -------------------- API Routes --------------------
 
+# -------------------- API Routes --------------------
 @app.route("/v1/nft/teleport", methods=["POST"])
 def teleport_nft():
     """
