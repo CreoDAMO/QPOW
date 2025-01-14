@@ -1,4 +1,3 @@
-from qiskit import QuantumCircuit, Aer, execute
 from pqcrypto.sign.dilithium2 import sign, verify
 from quantum_bridge_wrapper import QuantumBridgeWrapper
 import json
@@ -8,22 +7,24 @@ from typing import Callable, Dict, List, Any
 
 class QuantumSmartContract:
     """
-    Expanded Quantum Smart Contract to address real-world use cases such as
-    quantum-secured communication, resource allocation, AI-driven decision-making,
-    and quantum sensor integration.
+    Quantum Smart Contract with features for quantum-secured communication,
+    resource allocation, and AI-driven decision-making.
     """
 
-    def __init__(self, contract_id: str, states: List[str], creator: str, quantum_backend: str = "qiskit"):
+    def __init__(
+        self, contract_id: str, states: List[str], creator: str, 
+        quantum_backend: str = "qiskit"
+    ):
         self.contract_id = contract_id
         self.states = states
         self.current_state = states[0]
         self.creator = creator
         self.participants: List[str] = []
-        self.did_links: Dict[str, str] = {}  # Maps participant addresses to DIDs
-        self.conditions: Dict[tuple, Callable] = {}  # State transition conditions
-        self.history: List[Dict[str, Any]] = []  # Logs state transitions
-        self.oracles: Dict[str, Callable] = {}  # Registered oracles
-        self.signature = None  # Digital signature for contract verification
+        self.did_links: Dict[str, str] = {}
+        self.conditions: Dict[tuple, Callable] = {}
+        self.history: List[Dict[str, Any]] = []
+        self.oracles: Dict[str, Callable] = {}
+        self.signature = None
         self.quantum_bridge = QuantumBridgeWrapper(backend=quantum_backend)
         self.entangled_qubits = None
         self.resources: Dict[str, Any] = {}
@@ -43,19 +44,21 @@ class QuantumSmartContract:
         """Register an oracle to fetch external data."""
         self.oracles[name] = fetch_data_fn
 
-    def transition_state_with_oracle(self, oracle_name: str, from_state: str, to_state: str):
+    def transition_state_with_oracle(
+        self, oracle_name: str, from_state: str, to_state: str
+    ):
         """Transition the contract state using oracle data."""
         if oracle_name not in self.oracles:
             raise ValueError(f"Oracle {oracle_name} is not registered.")
         data = self.oracles[oracle_name]()
         condition_fn = self.conditions.get((from_state, to_state))
         if not condition_fn:
-            raise ValueError(f"No condition defined for state transition from {from_state} to {to_state}.")
+            raise ValueError(f"No condition for transition from {from_state} to {to_state}.")
         if condition_fn(data):
             self.current_state = to_state
             self.history.append({
-                "from": from_state, "to": to_state, "timestamp": time.time(),
-                "oracle": oracle_name
+                "from": from_state, "to": to_state, 
+                "timestamp": time.time(), "oracle": oracle_name
             })
         else:
             raise ValueError("Condition not met for state transition.")
@@ -85,12 +88,18 @@ class QuantumSmartContract:
         return True
 
     def allocate_resources(self, task_id: str, resource_type: str, amount: int):
-        """Allocate resources such as quantum computing or sensor bandwidth."""
+        """Allocate resources like quantum computing or sensor bandwidth."""
         if task_id in self.resources:
             raise ValueError(f"Task {task_id} already has resources allocated.")
-        self.resources[task_id] = {"type": resource_type, "amount": amount, "timestamp": time.time()}
+        self.resources[task_id] = {
+            "type": resource_type, 
+            "amount": amount, 
+            "timestamp": time.time()
+        }
         self.history.append({
-            "event": "resource_allocation", "task_id": task_id, "details": self.resources[task_id]
+            "event": "resource_allocation", 
+            "task_id": task_id, 
+            "details": self.resources[task_id]
         })
         return f"Allocated {amount} units of {resource_type} for task {task_id}."
 
