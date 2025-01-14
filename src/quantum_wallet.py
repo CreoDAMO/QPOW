@@ -46,7 +46,9 @@ class QuantumWallet:
             "signature": signature.hex(),
         }
 
-    def verify_transaction(self, tx_data: bytes, signature: bytes, public_key: bytes) -> bool:
+    def verify_transaction(
+        self, tx_data: bytes, signature: bytes, public_key: bytes
+    ) -> bool:
         """Verify transaction using the selected PQC backend."""
         try:
             return self.pqc.verify(tx_data, signature, public_key)
@@ -57,7 +59,10 @@ class QuantumWallet:
     def notify_transaction(self, message: str):
         """Send a notification about a transaction."""
         notification = messaging.Message(
-            notification=messaging.Notification(title="Quantum Wallet", body=message),
+            notification=messaging.Notification(
+                title="Quantum Wallet", 
+                body=message
+            ),
             topic=self.user_id,
         )
         try:
