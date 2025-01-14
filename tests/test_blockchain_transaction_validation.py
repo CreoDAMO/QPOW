@@ -1,4 +1,6 @@
+import unittest
 from src.core import Blockchain, StateManager
+
 
 class TestBlockchain(unittest.TestCase):
     def setUp(self):
