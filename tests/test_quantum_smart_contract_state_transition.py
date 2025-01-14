@@ -1,17 +1,16 @@
 import unittest
 from src.quantum_smart_contract import QuantumSmartContract
 
+
 class TestQuantumSmartContract(unittest.TestCase):
     def setUp(self):
         self.contract = QuantumSmartContract(
             contract_id="test_contract",
             states=["CREATED", "ACTIVE", "COMPLETED"],
-            creator="did:qfc:creator_public_key"
+            creator="did:qfc:creator_public_key",
         )
         self.contract.set_condition(
-            "CREATED",
-            "ACTIVE",
-            lambda data: data.get("price") > 500
+            "CREATED", "ACTIVE", lambda data: data.get("price") > 500
         )
 
     def test_state_transition(self):
