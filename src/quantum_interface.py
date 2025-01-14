@@ -1,5 +1,6 @@
-# Define an extended QuantumInterface
 class QuantumInterface:
+    """Define a quantum interface for creating and validating entanglements."""
+
     def create_entanglement(self, *args, **kwargs):
         raise NotImplementedError
 
@@ -11,8 +12,10 @@ class QuantumInterface:
         """Generate a Decentralized Identifier (DID) using quantum properties."""
         raise NotImplementedError
 
-# Adapter for a specific quantum library (quantum_lib)
+
 class QuantumLibAdapter(QuantumInterface):
+    """Adapter for a specific quantum library (quantum_lib)."""
+
     def __init__(self, library):
         self.library = library
 
@@ -25,8 +28,10 @@ class QuantumLibAdapter(QuantumInterface):
     def generate_did(self, *args, **kwargs):
         return self.library.generate_did(*args, **kwargs)
 
-# Adapter for Qiskit
+
 class QiskitAdapter(QuantumInterface):
+    """Adapter for the Qiskit quantum computing framework."""
+
     def __init__(self):
         from qiskit import QuantumCircuit, execute, Aer
         self.QuantumCircuit = QuantumCircuit
@@ -44,18 +49,18 @@ class QiskitAdapter(QuantumInterface):
 
     def validate_entanglement(self, entangled_state, *args, **kwargs):
         """Simulate a validation of the entangled state."""
-        # This is a placeholder for a real validation logic
-        return abs(sum(abs(amplitude)**2 for amplitude in entangled_state) - 1.0) < 1e-9
+        return abs(sum(abs(amplitude) ** 2 for amplitude in entangled_state) - 1.0) < 1e-9
 
     def generate_did(self, *args, **kwargs):
         """Generate a mock Decentralized Identifier."""
         import uuid
         return f"did:qfc:{uuid.uuid4()}"
 
-# Example Usage of Dynamic Loading
+
 def get_quantum_adapter(backend: str) -> QuantumInterface:
+    """Retrieve the appropriate quantum adapter for the specified backend."""
     if backend == "quantum_lib":
-        import quantum_lib  # Replace with real import path
+        import quantum_lib
         return QuantumLibAdapter(quantum_lib)
     elif backend == "qiskit":
         return QiskitAdapter()
