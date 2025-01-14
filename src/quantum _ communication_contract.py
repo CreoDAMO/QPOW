@@ -3,6 +3,7 @@ from quantum_bridge_wrapper import QuantumBridgeWrapper
 import time
 from typing import Dict, List
 
+
 class QuantumCommunicationContract:
     def __init__(self, contract_id: str, creator: str, quantum_backend: str = "qiskit"):
         self.contract_id = contract_id
@@ -43,7 +44,8 @@ class QuantumCommunicationContract:
             "recipient": recipient,
             "timestamp": time.time()
         })
-        return f"Key distributed between {sender} and {recipient}"
+        return f"Key distributed between {sender} 
+        and {recipient}"
 
     def verify_signature(self, message: bytes, signature: bytes, public_key: bytes) -> bool:
         try:
