@@ -12,8 +12,11 @@ class QuantumRandomOracleContract:
     def __init__(self, contract_id: str, creator: str):
         self.contract_id = contract_id
         self.creator = creator
-        self.authorized_users: Dict[str, bytes] = {}  # Mapping of user addresses to public keys
-        self.request_history: Dict[str, Dict[str, Any]] = {}  # Mapping of request IDs to request details
+        # Mapping of user addresses to public keys
+        self.authorized_users: Dict[str, bytes] = {}
+        # Mapping of request IDs to request details
+        self.request_history: Dict[str, Dict[str, Any]] = {}
+        
         self.quantum_resource_manager = QuantumResourceManager()
         self.quantum_secure_manager = QuantumSecureManager()
         self.quantum_simulator = QuantumSimulator()
@@ -30,11 +33,15 @@ class QuantumRandomOracleContract:
     def generate_random_number(self, user_address: str) -> bytes:
         """Generate a quantum-powered random number."""
         if user_address not in self.authorized_users:
-            raise ValueError(f"User {user_address} is not authorized to access the Random Oracle.")
+            raise ValueError(
+                f"User {user_address} is not authorized to access the Random Oracle."
+            )
 
         # Allocate quantum resources for random number generation
         resource_id = self.quantum_resource_manager.allocate_resources(
-            "random_number_generation", "quantum_simulator", 1
+            "random_number_generation",
+            "quantum_simulator",
+            1
         )
 
         # Generate the random number using the quantum simulator
@@ -42,8 +49,11 @@ class QuantumRandomOracleContract:
 
         # Record the request details
         request_id = self.quantum_storage.store_request_details(
-            user_address, random_number, resource_id
+            user_address,
+            random_number,
+            resource_id
         )
+        
         self.request_history[request_id] = {
             "user": user_address,
             "random_number": random_number,
@@ -51,7 +61,6 @@ class QuantumRandomOracleContract:
             "timestamp": self.quantum_storage.get_current_timestamp()
         }
 
-        # Return the random number
         return random_number
 
     def verify_random_number(self, request_id: str, signature: bytes) -> bool:
@@ -64,10 +73,11 @@ class QuantumRandomOracleContract:
         public_key = self.authorized_users[user_address]
 
         # Construct the data to be verified
-        data = f"{request_id}:{request_details['random_number']}:" \
-               f"{request_details['timestamp']}".encode()
+        data = (
+            f"{request_id}:{request_details['random_number']}:"
+            f"{request_details['timestamp']}"
+        ).encode()
 
-        # Verify the signature using the user's public key
         return verify(data, signature, public_key)
 
     def sign_random_number_request(self, request_id: str, private_key: bytes) -> bytes:
@@ -76,8 +86,11 @@ class QuantumRandomOracleContract:
             raise ValueError(f"Request {request_id} not found in the history.")
 
         request_details = self.request_history[request_id]
-        data = f"{request_id}:{request_details['random_number']}:" \
-               f"{request_details['timestamp']}".encode()
+        data = (
+            f"{request_id}:{request_details['random_number']}:"
+            f"{request_details['timestamp']}"
+        ).encode()
+        
         return sign(data, private_key)
 
     def get_contract_details(self) -> Dict[str, Any]:
