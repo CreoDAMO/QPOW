@@ -16,7 +16,6 @@ class QuantumRandomOracleContract:
         self.authorized_users: Dict[str, bytes] = {}
         # Mapping of request IDs to request details
         self.request_history: Dict[str, Dict[str, Any]] = {}
-        
         self.quantum_resource_manager = QuantumResourceManager()
         self.quantum_secure_manager = QuantumSecureManager()
         self.quantum_simulator = QuantumSimulator()
