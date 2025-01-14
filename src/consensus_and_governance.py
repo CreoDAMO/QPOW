@@ -1,4 +1,4 @@
-from typing import Dict  # Removed unused List, Callable
+from typing import Dict
 import logging
 from src.quantum_wallet import QuantumWallet
 from src.state_manager import StateManager
@@ -10,7 +10,6 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s: %(mes
 logger = logging.getLogger(__name__)
 
 
-# -------------------- QuantumFuse Coin --------------------
 class QuantumFuseCoin:
     """Manage QFC supply and distribution."""
 
@@ -36,7 +35,6 @@ class QuantumFuseCoin:
         }
 
 
-# -------------------- Consensus Algorithms --------------------
 class QuantumProofOfStake:
     """Quantum Proof-of-Stake (QPoS) system."""
 
@@ -60,7 +58,6 @@ class QuantumProofOfStake:
         return self.validators[selected]
 
 
-# -------------------- Green Proof-of-Work (GPoW) --------------------
 class GreenProofOfWork:
     """GPoW system with renewable energy rewards."""
 
@@ -80,7 +77,6 @@ class GreenProofOfWork:
         }
 
 
-# -------------------- Hybrid Consensus System --------------------
 class HybridConsensus:
     """Hybrid model using QPoS, QDPoS, and GPoW."""
 
