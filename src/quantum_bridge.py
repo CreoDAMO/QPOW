@@ -43,7 +43,8 @@ class HashTimeLockedContract:
 # -------------------- Quantum Bridge --------------------
 class QuantumBridge:
     """
-    The Quantum Bridge facilitates cross-chain asset transfers and state synchronization.
+    The Quantum Bridge facilitates cross-chain asset transfers and state 
+    synchronization.
     """
 
     def __init__(self, quantum_bridge_wrapper: QuantumBridgeWrapper):
@@ -94,7 +95,7 @@ def create_entanglement():
             abort(400, description=f"Missing required field: {field}")
 
     entanglement_id = bridge.create_entanglement(
-        data["chain_a"], 
+        data["chain_a"],
         data["chain_b"]
     )
     return jsonify({"success": True, "entanglement_id": entanglement_id})
