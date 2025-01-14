@@ -1,13 +1,13 @@
 from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
 from src.services import QFCOnramper, NFTMarketplace, QKDManager, QuantumAIOptimizer
-from src.core import Blockchain, Transaction
+from src.core import Blockchain
 import logging
 import os
 import time
 
 # -------------------- Configure Logging --------------------
-logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s: %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 # -------------------- Initialize Flask App --------------------
@@ -15,8 +15,8 @@ app = Flask(__name__)
 CORS(app)
 
 # -------------------- Load Configuration --------------------
-DEBUG_MODE = os.getenv('FLASK_DEBUG', 'False').lower() in ['true', '1', 't']
-API_KEY = os.getenv('API_KEY', 'default-api-key')
+DEBUG_MODE = os.getenv("FLASK_DEBUG", "False").lower() in ["true", "1", "t"]
+API_KEY = os.getenv("API_KEY", "default-api-key")
 
 # -------------------- Core Components --------------------
 blockchain = Blockchain(num_shards=3, difficulty=4, total_supply=1_000_000)
@@ -25,8 +25,8 @@ onramper = QFCOnramper(blockchain, analytics=None, compliance=None)
 qkd_manager = QKDManager()
 quantum_ai_optimizer = QuantumAIOptimizer()
 
-
 # -------------------- Helper Functions --------------------
+
 
 def validate_request(data, required_fields):
     """
@@ -43,8 +43,8 @@ def check_api_key():
     """
     Middleware to check API key for secure routes.
     """
-    if request.endpoint not in ['health_check']:
-        api_key = request.headers.get('X-API-KEY')
+    if request.endpoint not in ["health_check"]:
+        api_key = request.headers.get("X-API-KEY")
         if api_key != API_KEY:
             logger.warning("Unauthorized access attempt detected.")
             abort(401, description="Unauthorized")
@@ -52,7 +52,7 @@ def check_api_key():
 
 # -------------------- API Routes --------------------
 
-@app.route('/v1/nft/teleport', methods=['POST'])
+@app.route("/v1/nft/teleport", methods=["POST"])
 def teleport_nft():
     """
     Teleport an NFT from one user to another.
@@ -60,15 +60,24 @@ def teleport_nft():
     data = request.json
     validate_request(data, ["token_id", "sender", "recipient"])
     try:
-        nft_marketplace.teleport_nft(data["token_id"], data["sender"], data["recipient"])
-        logger.info(f"NFT {data['token_id']} teleported from {data['sender']} to {data['recipient']}.")
+        nft_marketplace.teleport_nft(
+            data["token_id"], data["sender"], data["recipient"]
+        )
+        logger.info(
+            f"NFT {data['token_id']} teleported from {data['sender']} to {data['recipient']}."
+        )
         return jsonify({"success": True, "message": "NFT teleported successfully."})
     except ValueError as e:
         logger.error(f"Error in teleport_nft: {str(e)}")
-        return jsonify({"success": False, "error": "An error occurred while processing your request."}), 400
+        return (
+            jsonify(
+                {"success": False, "error": "An error occurred while processing your request."}
+            ),
+            400,
+        )
 
 
-@app.route('/v1/onramp/buy', methods=['POST'])
+@app.route("/v1/onramp/buy", methods=["POST"])
 def buy_qfc():
     """
     Buy QFC tokens using fiat currency.
@@ -77,14 +86,23 @@ def buy_qfc():
     validate_request(data, ["user", "fiat_amount", "currency"])
     try:
         onramper.buy_qfc(data["user"], data["fiat_amount"], data["currency"])
-        logger.info(f"User {data['user']} bought {data['fiat_amount']} {data['currency']} worth of QFC.")
-        return jsonify({"success": True, "message": "Fiat converted to QFC successfully."})
+        logger.info(
+            f"User {data['user']} bought {data['fiat_amount']} {data['currency']} worth of QFC."
+        )
+        return jsonify(
+            {"success": True, "message": "Fiat converted to QFC successfully."}
+        )
     except ValueError as e:
         logger.error(f"Error in buy_qfc: {str(e)}")
-        return jsonify({"success": False, "error": "An error occurred while processing your request."}), 400
+        return (
+            jsonify(
+                {"success": False, "error": "An error occurred while processing your request."}
+            ),
+            400,
+        )
 
 
-@app.route('/v1/qkd/distribute', methods=['POST'])
+@app.route("/v1/qkd/distribute", methods=["POST"])
 def distribute_qkd_key():
     """
     Distribute a QKD key between two users.
@@ -93,14 +111,23 @@ def distribute_qkd_key():
     validate_request(data, ["sender", "recipient"])
     try:
         key = qkd_manager.distribute_key(data["sender"], data["recipient"])
-        logger.info(f"QKD key distributed between {data['sender']} and {data['recipient']}.")
-        return jsonify({"success": True, "message": f"QKD key distributed: {key}"})
+        logger.info(
+            f"QKD key distributed between {data['sender']} and {data['recipient']}."
+        )
+        return jsonify(
+            {"success": True, "message": f"QKD key distributed: {key}"}
+        )
     except ValueError as e:
         logger.error(f"Error in distribute_qkd_key: {str(e)}")
-        return jsonify({"success": False, "error": "An error occurred while distributing the QKD key."}), 400
+        return (
+            jsonify(
+                {"success": False, "error": "An error occurred while distributing the QKD key."}
+            ),
+            400,
+        )
 
 
-@app.route('/v1/qkd/teleport', methods=['POST'])
+@app.route("/v1/qkd/teleport", methods=["POST"])
 def teleport_qkd_key():
     """
     Teleport a QKD key using quantum teleportation.
@@ -109,14 +136,21 @@ def teleport_qkd_key():
     validate_request(data, ["sender", "recipient"])
     try:
         qkd_manager.teleport_qkd_key(data["sender"], data["recipient"])
-        logger.info(f"QKD key teleported between {data['sender']} and {data['recipient']}.")
+        logger.info(
+            f"QKD key teleported between {data['sender']} and {data['recipient']}."
+        )
         return jsonify({"success": True, "message": "QKD key teleported successfully."})
     except ValueError as e:
         logger.error(f"Error in teleport_qkd_key: {str(e)}")
-        return jsonify({"success": False, "error": "An error occurred while teleporting the QKD key."}), 400
+        return (
+            jsonify(
+                {"success": False, "error": "An error occurred while teleporting the QKD key."}
+            ),
+            400,
+        )
 
 
-@app.route('/v1/shard/optimize', methods=['POST'])
+@app.route("/v1/shard/optimize", methods=["POST"])
 def optimize_shard_allocation():
     """
     Optimize shard allocation for a set of transactions.
@@ -124,15 +158,22 @@ def optimize_shard_allocation():
     data = request.json
     validate_request(data, ["transaction_details"])
     try:
-        shard_allocations = quantum_ai_optimizer.optimize_shard_allocation(data["transaction_details"])
+        shard_allocations = quantum_ai_optimizer.optimize_shard_allocation(
+            data["transaction_details"]
+        )
         logger.info(f"Shard allocations: {shard_allocations}")
         return jsonify({"success": True, "shard_allocations": shard_allocations})
     except ValueError as e:
         logger.error(f"Error in optimize_shard_allocation: {str(e)}")
-        return jsonify({"success": False, "error": "An error occurred while optimizing shard allocation."}), 400
+        return (
+            jsonify(
+                {"success": False, "error": "An error occurred while optimizing shard allocation."}
+            ),
+            400,
+        )
 
 
-@app.route('/v1/health', methods=['GET'])
+@app.route("/v1/health", methods=["GET"])
 def health_check():
     """
     Health check endpoint.
@@ -179,6 +220,6 @@ def handle_internal_server_error(error):
 
 
 # -------------------- Main Function --------------------
-if __name__ == '__main__':
+if __name__ == "__main__":
     logger.info("Starting the QuantumFuse Flask app...")
     app.run(debug=DEBUG_MODE, host="0.0.0.0", port=5000)
