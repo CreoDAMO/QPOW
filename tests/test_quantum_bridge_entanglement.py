@@ -1,4 +1,6 @@
+import unittest
 from src.quantum_bridge_wrapper import QuantumBridgeWrapper
+
 
 class TestQuantumBridge(unittest.TestCase):
     def setUp(self):
