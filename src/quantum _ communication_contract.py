@@ -43,8 +43,7 @@ class QuantumCommunicationContract:
             "recipient": recipient,
             "timestamp": time.time()
         })
-        return f"Key distributed between {sender} and 
-        {recipient}"
+        return f"Key distributed between {sender} and {recipient}"
 
     def verify_signature(self, message: bytes, signature: bytes, public_key: bytes) -> bool:
         try:
