@@ -39,7 +39,7 @@ def initialize_smart_contracts(adapter: QuantumInterface):
 
 # -------------------- Setup Flask App --------------------
 def setup_app(
-    blockchain, state_manager, quantum_services, quantum_bridge, 
+    blockchain, state_manager, quantum_services, quantum_bridge,
     smart_contracts, quantum_resource_manager, quantum_secure_manager
 ):
     """
