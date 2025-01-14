@@ -1,18 +1,18 @@
 import asyncio
 import logging
-from typing import Callable, Dict, Any, List
+from typing import Callable, Dict, Any
 from quantum_lib.teleportation import QuantumTeleportation
-from backend_selector import BackendSelector  # BackendSelector for dynamic backend selection
-from pqc_wrapper import PQCWrapper  # Wrapper for dynamic cryptographic operations
-from quantum_bridge_wrapper import QuantumBridgeWrapper  # Wrapper for dynamic quantum operations
-from .core import Blockchain, StateManager, Wallet, Transaction
+from backend_selector import BackendSelector
+from pqc_wrapper import PQCWrapper
+from quantum_bridge_wrapper import QuantumBridgeWrapper
+from .core import Blockchain, StateManager, Transaction
 from .onramper import QFCOnramper
 from .nft_marketplace import NFTMarketplace
 from .optimizer import QuantumAIOptimizer
 from .qkd_manager import QKDManager
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -21,13 +21,14 @@ class QuantumServices:
     QuantumServices manages core blockchain services, quantum teleportation,
     fractional NFTs, and cryptographic backends dynamically via BackendSelector.
     """
+
     def __init__(self, blockchain: Blockchain, state_manager: StateManager, config_file: str = "config.yaml"):
         # Load backend configuration
         self.backend_selector = BackendSelector(config_file=config_file)
-        self.pqc_backend = self.backend_selector.get_pqc_backend()  # Get cryptographic backend
-        self.quantum_backend = self.backend_selector.get_quantum_backend()  # Get quantum backend
+        self.pqc_backend = self.backend_selector.get_pqc_backend()
+        self.quantum_backend = self.backend_selector.get_quantum_backend()
 
-        # Initialize wrappers for PQC and quantum operations
+        # Initialize wrappers
         self.pqc_wrapper = PQCWrapper(backend=self.pqc_backend)
         self.quantum_bridge_wrapper = QuantumBridgeWrapper(backend=self.quantum_backend)
 
@@ -42,6 +43,9 @@ class QuantumServices:
         self.qkd_manager = QKDManager()
 
     async def process_transactions(self, shard_id: int):
+        """
+        Process transactions in a specific shard, reallocating as needed.
+        """
         shard = self.blockchain.shards[shard_id]
         while True:
             pending_transactions = shard.pending_transactions
@@ -68,7 +72,9 @@ class QuantumServices:
                 if shard.shard_id == target_shard_id:
                     self.process_transaction(tx)
                 else:
-                    logger.info(f"Reassigning transaction {tx.calculate_hash()} to Shard {target_shard_id}.")
+                    logger.info(
+                        f"Reassigning transaction {tx.calculate_hash()} to Shard {target_shard_id}."
+                    )
                     self.blockchain.shards[target_shard_id].add_transaction(tx)
                     self.optimizer.update_shard_load(target_shard_id, 0.1)
 
@@ -77,6 +83,9 @@ class QuantumServices:
             logger.info(f"Transactions in Shard {shard_id} processed and saved.")
 
     def process_transaction(self, transaction: Transaction):
+        """
+        Process an individual transaction and update balances.
+        """
         sender_wallet = self.state_manager.get_wallet(transaction.sender)
         recipient_wallet = self.state_manager.get_wallet(transaction.recipient)
 
@@ -105,41 +114,41 @@ class QuantumServices:
             logger.error(f"QKD teleportation failed: {e}")
             return
 
-        logger.info(f"Transaction processed: {transaction.sender} -> {transaction.recipient} ({transaction.amount} QFC).")
+        logger.info(
+            f"Transaction processed: {transaction.sender} -> {transaction.recipient} ({transaction.amount} QFC)."
+        )
 
     def register_oracle(self, name: str, fetch_data_fn: Callable[[], Dict[str, Any]]):
+        """
+        Register an oracle for use in the blockchain.
+        """
         self.blockchain.register_oracle(name, fetch_data_fn)
         logger.info(f"Oracle {name} registered successfully.")
 
-    def create_quantum_smart_contract(self, contract_id: str, states: list, creator: str, conditions: Dict[str, Callable]):
+    def create_quantum_smart_contract(
+        self, contract_id: str, states: list, creator: str, conditions: Dict[str, Callable]
+    ):
+        """
+        Create a new quantum smart contract.
+        """
         contract = self.blockchain.create_quantum_smart_contract(contract_id, states, creator, conditions)
         logger.info(f"Quantum smart contract {contract_id} created by {creator}.")
         return contract
 
-    def execute_quantum_smart_contract(self, contract_id: str, from_state: str, to_state: str, oracle_name: str):
-        contract = self.blockchain.get_quantum_smart_contract(contract_id)
-        if not contract:
-            logger.error(f"Smart contract {contract_id} not found.")
-            return
-
-        contract.transition_state_with_oracle(oracle_name, from_state, to_state)
-        logger.info(f"Smart contract {contract_id} transitioned from {from_state} to {to_state} using Oracle {oracle_name}.")
-
     def create_fractional_nft(self, data_id: str, owner: str, metadata: Dict[str, Any], total_units: int):
+        """
+        Create a fractional NFT with metadata.
+        """
         try:
             self.nft_marketplace.create_fractional_nft(data_id, owner, metadata, total_units)
             logger.info(f"Fractional NFT {data_id} created by {owner} with {total_units} units.")
         except ValueError as e:
             logger.error(f"Failed to create fractional NFT {data_id}: {e}.")
 
-    def teleport_nft(self, token_id: str, sender: str, recipient: str):
-        try:
-            self.nft_marketplace.teleport_nft(token_id, sender, recipient)
-            logger.info(f"NFT {token_id} teleported from {sender} to {recipient}.")
-        except ValueError as e:
-            logger.error(f"Failed to teleport NFT {token_id}: {e}.")
-
     def generate_teleportation_metrics(self) -> Dict[str, Any]:
+        """
+        Generate metrics for quantum teleportation and shard utilization.
+        """
         return {
             "qkd_teleportation_success": self.qkd_manager.teleportation.success_count,
             "qkd_teleportation_failures": self.qkd_manager.teleportation.failure_count,
