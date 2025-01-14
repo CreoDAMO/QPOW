@@ -93,7 +93,9 @@ def create_entanglement():
         if field not in data:
             abort(400, description=f"Missing required field: {field}")
 
-    entanglement_id = bridge.create_entanglement(data["chain_a"], data["chain_b"])
+    entanglement_id = bridge.create_entanglement(
+        data["chain_a"], data["chain_b"]
+    )
     return jsonify({"success": True, "entanglement_id": entanglement_id})
 
 
@@ -110,8 +112,12 @@ def validate_entanglement():
     is_valid = bridge.validate_entanglement(entanglement_id)
 
     if is_valid:
-        return jsonify({"success": True, "message": "Entanglement validated successfully."})
-    return jsonify({"success": False, "message": "Entanglement validation failed."})
+        return jsonify(
+            {"success": True, "message": "Entanglement validated successfully."}
+        )
+    return jsonify(
+        {"success": False, "message": "Entanglement validation failed."}
+    )
 
 
 @app.route("/bridge/entanglements", methods=["GET"])
@@ -138,15 +144,21 @@ def redeem_htlc():
     asset_id = data["asset_id"]
     provided_preimage = data["provided_preimage"]
 
-    htlc_contract = HashTimeLockedContract(asset_id, "example_preimage", timeout=300)
+    htlc_contract = HashTimeLockedContract(
+        asset_id, "example_preimage", timeout=300
+    )
 
     try:
         if htlc_contract.redeem(provided_preimage):
-            return jsonify({"success": True, "message": "HTLC redeemed successfully."})
+            return jsonify(
+                {"success": True, "message": "HTLC redeemed successfully."}
+            )
         return jsonify({"success": False, "message": "Invalid preimage."})
     except TimeoutError as e:
         app.logger.error(f"TimeoutError: {str(e)}")
-        return jsonify({"success": False, "error": "A timeout error has occurred."}), 400
+        return jsonify(
+            {"success": False, "error": "A timeout error has occurred."}
+        ), 400
 
 
 @app.route("/htlc/check", methods=["GET"])
@@ -158,7 +170,9 @@ def check_htlc_status():
     if not asset_id:
         abort(400, description="Missing required query parameter: asset_id")
 
-    htlc_contract = HashTimeLockedContract(asset_id, "example_preimage", timeout=300)
+    htlc_contract = HashTimeLockedContract(
+        asset_id, "example_preimage", timeout=300
+    )
 
     if htlc_contract.is_expired():
         return jsonify({"success": False, "status": "expired"})
@@ -179,5 +193,6 @@ def not_found_error(error):
 # -------------------- Main Function --------------------
 if __name__ == "__main__":
     import os
+
     debug_mode = os.getenv("FLASK_DEBUG", "False").lower() in ["true", "1", "t"]
     app.run(debug=debug_mode)
