@@ -57,8 +57,10 @@ class QuantumSmartContract:
         if condition_fn(data):
             self.current_state = to_state
             self.history.append({
-                "from": from_state, "to": to_state, 
-                "timestamp": time.time(), "oracle": oracle_name
+                "from": from_state, 
+                "to": to_state,
+                "timestamp": time.time(), 
+                "oracle": oracle_name
             })
         else:
             raise ValueError("Condition not met for state transition.")
@@ -92,13 +94,13 @@ class QuantumSmartContract:
         if task_id in self.resources:
             raise ValueError(f"Task {task_id} already has resources allocated.")
         self.resources[task_id] = {
-            "type": resource_type, 
-            "amount": amount, 
+            "type": resource_type,
+            "amount": amount,
             "timestamp": time.time()
         }
         self.history.append({
-            "event": "resource_allocation", 
-            "task_id": task_id, 
+            "event": "resource_allocation",
+            "task_id": task_id,
             "details": self.resources[task_id]
         })
         return f"Allocated {amount} units of {resource_type} for task {task_id}."
