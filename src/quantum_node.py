@@ -27,6 +27,12 @@ async def initialize_quantum_node(config_file: str = "config.yaml"):
     pqc_wrapper = PQCWrapper(backend=pqc_backend)
     quantum_bridge_wrapper = QuantumBridgeWrapper(backend=quantum_backend)
 
+    # Example: Setup cryptographic services with pqc_wrapper
+    pqc_wrapper.initialize_security_protocols()
+
+    # Example: Establish quantum communication using quantum_bridge_wrapper
+    quantum_bridge_wrapper.establish_connection()
+
     # Initialize components
     network, datastore, qdpos_manager = None, None, None
     app.state.peer_manager = PeerManager(network=network, protocol_host=None)
