@@ -1,5 +1,3 @@
-# src/consensus_and_governance.py
-
 from typing import Dict
 import logging
 from src.quantum_wallet import QuantumWallet
@@ -10,6 +8,7 @@ import random
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
+
 
 class QuantumProofOfStake:
     """Quantum Proof-of-Stake (QPoS) system."""
@@ -54,7 +53,7 @@ class GreenProofOfWork:
 
 
 class HybridConsensus:
-    """Hybrid model using QPoS, QDPoS, and GPoW."""
+    """Hybrid model using QPoS, QDPoS, GPoW, and QPoW."""
 
     def __init__(self, state_manager: StateManager, qdpos_manager: QDPoSManager):
         self.qpos = QuantumProofOfStake()
@@ -75,3 +74,58 @@ class HybridConsensus:
         rewards = self.gpow.adjust_rewards(reward)
         final_reward = rewards.get(miner_id, 0)
         logger.info(f"Block mined by {miner_id}, reward: {final_reward}.")
+
+# Consensus Mechanisms Overview
+
+def consensus_mechanisms_overview():
+    """Provides an overview of the consensus mechanisms used in QuantumFuse."""
+
+    mechanisms = {
+        "Quantum Proof-of-Work (QPoW)": [
+            "QPoW integrates quantum technology to optimize traditional Proof-of-Work mechanisms:",
+            "- Quantum Random Number Generators (QRNG):",
+            "  Uses quantum randomness to create unpredictable and unforgeable nonces.",
+            "  Guarantees fairness and eliminates vulnerabilities associated with pseudo-random number generation.",
+            "- Dynamic Difficulty Adjustment:",
+            "  Adapts mining difficulty in real-time based on network performance and quantum states.",
+            "  Ensures energy efficiency by scaling requirements proportionally to the network load.",
+        ],
+        "Quantum Proof-of-Stake (QPoS)": [
+            "QPoS introduces stake-based consensus to reduce energy consumption while maintaining security:",
+            "- Stake-Based Validator Selection:",
+            "  Validators are selected proportionally to their QFC holdings.",
+            "  Promotes decentralization while ensuring economic commitment.",
+            "- Quantum Staking Rewards:",
+            "  Stakers earn rewards through quantum teleportation-enhanced distribution mechanisms.",
+            "  Includes penalties for malicious behavior, such as double-signing or inactivity.",
+        ],
+        "Quantum Delegated Proof-of-Stake (QDPoS)": [
+            "QDPoS builds on QPoS by introducing delegation and governance:",
+            "- Delegation:",
+            "  Token holders delegate their stake to trusted validators.",
+            "  Increases participation by allowing non-technical users to contribute.",
+            "- Governance:",
+            "  Validators are elected through a voting system enabled by decentralized identifiers (DIDs).",
+            "  Supports on-chain proposals and upgrades for continuous improvement.",
+        ],
+        "Green Proof-of-Work (GPoW)": [
+            "GPoW integrates renewable energy incentives into the mining process:",
+            "- Renewable Energy Verification:",
+            "  Nodes submit renewable energy certificates for eligibility.",
+            "  Ensures that mining operations prioritize sustainability.",
+            "- Green Mining Rewards:",
+            "  Rewards are dynamically adjusted based on a node’s renewable energy usage ratio.",
+            "  Promotes eco-friendly blockchain adoption.",
+        ],
+    }
+
+    for mechanism, details in mechanisms.items():
+        print(mechanism)
+        for line in details:
+            print("\t" + line)
+        print()  # Add a blank line for spacing
+
+
+# Example call to print consensus mechanisms overview
+if __name__ == "__main__":
+    consensus_mechanisms_overview()
