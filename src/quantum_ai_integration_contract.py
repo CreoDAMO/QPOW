@@ -1,8 +1,8 @@
-from pqcrypto.sign.dilithium2 import sign, verify
 from quantum_bridge_wrapper import QuantumBridgeWrapper
 from quantum_resource_manager import QuantumResourceManager
 import time
 from typing import Dict, List, Callable, Any
+
 
 class QuantumAIIntegrationContract:
     def __init__(self, contract_id: str, creator: str, quantum_backend: str = "qiskit"):
@@ -53,7 +53,8 @@ class QuantumAIIntegrationContract:
 
         return result
 
-    def verify_signature(self, message: bytes, signature: bytes, public_key: bytes) -> bool:
+    def verify_signature
+    (self, message: bytes, signature: bytes, public_key: bytes) -> bool:
         try:
             return verify(message, signature, public_key)
         except Exception:
