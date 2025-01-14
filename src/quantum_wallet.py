@@ -60,7 +60,7 @@ class QuantumWallet:
         """Send a notification about a transaction."""
         notification = messaging.Message(
             notification=messaging.Notification(
-                title="Quantum Wallet", 
+                title="Quantum Wallet",
                 body=message
             ),
             topic=self.user_id,
