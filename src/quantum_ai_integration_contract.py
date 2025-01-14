@@ -54,8 +54,7 @@ class QuantumAIIntegrationContract:
 
         return result
 
-    def verify_signature
-    (self, message: bytes, signature: bytes, public_key: bytes) -> bool:
+    def verify_signature (self, message: bytes, signature: bytes, public_key: bytes) -> bool:
         try:
             return verify(message, signature, public_key)
         except Exception:
