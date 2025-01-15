@@ -38,12 +38,15 @@ jobs:
     - name: Install Dependencies
       run: make venv install install-formatters
 
-    # Step 5: Lint, Format, and Run Tests Sequentially
+    # Step 5: Lint, Format, Generate Tests, and Run Tests
     - name: Lint the Codebase
       run: make lint
 
     - name: Format the Codebase
       run: make format
+
+    - name: Generate Tests with Pynguin
+      run: make generate-tests
 
     - name: Run Tests
       run: make test
