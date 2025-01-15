@@ -6,24 +6,21 @@ from typing import Dict, List, Callable, Any
 
 
 class QuantumAIIntegrationContract:
-    """A contract class for quantum-enhanced AI model integration and execution."""
-
     def __init__(
-        self, 
-        contract_id: str, 
-        creator: str, 
+        self,
+        contract_id: str,
+        creator: str,
         quantum_backend: str = "qiskit"
     ) -> None:
         self.contract_id = contract_id
         self.creator = creator
-        self.participants: Dict[str, str] = {}  # {address: did}
-        self.ai_models: Dict[str, Callable] = {}  # {model_id: inference_fn}
+        self.participants: Dict[str, str] = {}
+        self.ai_models: Dict[str, Callable] = {}
         self.quantum_bridge = QuantumBridgeWrapper(backend=quantum_backend)
         self.quantum_resource_manager = QuantumResourceManager()
         self.history: List[Dict[str, Any]] = []
 
     def register_participant(self, participant_address: str, did: str) -> None:
-        """Register a new participant in the contract."""
         if participant_address in self.participants:
             raise ValueError(
                 f"Participant {participant_address} already registered."
@@ -31,19 +28,16 @@ class QuantumAIIntegrationContract:
         self.participants[participant_address] = did
 
     def register_ai_model(self, model_id: str, inference_fn: Callable) -> None:
-        """Register an AI model for quantum-enhanced inference."""
         if model_id in self.ai_models:
             raise ValueError(f"AI model {model_id} already registered.")
-        
         self.ai_models[model_id] = inference_fn
         self._log_event("ai_model_registration", {"model_id": model_id})
 
     def run_quantum_ai_inference(
-        self, 
-        model_id: str, 
+        self,
+        model_id: str,
         input_data: Any
     ) -> Any:
-        """Execute quantum-enhanced AI inference with the specified model."""
         if model_id not in self.ai_models:
             raise ValueError(f"AI model {model_id} is not registered.")
 
@@ -51,7 +45,6 @@ class QuantumAIIntegrationContract:
         try:
             self.quantum_resource_manager.allocate_resource(task_id, 10)
             result = self.ai_models[model_id](input_data)
-            
             self._log_event(
                 "quantum_ai_inference",
                 {
@@ -65,19 +58,17 @@ class QuantumAIIntegrationContract:
             self.quantum_resource_manager.release_resource(task_id)
 
     def verify_signature(
-        self, 
-        message: bytes, 
-        signature: bytes, 
+        self,
+        message: bytes,
+        signature: bytes,
         public_key: bytes
     ) -> bool:
-        """Verify a digital signature using post-quantum cryptography."""
         try:
             return verify(message, signature, public_key)
         except Exception:
             return False
 
     def get_contract_details(self) -> Dict[str, Any]:
-        """Get the current state and details of the contract."""
         return {
             "contract_id": self.contract_id,
             "creator": self.creator,
@@ -87,7 +78,6 @@ class QuantumAIIntegrationContract:
         }
 
     def _log_event(self, event_type: str, event_data: Dict[str, Any]) -> None:
-        """Log contract events with timestamps."""
         event_data["event"] = event_type
         event_data["timestamp"] = time.time()
         self.history.append(event_data)
