@@ -48,11 +48,9 @@ jobs:
 
     # Step 7: Generate Tests with Pynguin
     - name: Generate Tests with Pynguin
-      run: make generate-tests
-      env:
-        PYNGUIN_DANGER_AWARE: 1
-      with:
-        args: --module-name your_main_module_name
+      run: |
+        export PYNGUIN_DANGER_AWARE=1
+        make generate-tests
 
     # Step 8: Run Unit Tests
     - name: Run Tests
