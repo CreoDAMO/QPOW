@@ -1,0 +1,73 @@
+name: Makefile CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout code
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    # Step 2: Set up Python
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    # Step 3: Cache pip dependencies
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    # Step 4: Create Virtual Environment and Install Dependencies
+    - name: Install Dependencies
+      run: make venv install install-formatters
+
+    # Step 5: Lint, Format, and Run Tests Sequentially
+    - name: Lint the Codebase
+      run: make lint
+
+    - name: Format the Codebase
+      run: make format
+
+    - name: Run Tests
+      run: make test
+
+    # Step 6: Generate Coverage Report and Upload Artifacts
+    - name: Generate Coverage Report
+      run: make coverage
+
+    - name: Upload Coverage Report
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: coverage_html
+
+    # Step 7: Generate and Upload Documentation
+    - name: Generate Documentation
+      run: make docs
+
+    - name: Upload Documentation
+      uses: actions/upload-artifact@v3
+      with:
+        name: documentation
+        path: docs
+
+    # Step 8: Clean Temporary Files
+    - name: Clean Temporary Files
+      run: make clean clean-venv
