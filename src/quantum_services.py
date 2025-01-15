@@ -157,23 +157,21 @@ class QuantumServices:
         return contract
 
     def create_fractional_nft(
-    self, data_id: str, owner: str, metadata: Dict[str, Any], total_units: int
-	):
-    """
-    Create a fractional NFT with metadata.
-    """
-    try:
-        self.nft_marketplace.create_fractional_nft(
-            data_id, owner, metadata, total_units
-        )
-        logger.info(
-            f"Fractional NFT {data_id} created by {owner} with "
-            f"{total_units} units."
-        )
-    except ValueError as e:
-        logger.error(f"Failed to create fractional NFT {data_id}: {e}.")
-
-    def generate_teleportation_metrics(self) -> Dict[str, Any]:
+        self, data_id: str, owner: str, metadata: Dict[str, Any], total_units: int
+    ):
+        """
+        Create a fractional NFT with metadata.
+        """
+        try:
+            self.nft_marketplace.create_fractional_nft(
+                data_id, owner, metadata, total_units
+            )
+            logger.info(
+                f"Fractional NFT {data_id} created by {owner} with "
+                f"{total_units} units."
+            )
+        except ValueError as e:
+            logger.error(f"Failed to create fractional NFT {data_id}: {e}.")
         """
         Generate metrics for quantum teleportation and shard utilization.
         """
