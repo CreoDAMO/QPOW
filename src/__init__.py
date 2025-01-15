@@ -1,5 +1,3 @@
-# src/__init__.py
-
 # Import core functionality
 from .core import Blockchain, StateManager, Transaction
 
@@ -21,8 +19,7 @@ from .quantum_node import QuantumNode, PeerManager, TransactionPropagator, Conse
 # Import utilities
 from .quantum_wallet import QuantumWallet
 from .quantum_bridge import QuantumBridge
-from .quantum_interface import QuantumInterface, 
-get_quantum_adapter
+from .quantum_interface import QuantumInterface, get_quantum_adapter  # Fixed import
 
 # Expose key components for simpler imports in external modules
 __all__ = [
@@ -44,5 +41,5 @@ __all__ = [
     "QuantumWallet",
     "QuantumBridge",
     "QuantumInterface",
-    "get_quantum_adapter"
+    "get_quantum_adapter"  # No trailing comma here
 ]
