@@ -73,7 +73,10 @@ test: check-env install  ## Run tests with pytest
 # Generate tests using Pynguin
 generate-tests: check-env install  ## Generate unit tests using Pynguin
 	@echo "Generating unit tests with Pynguin..."
-	$(ACTIVATE) && PYNGUIN_DANGER_AWARE=1 $(PYNGUIN) --project-path ./src --output-path $(TEST_OUTPUT_DIR)
+	$(ACTIVATE) && PYNGUIN_DANGER_AWARE=1 $(PYNGUIN) \
+		--project-path ./src \
+		--module-name your_main_module_name \
+		--output-path $(TEST_OUTPUT_DIR)
 
 # Generate coverage report
 coverage: check-env install test  ## Generate test coverage report
