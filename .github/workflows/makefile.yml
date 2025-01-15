@@ -38,22 +38,27 @@ jobs:
     - name: Install Dependencies
       run: make venv install install-formatters
 
-    # Step 5: Lint, Format, Generate Tests, and Run Tests
+    # Step 5: Lint the Codebase
     - name: Lint the Codebase
       run: make lint
 
+    # Step 6: Format the Codebase
     - name: Format the Codebase
       run: make format
 
+    # Step 7: Generate Tests with Pynguin
     - name: Generate Tests with Pynguin
       run: make generate-tests
       env:
         PYNGUIN_DANGER_AWARE: 1
+      with:
+        args: --module-name your_main_module_name
 
+    # Step 8: Run Unit Tests
     - name: Run Tests
       run: make test
 
-    # Step 6: Generate Coverage Report and Upload Artifacts
+    # Step 9: Generate Coverage Report
     - name: Generate Coverage Report
       run: make coverage
 
@@ -63,7 +68,7 @@ jobs:
         name: coverage-report
         path: coverage_html
 
-    # Step 7: Generate and Upload Documentation
+    # Step 10: Generate Documentation
     - name: Generate Documentation
       run: make docs
 
@@ -73,6 +78,6 @@ jobs:
         name: documentation
         path: docs
 
-    # Step 8: Clean Temporary Files
+    # Step 11: Clean Temporary Files
     - name: Clean Temporary Files
       run: make clean clean-venv
