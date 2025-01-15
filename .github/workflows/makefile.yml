@@ -36,47 +36,65 @@ jobs:
 
     # Step 4: Install Dependencies
     - name: Install Dependencies
-      run: make venv install install-formatters
+      run: |
+        make venv
+        source qpow-venv/bin/activate
+        make install install-formatters
 
     # Step 5: Lint the Codebase
     - name: Lint the Codebase
-      run: make lint
+      run: |
+        source qpow-venv/bin/activate
+        make lint
 
     # Step 6: Format the Codebase
     - name: Format the Codebase
-      run: make format
+      run: |
+        source qpow-venv/bin/activate
+        make format
 
     # Step 7: Generate Tests with Pynguin
     - name: Generate Tests with Pynguin
-      run: make generate-tests
+      run: |
+        source qpow-venv/bin/activate
+        make generate-tests
       env:
         PYTHONPATH: ./src
         PYNGUIN_DANGER_AWARE: 1
 
     # Step 8: Run Unit Tests
     - name: Run Tests
-      run: make test
+      run: |
+        source qpow-venv/bin/activate
+        make test
 
     # Step 9: Generate Coverage Report
     - name: Generate Coverage Report
-      run: make coverage
+      run: |
+        source qpow-venv/bin/activate
+        make coverage
 
+    # Step 10: Upload Coverage Report
     - name: Upload Coverage Report
       uses: actions/upload-artifact@v3
       with:
         name: coverage-report
         path: coverage_html
 
-    # Step 10: Generate Documentation
+    # Step 11: Generate Documentation
     - name: Generate Documentation
-      run: make docs
+      run: |
+        source qpow-venv/bin/activate
+        make docs
 
+    # Step 12: Upload Documentation
     - name: Upload Documentation
       uses: actions/upload-artifact@v3
       with:
         name: documentation
         path: docs
 
-    # Step 11: Clean Temporary Files
+    # Step 13: Clean Temporary Files
     - name: Clean Temporary Files
-      run: make clean clean-venv
+      run: |
+        make clean clean-venv
