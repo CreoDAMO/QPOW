@@ -1,5 +1,6 @@
 from pqcrypto.sign.dilithium2 import verify
 from quantum_bridge_wrapper import QuantumBridgeWrapper
+from quantum_resource_manager import QuantumResourceManager
 from typing import Dict, List, Any, Callable
 import time
 
@@ -7,7 +8,7 @@ import time
 class QuantumCommunicationContract:
     """
     A contract class for managing quantum communication and AI integration.
-    
+
     This class handles participant registration, key management, and quantum-enhanced
     AI model execution in a secure environment.
     """
@@ -64,7 +65,7 @@ class QuantumCommunicationContract:
         """
         if model_id in self.ai_models:
             raise ValueError(f"AI model {model_id} already registered.")
-        
+
         self.ai_models[model_id] = inference_fn
         self._log_event("ai_model_registration", {"model_id": model_id})
 
@@ -90,11 +91,11 @@ class QuantumCommunicationContract:
             raise ValueError(f"AI model {model_id} is not registered.")
 
         task_id = f"inference-{model_id}"
-        
+
         try:
             self.quantum_resource_manager.allocate_resource(task_id, 10)
             result = self.ai_models[model_id](input_data)
-            
+
             self._log_event(
                 "quantum_ai_inference",
                 {
@@ -103,7 +104,7 @@ class QuantumCommunicationContract:
                     "result": result
                 }
             )
-            
+
             return result
         finally:
             self.quantum_resource_manager.release_resource(task_id)
