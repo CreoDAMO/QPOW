@@ -145,8 +145,8 @@ class QuantumServices:
         logger.info(f"Oracle {name} registered successfully.")
 
     def create_quantum_smart_contract(
-        self, contract_id: str, states: list, 
-        creator: str, 
+        self, contract_id: str, states: list,
+        creator: str,
         conditions: Dict[str, Callable]
     ):
         """
