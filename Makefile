@@ -16,11 +16,11 @@ TEST_OUTPUT_DIR := tests/generated
 .DEFAULT_GOAL := help
 
 # Help
-help:
+help:  ## Show available Makefile targets
 	@echo "Usage: make <target>"
 	@echo ""
 	@echo "Available targets:"
-	@awk '/^[a-zA-Z_-]+:.*?## / {printf "  %-15s %s\n", $$1, substr($$0, index($$0, "## ") + 3)}' $(MAKEFILE_LIST)
+	@awk '/^[a-zA-Z_-]+:.*?## / {printf "  %-20s %s\n", $$1, substr($$0, index($$0, "## ") + 3)}' $(MAKEFILE_LIST)
 
 # Create virtual environment
 venv:  ## Create the virtual environment
@@ -73,7 +73,7 @@ test: check-env install  ## Run tests with pytest
 # Generate tests using Pynguin
 generate-tests: check-env install  ## Generate unit tests using Pynguin
 	@echo "Generating unit tests with Pynguin..."
-	$(ACTIVATE) && $(PYNGUIN) --project-path ./src --output-path $(TEST_OUTPUT_DIR)
+	$(ACTIVATE) && PYNGUIN_DANGER_AWARE=1 $(PYNGUIN) --project-path ./src --output-path $(TEST_OUTPUT_DIR)
 
 # Generate coverage report
 coverage: check-env install test  ## Generate test coverage report
