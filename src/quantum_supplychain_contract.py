@@ -60,8 +60,7 @@ class QuantumSupplyChainContract:
     return event_id
 
 def retrieve_supply_chain_event(
-    self, participant_address: str, event_id: str
-) -> Dict[str, Any]:
+    self, participant_address: str, event_id: str) -> Dict[str, Any]:
     """Retrieve and decrypt a supply chain event."""
     if participant_address not in self.authorized_participants:
         raise ValueError(f"Participant {participant_address} is not authorized.")
