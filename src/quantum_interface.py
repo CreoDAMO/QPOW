@@ -1,6 +1,3 @@
-from typing import Any, Dict
-
-
 class QuantumInterface:
     """Define a quantum interface for creating and validating entanglements."""
 
