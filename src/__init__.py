@@ -44,5 +44,5 @@ __all__ = [
     "QuantumWallet",
     "QuantumBridge",
     "QuantumInterface",
-    "get_quantum_adapter",
+    "get_quantum_adapter"
 ]
