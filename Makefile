@@ -35,7 +35,7 @@ check-env:  ## Ensure virtual environment exists
 	fi
 
 # Install dependencies
-install: venv check-env  ## Install project dependencies
+install: check-env  ## Install project dependencies
 	@echo "Installing dependencies..."
 	$(ACTIVATE) && pip install -r $(REQUIREMENTS)
 
@@ -73,7 +73,7 @@ test: check-env install  ## Run tests with pytest
 # Generate tests using Pynguin
 generate-tests: check-env install  ## Generate unit tests using Pynguin
 	@echo "Generating unit tests with Pynguin..."
-	PYTHONPATH=./src $(ACTIVATE) && PYNGUIN_DANGER_AWARE=1 $(PYNGUIN) \
+	$(ACTIVATE) && PYTHONPATH=./src PYNGUIN_DANGER_AWARE=1 $(PYNGUIN) \
 		--project-path ./src \
 		--module-name app \
 		--output-path $(TEST_OUTPUT_DIR)
