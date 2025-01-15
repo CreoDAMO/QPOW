@@ -10,7 +10,8 @@ from quantum_services import QuantumServices
 
 class QuantumGovernanceContract:
     """
-    Quantum Governance Contract for managing proposals and votes in a secure, decentralized manner.
+    Quantum Governance Contract for managing proposals
+    and votes in a secure, decentralized manner.
     """
 
     def __init__(self, contract_id: str, creator: str):
