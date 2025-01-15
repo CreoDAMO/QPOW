@@ -21,7 +21,8 @@ from .quantum_node import QuantumNode, PeerManager, TransactionPropagator, Conse
 # Import utilities
 from .quantum_wallet import QuantumWallet
 from .quantum_bridge import QuantumBridge
-from .quantum_interface import QuantumInterface, get_quantum_adapter
+from .quantum_interface import QuantumInterface, 
+get_quantum_adapter
 
 # Expose key components for simpler imports in external modules
 __all__ = [
