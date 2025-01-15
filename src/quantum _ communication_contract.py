@@ -15,8 +15,8 @@ class QuantumCommunicationContract:
 
     def __init__(
         self, 
-        contract_id: str, 
-        creator: str, 
+        contract_id: str,
+        creator: str,
         quantum_backend: str = "qiskit"
     ) -> None:
         """
@@ -70,8 +70,8 @@ class QuantumCommunicationContract:
         self._log_event("ai_model_registration", {"model_id": model_id})
 
     def run_quantum_ai_inference(
-        self, 
-        model_id: str, 
+        self,
+        model_id: str,
         input_data: Any
     ) -> Any:
         """
@@ -110,9 +110,9 @@ class QuantumCommunicationContract:
             self.quantum_resource_manager.release_resource(task_id)
 
     def verify_signature(
-        self, 
-        message: bytes, 
-        signature: bytes, 
+        self,
+        message: bytes,
+        signature: bytes,
         public_key: bytes
     ) -> bool:
         """
