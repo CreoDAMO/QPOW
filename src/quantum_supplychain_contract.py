@@ -31,7 +31,8 @@ class QuantumSupplyChainContract:
     def authorize_participant(self, participant_address: str, public_key: bytes):
         """Authorize a supply chain participant to interact with the contract."""
         if participant_address in self.authorized_participants:
-            raise ValueError(f"Participant {participant_address} is already authorized.")
+            raise ValueError(
+                f"Participant {participant_address} is already authorized.")
         self.authorized_participants[participant_address] = public_key
 
     def register_supply_chain_event(
@@ -49,7 +50,8 @@ class QuantumSupplyChainContract:
 
         # Encrypt the event details using the participant's public key
         encrypted_data = encrypt(
-            str(event_details).encode(), self.authorized_participants[participant_address]
+            str(event_details).encode(),
+            self.authorized_participants[participant_address]
         )
 
         # Store the encrypted event details
