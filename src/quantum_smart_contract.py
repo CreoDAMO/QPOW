@@ -119,5 +119,8 @@ class QuantumEntanglementContract(BaseContract):
 
 # Example usage (you can combine these contracts as needed)
 resource_contract = ResourceAllocationContract("resource_contract_1")
-state_contract = StateTransitionContract("state_contract_1", ["draft", "approved", "executed"])
+state_contract = StateTransitionContract(
+    "state_contract_1",
+    ["draft", "approved", "executed"]
+)
 entanglement_contract = QuantumEntanglementContract("entanglement_contract_1")
