@@ -158,7 +158,7 @@ class QuantumServices:
 
     def create_fractional_nft(
     self, data_id: str, owner: str, metadata: Dict[str, Any], total_units: int
-):
+	):
     """
     Create a fractional NFT with metadata.
     """
