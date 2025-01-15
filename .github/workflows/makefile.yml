@@ -50,6 +50,7 @@ jobs:
     - name: Generate Tests with Pynguin
       run: make generate-tests
       env:
+        PYTHONPATH: ./src
         PYNGUIN_DANGER_AWARE: 1
 
     # Step 8: Run Unit Tests
