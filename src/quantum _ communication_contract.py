@@ -14,7 +14,7 @@ class QuantumCommunicationContract:
     """
 
     def __init__(
-        self, 
+        self,
         contract_id: str,
         creator: str,
         quantum_backend: str = "qiskit"
