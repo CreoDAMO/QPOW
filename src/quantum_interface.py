@@ -48,9 +48,9 @@ class QiskitAdapter(QuantumInterface):
         return result
 
     def validate_entanglement(self, entangled_state, *args, **kwargs):
-    """
-    Simulate a validation of the entangled state.
-    """
+    	"""
+    	Simulate a validation of the entangled state.
+    	"""
     return abs(
         sum(abs(amplitude) ** 2 for amplitude in entangled_state) - 1.0
     ) < 1e-9
