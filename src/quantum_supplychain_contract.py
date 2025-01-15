@@ -34,8 +34,7 @@ class QuantumSupplyChainContract:
         self.authorized_participants[participant_address] = public_key
 
     def register_supply_chain_event(
-    self, participant_address: str, event_details: Dict[str, Any]
-) -> str:
+    self, participant_address: str, event_details: Dict[str, Any]) -> str:
     """Record a supply chain event in the contract."""
     if participant_address not in self.authorized_participants:
         raise ValueError(f"Participant {participant_address} is not authorized.")
