@@ -1,3 +1,6 @@
+from typing import Any, Dict
+
+
 class QuantumInterface:
     """Define a quantum interface for creating and validating entanglements."""
 
@@ -48,13 +51,13 @@ class QiskitAdapter(QuantumInterface):
         return result
 
     def validate_entanglement(self, entangled_state, *args, **kwargs):
-    	"""
-    	Simulate a validation of the entangled state.
-    	"""
-    return abs(
-        sum(abs(amplitude) ** 2 for amplitude in entangled_state) - 1.0
-    ) < 1e-9
-    
+        """
+        Simulate a validation of the entangled state.
+        """
+        return abs(
+            sum(abs(amplitude) ** 2 for amplitude in entangled_state) - 1.0
+        ) < 1e-9
+
     def generate_did(self, *args, **kwargs):
         """Generate a mock Decentralized Identifier."""
         import uuid
