@@ -34,7 +34,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-pip-
 
-    # Step 4: Create Virtual Environment and Install Dependencies
+    # Step 4: Install Dependencies
     - name: Install Dependencies
       run: make venv install install-formatters
 
@@ -47,6 +47,8 @@ jobs:
 
     - name: Generate Tests with Pynguin
       run: make generate-tests
+      env:
+        PYNGUIN_DANGER_AWARE: 1
 
     - name: Run Tests
       run: make test
