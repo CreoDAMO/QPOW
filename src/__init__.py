@@ -14,7 +14,8 @@ from .quantum_random_oracle_contract import QuantumRandomOracleContract
 from .quantum_defi_contract import QuantumDefiContract
 
 # Import infrastructure
-from .quantum_node import QuantumNode, PeerManager, TransactionPropagator, ConsensusManager
+from .quantum_node import QuantumNode, PeerManager,
+TransactionPropagator, ConsensusManager
 
 # Import utilities
 from .quantum_wallet import QuantumWallet
