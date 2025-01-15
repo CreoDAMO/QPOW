@@ -22,7 +22,7 @@ class QuantumRandomOracleContract:
         self.identity_manager = IdentityManager()
         self.quantum_storage = QuantumStorage()
         self.quantum_services = QuantumServices()
-        
+
     def authorize_user(self, user_address: str, public_key: bytes):
         """Authorize a user to access the Quantum Random Oracle."""
         if user_address in self.authorized_users:
@@ -52,7 +52,7 @@ class QuantumRandomOracleContract:
             random_number,
             resource_id
         )
-        
+
         self.request_history[request_id] = {
             "user": user_address,
             "random_number": random_number,
@@ -89,7 +89,7 @@ class QuantumRandomOracleContract:
             f"{request_id}:{request_details['random_number']}:"
             f"{request_details['timestamp']}"
         ).encode()
-        
+
         return sign(data, private_key)
 
     def get_contract_details(self) -> Dict[str, Any]:
