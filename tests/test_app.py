@@ -1,4 +1,4 @@
-import unittest
+import pytest
 from unittest.mock import patch
 from flask import json
 from src.app import app, API_KEY
@@ -6,7 +6,7 @@ from src.services import QFCOnramper, NFTMarketplace, QKDManager, QuantumAIOptim
 from src.core import Blockchain
 
 
-class TestApp(unittest.TestCase):
+class TestApp(pytest.TestCase):
     def setUp(self):
         """Set up the Flask test client and necessary mocks."""
         self.app = app.test_client()
