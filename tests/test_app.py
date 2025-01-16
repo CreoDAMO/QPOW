@@ -58,7 +58,10 @@ class TestApp(unittest.TestCase):
             )
             self.assertEqual(response.status_code, 400)
             self.assertFalse(response.json["success"])
-            self.assertEqual(response.json["error"], "An error occurred while processing your request.")
+            self.assertEqual(
+                response.json["error"],
+                "An error occurred while processing your request.",
+            )
 
     def test_buy_qfc_success(self):
         """Test successful QFC coin purchase."""
@@ -71,7 +74,9 @@ class TestApp(unittest.TestCase):
                 content_type="application/json",
             )
             self.assertEqual(response.status_code, 200)
-            self.assertEqual(response.json["message"], "Fiat converted to QFC coins successfully.")
+            self.assertEqual(
+                response.json["message"], "Fiat converted to QFC coins successfully."
+            )
 
     def test_optimize_shard_allocation_success(self):
         """Test shard allocation optimization success."""
@@ -103,4 +108,3 @@ class TestApp(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-    
