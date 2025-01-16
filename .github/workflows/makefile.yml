@@ -78,19 +78,7 @@ jobs:
           path: coverage_html
         if: always()
 
-      # Step 11: Generate Documentation
-      - name: Generate Documentation
-        run: |
-          source qpow-venv/bin/activate
-          make docs
-
-      # Step 12: Upload Documentation
-      - name: Upload Documentation
-        uses: actions/upload-artifact@v4
-        with:
-          name: documentation
-          path: docs
-
+      
       # Step 13: Final Cleanup
       - name: Clean Up
         run: |
