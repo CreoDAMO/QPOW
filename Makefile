@@ -80,6 +80,7 @@ generate-tests: check-env install  ## Generate unit tests using Pynguin
 	@echo "Generating unit tests with Pynguin..."
 	$(ACTIVATE) && PYTHONPATH=./src PYNGUIN_DANGER_AWARE=1 $(PYNGUIN) \
 		--project-path ./src \
+		--module-name app \
 		--output-path $(TEST_OUTPUT_DIR)
 
 # Generate coverage report
