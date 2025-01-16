@@ -28,4 +28,3 @@ def test_transaction_validation(blockchain):
     tx = Transaction(
         "0xSender", "0xRecipient", 1000.0)
     assert not blockchain.state_manager.validate_transaction(tx)
-    
