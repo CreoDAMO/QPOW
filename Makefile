@@ -94,8 +94,3 @@ clean:  ## Remove temporary files and directories
 clean-venv:  ## Remove the virtual environment
 	@echo "Removing the virtual environment..."
 	rm -rf $(VENV)
-
-# Clean documentation
-clean-docs:  ## Remove generated documentation
-	@echo "Cleaning up generated documentation..."
-	rm -rf docs
