@@ -80,7 +80,8 @@ def teleport_nft():
     except ValueError as e:
         logger.error(f"Error in teleport_nft: {str(e)}")
         return jsonify(
-            {"success": False, "error": "An error occurred while processing your request."}), 400
+            {"success": False,
+             "error": "An error occurred while processing your request."}), 400
 
 
 @app.route("/v1/onramp/buy", methods=["POST"])
@@ -108,7 +109,8 @@ def buy_qfc():
     except ValueError as e:
         logger.error(f"Error in buy_qfc: {str(e)}")
         return jsonify(
-            {"success": False, "error": "An error occurred while processing your request."}), 400
+            {"success": False,
+             "error": "An error occurred while processing your request."}), 400
 
 
 @app.route("/v1/qkd/distribute", methods=["POST"])
@@ -132,7 +134,8 @@ def distribute_qkd_key():
     except ValueError as e:
         logger.error(f"Error in distribute_qkd_key: {str(e)}")
         return jsonify(
-            {"success": False, "error": "An error occurred while distributing the QKD key."}), 400
+            {"success": False,
+             "error": "An error occurred while distributing the QKD key."}), 400
 
 
 @app.route("/v1/qkd/teleport", methods=["POST"])
@@ -156,7 +159,8 @@ def teleport_qkd_key():
     except ValueError as e:
         logger.error(f"Error in teleport_qkd_key: {str(e)}")
         return jsonify(
-            {"success": False, "error": "An error occurred while teleporting the QKD key."}), 400
+            {"success": False,
+             "error": "An error occurred while teleporting the QKD key."}), 400
 
 
 @app.route("/v1/shard/optimize", methods=["POST"])
@@ -177,7 +181,8 @@ def optimize_shard_allocation():
     except ValueError as e:
         logger.error(f"Error in optimize_shard_allocation: {str(e)}")
         return jsonify(
-            {"success": False, "error": "An error occurred while optimizing shard allocation."}), 400
+            {"success": False, 
+             "error": "An error occurred while optimizing shard allocation."}), 400
 
 
 @app.route("/v1/health", methods=["GET"])
@@ -213,7 +218,8 @@ def handle_not_found(error):
 def handle_internal_server_error(error):
     """Handle 500 Internal Server errors."""
     logger.critical(f"Internal Server Error: {error}")
-    return jsonify({"success": False, "error": "Internal server error occurred."}), 500
+    return jsonify({"success": False,
+                    "error": "Internal server error occurred."}), 500
 
 
 # -------------------- Main Function --------------------
