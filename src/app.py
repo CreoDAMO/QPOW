@@ -181,7 +181,7 @@ def optimize_shard_allocation():
     except ValueError as e:
         logger.error(f"Error in optimize_shard_allocation: {str(e)}")
         return jsonify(
-            {"success": False, 
+            {"success": False,
              "error": "An error occurred while optimizing shard allocation."}), 400
 
 
