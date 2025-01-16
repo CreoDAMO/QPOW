@@ -6,4 +6,3 @@ def cleanup_resources():
 def common_setup():
     """Set up common test resources."""
     pass
-    
