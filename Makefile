@@ -78,8 +78,8 @@ test: check-env install  ## Run tests with pytest
 # Generate tests using Pynguin
 generate-tests: check-env install  ## Generate unit tests using Pynguin
 	@echo "Generating unit tests with Pynguin..."
-	$(ACTIVATE) && PYTHONPATH=./src PYNGUIN_DANGER_AWARE=1 $(PYNGUIN) \
-		--project-path ./src \
+	$(ACTIVATE) && PYTHONPATH=./QPOW/src PYNGUIN_DANGER_AWARE=1 $(PYNGUIN) \
+		--project-path ./QPOW/src \
 		--output-path $(TEST_OUTPUT_DIR) \
 		--module-name app
 
