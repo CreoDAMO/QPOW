@@ -75,7 +75,8 @@ class TestApp(unittest.TestCase):
             )
             self.assertEqual(response.status_code, 200)
             self.assertEqual(
-                response.json["message"], "Fiat converted to QFC coins successfully."
+                response.json["message"],
+                "Fiat converted to QFC coins successfully.",
             )
 
     def test_optimize_shard_allocation_success(self):
