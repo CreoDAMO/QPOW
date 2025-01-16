@@ -6,21 +6,17 @@ import logging
 import os
 import time
 
-
 # -------------------- Configure Logging --------------------
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
-
 
 # -------------------- Initialize Flask App --------------------
 app = Flask(__name__)
 CORS(app)
 
-
 # -------------------- Load Configuration --------------------
 DEBUG_MODE = os.getenv("FLASK_DEBUG", "False").lower() in ["true", "1", "t"]
 API_KEY = os.getenv("API_KEY", "default-api-key")
-
 
 # -------------------- Core Components --------------------
 blockchain = Blockchain(num_shards=3, difficulty=4, total_supply=1_000_000)
@@ -28,7 +24,6 @@ nft_marketplace = NFTMarketplace(blockchain)
 onramper = QFCOnramper(blockchain, analytics=None, compliance=None)
 qkd_manager = QKDManager()
 quantum_ai_optimizer = QuantumAIOptimizer()
-
 
 # -------------------- Helper Functions --------------------
 
@@ -38,7 +33,6 @@ def validate_request(data, required_fields):
         if field not in data:
             logger.error(f"Missing required field: {field}")
             abort(400, description=f"Missing required field: {field}")
-
 
 # -------------------- Middleware --------------------
 
@@ -50,7 +44,6 @@ def check_api_key():
         if api_key != API_KEY:
             logger.warning("Unauthorized access attempt detected.")
             abort(401, description="Unauthorized")
-
 
 # -------------------- API Routes --------------------
 
@@ -144,7 +137,6 @@ def health_check():
     """Health check endpoint."""
     return jsonify({"status": "Healthy", "timestamp": time.time()}), 200
 
-
 # -------------------- Error Handlers --------------------
 
 @app.errorhandler(400)
@@ -170,7 +162,6 @@ def handle_internal_server_error(error):
     """Handle 500 Internal Server errors."""
     logger.critical(f"Internal Server Error: {error}")
     return jsonify({"success": False, "error": "Internal server error occurred."}), 500
-
 
 # -------------------- Main Function --------------------
 
