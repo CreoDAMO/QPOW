@@ -89,8 +89,8 @@ class TestApp(unittest.TestCase):
         }
         mock_result = {0: [0, 1], 1: [2]}
         with patch.object(
-            self.quantum_ai_optimizer, "optimize_shard_allocation", 
-            return_value=mock_result
+            self.quantum_ai_optimizer, 
+            "optimize_shard_allocation", return_value=mock_result
         ):
             response = self.app.post(
                 "/v1/shard/optimize",
