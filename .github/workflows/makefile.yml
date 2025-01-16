@@ -34,45 +34,35 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-pip-
 
-    # Step 4: Install Dependencies
-    - name: Install Dependencies
+    # Step 4: Install Dependencies and Upgrade pip
+    - name: Install Dependencies and Upgrade pip
       run: |
         make venv
-        source qpow-venv/bin/activate
+        make upgrade-pip
         make install install-formatters
 
     # Step 5: Lint the Codebase
     - name: Lint the Codebase
-      run: |
-        source qpow-venv/bin/activate
-        make lint
+      run: make lint
 
     # Step 6: Format the Codebase
     - name: Format the Codebase
-      run: |
-        source qpow-venv/bin/activate
-        make format
+      run: make format
 
     # Step 7: Generate Tests with Pynguin
     - name: Generate Tests with Pynguin
-      run: |
-        source qpow-venv/bin/activate
-        make generate-tests
+      run: make generate-tests
       env:
         PYTHONPATH: ./src
         PYNGUIN_DANGER_AWARE: 1
 
     # Step 8: Run Unit Tests
     - name: Run Tests
-      run: |
-        source qpow-venv/bin/activate
-        make test
+      run: make test
 
     # Step 9: Generate Coverage Report
     - name: Generate Coverage Report
-      run: |
-        source qpow-venv/bin/activate
-        make coverage
+      run: make coverage
 
     # Step 10: Upload Coverage Report
     - name: Upload Coverage Report
@@ -83,9 +73,7 @@ jobs:
 
     # Step 11: Generate Documentation
     - name: Generate Documentation
-      run: |
-        source qpow-venv/bin/activate
-        make docs
+      run: make docs
 
     # Step 12: Upload Documentation
     - name: Upload Documentation
@@ -96,5 +84,5 @@ jobs:
 
     # Step 13: Clean Temporary Files
     - name: Clean Temporary Files
-      run: |
-        make clean clean-venv
+      run: make clean clean-venv
+      
