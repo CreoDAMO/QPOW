@@ -110,4 +110,4 @@ class TestApp(pytest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    pytest.main()
