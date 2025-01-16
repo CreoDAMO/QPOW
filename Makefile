@@ -7,10 +7,8 @@ FLAKE8 := flake8
 BLACK := black
 ISORT := isort
 PYTEST := pytest
-PYNGUIN := pynguin
 DOXYGEN_CONFIG := Doxyfile
 COVERAGE_DIR := coverage_html
-TEST_OUTPUT_DIR := tests/generated
 
 # Default target
 .DEFAULT_GOAL := help
@@ -54,11 +52,6 @@ run-app: check-env install  ## Run the Flask application
 	@echo "Starting the Flask application..."
 	$(ACTIVATE) && python src/app.py
 
-# Run Quantum Node
-run-node: check-env install  ## Run the Quantum Node
-	@echo "Starting the Quantum Node..."
-	$(ACTIVATE) && python src/quantum_node.py
-
 # Lint the codebase
 lint: check-env install  ## Lint the codebase using flake8
 	@echo "Linting the codebase with flake8..."
@@ -74,14 +67,6 @@ format: check-env install-formatters  ## Format code with Black and Isort
 test: check-env install  ## Run tests with pytest
 	@echo "Running tests with pytest..."
 	$(ACTIVATE) && $(PYTEST) tests --disable-warnings
-
-# Generate tests using Pynguin
-generate-tests: check-env install  ## Generate unit tests using Pynguin
-	@echo "Generating unit tests with Pynguin..."
-	$(ACTIVATE) && PYTHONPATH=./QPOW/src PYNGUIN_DANGER_AWARE=1 $(PYNGUIN) \
-		--project-path ./QPOW/src \
-		--output-path $(TEST_OUTPUT_DIR) \
-		--module-name app
 
 # Generate coverage report
 coverage: check-env install test  ## Generate test coverage report
@@ -106,7 +91,6 @@ clean:  ## Remove temporary files and directories
 	rm -rf .pytest_cache
 	rm -rf $(COVERAGE_DIR)
 	rm -rf .coverage
-	rm -rf $(TEST_OUTPUT_DIR)
 
 # Clean virtual environment
 clean-venv:  ## Remove the virtual environment
