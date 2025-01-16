@@ -34,13 +34,18 @@ check-env:  ## Ensure virtual environment exists
 		exit 1; \
 	fi
 
+# Upgrade pip
+upgrade-pip: check-env  ## Upgrade pip in the virtual environment
+	@echo "Upgrading pip..."
+	$(ACTIVATE) && pip install --upgrade pip
+
 # Install dependencies
-install: check-env  ## Install project dependencies
+install: upgrade-pip  ## Install project dependencies
 	@echo "Installing dependencies..."
 	$(ACTIVATE) && pip install -r $(REQUIREMENTS)
 
 # Install formatting tools
-install-formatters: check-env  ## Install Black and Isort
+install-formatters: upgrade-pip  ## Install Black and Isort
 	@echo "Installing Black and Isort..."
 	$(ACTIVATE) && pip install $(BLACK) $(ISORT)
 
@@ -75,7 +80,6 @@ generate-tests: check-env install  ## Generate unit tests using Pynguin
 	@echo "Generating unit tests with Pynguin..."
 	$(ACTIVATE) && PYTHONPATH=./src PYNGUIN_DANGER_AWARE=1 $(PYNGUIN) \
 		--project-path ./src \
-		--module-name app \
 		--output-path $(TEST_OUTPUT_DIR)
 
 # Generate coverage report
