@@ -1,0 +1,73 @@
+# Doxyfile 1.13.2
+
+# Project Information
+PROJECT_NAME           = "QuantumFuse"
+PROJECT_NUMBER         = "1.0"
+PROJECT_BRIEF          = "Documentation for QuantumFuse Project"
+OUTPUT_DIRECTORY       = docs
+CREATE_SUBDIRS         = YES
+ALLOW_UNICODE_NAMES    = YES
+
+# Input Settings
+INPUT                  = src
+RECURSIVE              = YES
+FILE_PATTERNS          = *.py
+EXCLUDE_PATTERNS       = tests/*
+
+# Build Settings
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = YES
+EXTRACT_LOCAL_CLASSES  = YES
+EXTRACT_LOCAL_METHODS  = YES
+EXTRACT_ANON_NSPACES   = YES
+
+# Markdown Support
+USE_MDFILE_AS_MAINPAGE = README.md
+MARKDOWN_SUPPORT       = YES
+
+# Warnings and Logs
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = YES
+WARN_NO_PARAMDOC       = YES
+WARN_LOGFILE           = doxy_warnings.log
+
+# Output Settings
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+HTML_COLORSTYLE_HUE    = 220
+HTML_COLORSTYLE_SAT    = 180
+HTML_COLORSTYLE_GAMMA  = 80
+HTML_DYNAMIC_SECTIONS  = YES
+
+GENERATE_LATEX         = NO
+
+# Index Options
+ALPHABETICAL_INDEX     = YES
+COLS_IN_ALPHA_INDEX    = 3
+SHOW_FILES             = YES
+SHOW_NAMESPACES        = YES
+
+# Source Browser
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = YES
+REFERENCED_BY_RELATION = YES
+REFERENCES_RELATION    = YES
+STRIP_CODE_COMMENTS    = NO
+
+# Documentation Strategies
+OPTIMIZE_OUTPUT_FOR_C  = NO
+OPTIMIZE_OUTPUT_JAVA   = NO
+OPTIMIZE_FOR_FORTRAN   = NO
+OPTIMIZE_OUTPUT_VHDL   = NO
+
+# Dot Settings
+HAVE_DOT               = YES
+DOT_IMAGE_FORMAT       = svg
+DOT_TRANSPARENT        = YES
+DOT_MULTI_TARGETS      = YES
+
+# Miscellaneous
+FULL_PATH_NAMES        = YES
+SHORT_NAMES            = NO
+QUIET                  = NO
