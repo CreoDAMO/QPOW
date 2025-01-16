@@ -48,7 +48,8 @@ class TestApp(unittest.TestCase):
         """Test NFT teleportation fails due to an unexpected exception."""
         data = {"token_id": "123", "sender": "Alice", "recipient": "Bob"}
         with patch.object(
-            self.nft_marketplace, "teleport_nft", side_effect=ValueError("Unexpected error")
+            self.nft_marketplace,
+            "teleport_nft", side_effect=ValueError("Unexpected error")
         ):
             response = self.app.post(
                 "/v1/nft/teleport",
@@ -89,7 +90,7 @@ class TestApp(unittest.TestCase):
         }
         mock_result = {0: [0, 1], 1: [2]}
         with patch.object(
-            self.quantum_ai_optimizer, 
+            self.quantum_ai_optimizer,
             "optimize_shard_allocation", return_value=mock_result
         ):
             response = self.app.post(
