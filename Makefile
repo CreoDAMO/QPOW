@@ -76,8 +76,7 @@ coverage: check-env install test  ## Generate test coverage report
 docs:  ## Generate documentation using Doxygen
 	@echo "Generating documentation with Doxygen..."
 	@if [ ! -f "$(DOXYGEN_CONFIG)" ]; then \
-		echo "Doxygen configuration file ($(DOXYGEN_CONFIG)) not found. Please create it."; \
-		exit 1; \
+		echo "Doxygen configuration file ($(DOXYGEN_CONFIG)) not found. Skipping documentation generation."; \
 	else \
 		doxygen $(DOXYGEN_CONFIG); \
 	fi
