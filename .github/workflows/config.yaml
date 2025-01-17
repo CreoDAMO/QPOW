@@ -16,25 +16,31 @@ permissions:
   pull-requests: write
 
 jobs:
-  build:
+  validate-config:
+    name: Validate Backend Configuration
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      # Step 1: Checkout code
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.10"
+      # Step 2: Set up Python Environment
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
 
-    - name: Install Dependencies
-      run: |
-        python -m venv qpow-venv
-        source qpow-venv/bin/activate
-        pip install -r requirements.txt
+      # Step 3: Install Dependencies
+      - name: Install Dependencies
+        run: |
+          python -m venv qpow-venv
+          source qpow-venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
 
-    - name: Run Configuration Validation
-      run: |
-        echo "Validating Backend Configuration..."
-        python validate_backend.py  # Example of a script to validate your YAML config
+      # Step 4: Validate Backend Configuration
+      - name: Validate Backend Configuration
+        run: |
+          echo "Validating Backend Configuration..."
+          python validate_backend.py config.yaml
