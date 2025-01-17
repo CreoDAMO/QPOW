@@ -43,4 +43,4 @@ jobs:
       - name: Validate Backend Configuration
         run: |
           echo "Validating Backend Configuration..."
-          python validate_backend.py config.yaml
+          python scripts/validate_backend.py configs/config.yaml
