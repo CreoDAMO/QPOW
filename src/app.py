@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, abort
-from flask_cors import CORSfrom src.quantum_services import (
+from flask_cors import CORS
+from src.quantum_services import (
     QFCOnramper,
     NFTMarketplace,
     QKDManager,
