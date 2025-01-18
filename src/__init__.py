@@ -21,7 +21,6 @@ from .quantum_node import QuantumNode, PeerManager, TransactionPropagator
 from .quantum_bridge import QuantumBridge
 from .quantum_interface import QuantumInterface, get_quantum_adapter
 from .fusion_reactor import FusionReactor
-from .ar_vr_xr_environment import ARVREnvironment
 
 # Import utilities and wrappers
 from .quantum_wallet import QuantumWallet
@@ -55,7 +54,6 @@ __all__ = [
     "QuantumInterface",
     "get_quantum_adapter",
     "FusionReactor",
-    "ARVREnvironment",
     "QuantumSimulator",
     "QuantumFuseCoin",
     "BackendSelector",
