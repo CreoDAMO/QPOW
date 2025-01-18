@@ -1,7 +1,7 @@
 import logging
 from src.quantum_secure_manager import QuantumSecureManager
 from src.analytics_manager import AnalyticsManager
-from src.blockchain.blockchain_api import BlockchainAPI
+from src.api import API
 from src.asset_manager import AssetManager
 from src.multiplayer_manager import MultiplayerManager
 
