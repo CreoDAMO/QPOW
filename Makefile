@@ -7,6 +7,7 @@ FLAKE8 := flake8
 BLACK := black
 ISORT := isort
 PYTEST := pytest
+DOXYGEN := doxygen
 DOXYGEN_CONFIG := Doxyfile
 COVERAGE_DIR := coverage_html
 
@@ -50,7 +51,7 @@ install-formatters: upgrade-pip  ## Install Black and Isort
 # Run Flask application
 run-app: check-env install  ## Run the Flask application
 	@echo "Starting the Flask application..."
-	$(ACTIVATE) && python src/app.py
+	$(ACTIVATE) && $(PYTHON) src/app.py
 
 # Lint the codebase
 lint: check-env install  ## Lint the codebase using flake8
@@ -63,14 +64,15 @@ format: check-env install-formatters  ## Format code with Black and Isort
 	$(ACTIVATE) && $(BLACK) src tests
 	$(ACTIVATE) && $(ISORT) src tests
 
-# Run tests
-test:  ## Skip tests temporarily
-	@echo "Skipping tests during the build process..."
+# Run tests with pytest
+test: check-env install  ## Run tests using pytest
+	@echo "Running tests with pytest..."
+	$(ACTIVATE) && $(PYTEST) tests --verbose
 
 # Generate coverage report
-coverage: check-env install test  ## Generate test coverage report
+coverage: check-env install  ## Generate test coverage report
 	@echo "Generating test coverage report..."
-	$(ACTIVATE) && $(PYTEST) tests --cov=src --cov-report=term-missing --cov-report=html --cov-report html:$(COVERAGE_DIR)
+	$(ACTIVATE) && $(PYTEST) tests --cov=src --cov-report=term-missing --cov-report=html:$(COVERAGE_DIR)
 
 # Generate documentation using Doxygen
 docs:  ## Generate documentation using Doxygen
@@ -78,7 +80,7 @@ docs:  ## Generate documentation using Doxygen
 	@if [ ! -f "$(DOXYGEN_CONFIG)" ]; then \
 		echo "Doxygen configuration file ($(DOXYGEN_CONFIG)) not found. Skipping documentation generation."; \
 	else \
-		doxygen $(DOXYGEN_CONFIG); \
+		$(DOXYGEN) $(DOXYGEN_CONFIG); \
 	fi
 
 # Clean temporary files
