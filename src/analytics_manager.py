@@ -10,11 +10,11 @@ class AnalyticsManager:
     and analyze usage patterns for insights.
     """
 
-    
+
     def __init__(self):
         self.interaction_logs = []
 
-    
+
     def capture_interaction_data(self):
         """
         Simulate capturing interaction data from the AR/VR interface.
@@ -32,7 +32,7 @@ class AnalyticsManager:
         print(f"Captured interaction: {interaction_data}")
         return interaction_data
 
-    
+ 
     def analyze_data(self, data):
         """
         Perform analysis on captured interaction data.
@@ -43,7 +43,7 @@ class AnalyticsManager:
         print(f"Analyzing action '{action}' at position {position}.")
         # Example analysis logic could be extended here.
 
-    
+ 
     def summarize_interactions(self):
         """
         Summarize interaction logs for reporting.
