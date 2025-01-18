@@ -34,52 +34,55 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      # Step 4: Ensure Clean Environment
+      # Step 4: Clean Temporary Files
       - name: Clean Temporary Files
         run: |
           make clean clean-venv
 
-      # Step 5: Install Dependencies
-      - name: Install Dependencies
+      # Step 5: Create and Activate Virtual Environment
+      - name: Set up Virtual Environment
         run: |
           make venv
           source qpow-venv/bin/activate
-          make install install-formatters
 
-      # Step 6: Lint the Codebase
+      # Step 6: Install Dependencies and Formatters
+      - name: Install Dependencies
+        run: make install install-formatters
+
+      # Step 7: Lint the Codebase
       - name: Lint the Codebase
-        run: |
-          source qpow-venv/bin/activate
-          make lint
+        run: make lint
 
-      # Step 7: Format the Codebase
+      # Step 8: Format the Codebase
       - name: Format the Codebase
-        run: |
-          source qpow-venv/bin/activate
-          make format
+        run: make format
 
-      # Step 8: (Skip Testing Temporarily)
-      # - name: Run Tests
-      #   run: |
-      #       source qpow-venv/bin/activate
-      #       make test
+      # Step 9: Run Tests
+      - name: Run Tests
+        run: make test
 
-      # Step 9: (Skip Coverage Temporarily)
-      # - name: Generate Coverage Report
-      #   run: |
-      #       source qpow-venv/bin/activate
-      #       make coverage
+      # Step 10: Generate Coverage Report
+      - name: Generate Coverage Report
+        run: make coverage
 
-      # Step 10: Upload Coverage Report
+      # Step 11: Upload Coverage Report
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage_html
-        if: always()
 
-      
-      # Step 13: Final Cleanup
+      # Step 12: Generate Documentation
+      - name: Generate Documentation
+        run: make docs
+
+      # Step 13: Upload Documentation (Optional)
+      - name: Upload Documentation
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation
+          path: docs/html  # Assuming Doxygen outputs to docs/html
+
+      # Step 14: Final Cleanup
       - name: Clean Up
-        run: |
-          make clean clean-venv
+        run: make clean clean-venv
