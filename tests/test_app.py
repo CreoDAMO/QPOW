@@ -60,7 +60,6 @@ def test_optimize_shard_allocation(client):
     assert response.json['success'] is True
 
 
-
 def test_invalid_route(client):
     response = client.get('/invalid-route')
     assert response.status_code == 404
