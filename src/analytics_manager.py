@@ -4,8 +4,10 @@ import time
 
 class AnalyticsManager:
     """
-    Manages the capture and analysis of user interaction data within the AR/VR/XR environment.
-    Provides methods to collect, store, and analyze usage patterns for insights.
+    Manages the capture and analysis of user interaction
+    data within the AR/VR/XR environment.
+    Provides methods to collect, store,
+    and analyze usage patterns for insights.
     """
 
     
@@ -22,7 +24,9 @@ class AnalyticsManager:
             "user_id": f"user_{random.randint(1, 100)}",
             "timestamp": time.time(),
             "action": random.choice(["move", "select", "grab", "drop"]),
-            "position": (random.uniform(-10, 10), random.uniform(-10, 10), random.uniform(-10, 10))
+            "position": (
+                random.uniform(-10, 10), random.uniform(
+                    -10, 10), random.uniform(-10, 10))
         }
         self.interaction_logs.append(interaction_data)
         print(f"Captured interaction: {interaction_data}")
