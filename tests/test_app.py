@@ -1,5 +1,6 @@
 import pytest
-from app import app  # Assuming your Flask app is in app.py
+from unittest.mock import patch, MagicMock
+from app import app
 
 
 @pytest.fixture
@@ -58,3 +59,11 @@ def test_optimize_shard_allocation(client):
     }, headers={"X-API-KEY": "default-api-key"})
     assert response.status_code == 200
     assert response.json['success'] is True
+
+# Negative test cases
+
+def test_invalid_route(client):
+    response = client.get('/invalid-route')
+    assert response.status_code == 404
+    assert response.json['success'] is False
+    
