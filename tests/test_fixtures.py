@@ -22,7 +22,7 @@ def test_mining_difficulty(blockchain):
 def test_transaction_validation(blockchain):
     tx = Transaction("0xSender", "0xRecipient", 1000.0)
     assert not blockchain.state_manager.validate_transaction(tx)
-  
+
 
 def test_block_creation(blockchain):
     block = Block(2, [Transaction("0xSender", "0xRecipient", 20.0)], "previous_hash")
