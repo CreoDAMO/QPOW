@@ -1,11 +1,11 @@
 from typing import Dict, Any
 from pqcrypto.sign.dilithium2 import sign, verify
-from quantum_resource_manager import QuantumResourceManager
-from quantum_secure_manager import QuantumSecureManager
-from quantum_simulator import QuantumSimulator
+from src.quantum_resource_manager import QuantumResourceManager
+from src.quantum_secure_manager import QuantumSecureManager
+from src.quantum_simulator import QuantumSimulator
 from identity_manager import IdentityManager
 from quantum_storage import QuantumStorage
-from quantum_services import QuantumServices
+from src.quantum_services import QuantumServices
 
 
 class QuantumRandomOracleContract:
