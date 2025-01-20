@@ -1,6 +1,6 @@
 from pqcrypto.sign.dilithium2 import verify
-from quantum_bridge_wrapper import QuantumBridgeWrapper
-from quantum_resource_manager import QuantumResourceManager
+from src.quantum_bridge_wrapper import QuantumBridgeWrapper
+from src.quantum_resource_manager import QuantumResourceManager
 from typing import Dict, List, Any, Callable
 import time
 
