@@ -1,6 +1,6 @@
 import time
 from flask import Flask, jsonify, request, abort
-from quantum_bridge_wrapper import QuantumBridgeWrapper
+from src.quantum_bridge_wrapper import QuantumBridgeWrapper
 
 # Flask app for API
 app = Flask(__name__)
