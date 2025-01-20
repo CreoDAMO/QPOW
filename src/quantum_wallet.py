@@ -1,5 +1,5 @@
 import logging
-from pqc_wrapper import PQCWrapper  # Wrapper for dynamic PQC backend
+from src.pqc_wrapper import PQCWrapper  # Wrapper for dynamic PQC backend
 from argon2 import PasswordHasher
 from firebase_admin import messaging
 
