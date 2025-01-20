@@ -1,14 +1,14 @@
 import asyncio
 import logging
-from .backend_selector import BackendSelector
-from .pqc_wrapper import PQCWrapper
-from .quantum_bridge_wrapper import QuantumBridgeWrapper
+from src.backend_selector import BackendSelector
+from src.pqc_wrapper import PQCWrapper
+from src.quantum_bridge_wrapper import QuantumBridgeWrapper
 from .peer_manager import PeerManager
 from .transaction_propagator import TransactionPropagator
 from .consensus_manager import ConsensusManager
 from .node_manager import NodeManager
 from .quantum_storage import QuantumStorage
-from .app import app
+from src.app import app
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
