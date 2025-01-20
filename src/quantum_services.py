@@ -2,10 +2,10 @@ import asyncio
 import logging
 from typing import Callable, Dict, Any
 from quantum_lib.teleportation import QuantumTeleportation
-from backend_selector import BackendSelector
-from pqc_wrapper import PQCWrapper
-from quantum_bridge_wrapper import QuantumBridgeWrapper
-from .core import Blockchain, StateManager, Transaction
+from src.backend_selector import BackendSelector
+from src.pqc_wrapper import PQCWrapper
+from src.quantum_bridge_wrapper import QuantumBridgeWrapper
+from src.core import Blockchain, StateManager, Transaction
 from .onramper import QFCOnramper
 from .nft_marketplace import NFTMarketplace
 from .optimizer import QuantumAIOptimizer
