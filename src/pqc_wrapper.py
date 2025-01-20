@@ -1,6 +1,3 @@
-from src.pqc_wrapper import PQCWrapper
-
-
 class PQCWrapper:
     def __init__(self, backend="quantcrypt"):
         self.backend = backend.lower()
@@ -15,21 +12,18 @@ class PQCWrapper:
                 "Unsupported PQC backend. Choose 'quantcrypt' or 'pqclean'."
             )
 
-    
     def generate_keypair(self):
         """
         Generate a cryptographic keypair using the selected backend.
         """
         return self.lib.generate_keypair()
 
-    
     def sign(self, message: bytes, private_key: bytes):
         """
         Sign a message using the private key.
         """
         return self.lib.sign(message, private_key)
 
-    
     def verify(self, message: bytes, signature: bytes, public_key: bytes):
         """
         Verify a signed message using the public key.
