@@ -1,5 +1,7 @@
 import logging
-from typing import Dict
+
+# Uncomment if using Dict in type hints
+# from typing import Dict
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s: %(message)s")
@@ -7,10 +9,12 @@ logger = logging.getLogger(__name__)
 
 class Transaction:
     """Represents a transaction."""
+    
     def __init__(self, sender: str, amount: float, fee: float):
         self.sender = sender
         self.amount = amount
         self.fee = fee
+
 
 class StateManager:
     """Manages the state of QFC assets and balances."""
