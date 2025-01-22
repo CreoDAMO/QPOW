@@ -138,8 +138,7 @@ class ConsensusManager:
         is_valid = self.state_manager.validate_transaction(tx_data)
         logger.info(
             f"Transaction validated by {validator.get_address()}: {
-                'Success' if is_valid else 'Failure'}."
-        )
+                'Success' if is_valid else 'Failure'}.")
         return is_valid
 
     def mine_block(self, block_data: str, miner_id: str, difficulty: int, reward: float):
