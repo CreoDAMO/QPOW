@@ -11,7 +11,8 @@ def cleanup_resources():
 def common_setup():
     """Set up common test resources."""
     pass
-    
+
+
 def blockchain():
     """Fixture for setting up a blockchain instance."""
     return Blockchain(
