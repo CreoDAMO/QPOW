@@ -137,13 +137,18 @@ class ConsensusManager:
 
         is_valid = self.state_manager.validate_transaction(tx_data)
         logger.info(
-            f"Transaction validated by {validator.get_address()}: {'Success' if is_valid else 'Failure'}.")
+            f"Transaction validated by {validator.get_address()}: "
+            f"{'Success' if is_valid else 'Failure'}."
+        )
         return is_valid
 
-    def mine_block(self, block_data: str, miner_id: str, difficulty: int, reward: float):
+    def mine_block(
+        self, block_data: str, miner_id: str, difficulty: int, reward: float
+    ):
         """Mine a block using QPOW and GPoW."""
         mined_block = self.qpow.mine_block(block_data, difficulty)
         rewards = self.gpow.adjust_rewards(reward)
         final_reward = rewards.get(miner_id, 0)
         logger.info(
-            f"Block mined: {mined_block['hash']}, reward to {miner_id}: {final_reward}.")
+            f"Block mined: {mined_block['hash']}, reward to {miner_id}: {final_reward}."
+        )
