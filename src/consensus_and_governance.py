@@ -1,8 +1,8 @@
 from typing import Dict
 import logging
-from src.quantum_wallet import QuantumWallet
-from src.state_manager import StateManager
-from src.qdpos_manager import QDPoSManager
+from src.quantum_wallet import QuantumWallet  # Verify this import path
+from src.state_manager import StateManager, Transaction # Import Transaction
+from src.qdpos_manager import QDPoSManager  # Verify this import path
 import random
 import hashlib
 
@@ -53,8 +53,8 @@ class QuantumProofOfStake:
 
     def register_validator(self, wallet: QuantumWallet, stake: int):
         """Register a validator."""
-        wallet.balance -= stake
-        self.validators[wallet.get_address()] = wallet
+        wallet.balance -= stake  # Assuming QuantumWallet has a balance attribute
+        self.validators[wallet.get_address()] = wallet  # Assuming get_address() method
         self.total_staked += stake
         logger.info(
             f"Validator {wallet.get_address()} registered with stake {stake} QFC."
@@ -62,6 +62,10 @@ class QuantumProofOfStake:
 
     def select_validator(self) -> QuantumWallet:
         """Select a validator proportional to stake."""
+        if not self.validators:  # Handle empty validators dictionary
+            logger.warning("No validators registered.")
+            return None
+
         addresses = list(self.validators.keys())
         stakes = [wallet.balance for wallet in self.validators.values()]
         selected = random.choices(addresses, weights=stakes, k=1)[0]
@@ -86,9 +90,20 @@ class QuantumDelegatedProofOfStake:
 
     def validate_block(self, block_data: str) -> bool:
         """Validate a block."""
+        # Handle the case where there are no delegates
+        if not self.delegates:
+            logger.warning("No delegates registered.")
+            return False
+
         validator_address = random.choice(list(self.delegates.values()))
         logger.info(f"Block validated by {validator_address}.")
-        return self.state_manager.validate_transaction({"data": block_data})
+
+        # Create a dummy transaction for validation.  Adjust as needed
+        dummy_transaction = Transaction(sender=validator_address, amount=0, fee=0)
+        dummy_transaction.data = block_data  # Add block data to the transaction
+        return self.state_manager.validate_transaction(dummy_transaction)
+
+
 
 
 # -------------------- Green Proof-of-Work (GPoW) --------------------
@@ -114,7 +129,7 @@ class GreenProofOfWork:
 
 
 # -------------------- Hybrid Consensus System --------------------
-class HybridConsensus:
+class ConsensusManager:
     """Hybrid model combining QPOW, QPOS, QDPoS, and GPoW."""
 
     def __init__(self, state_manager: StateManager, qdpos_manager: QDPoSManager):
@@ -124,9 +139,13 @@ class HybridConsensus:
         self.gpow = GreenProofOfWork()
         self.state_manager = state_manager
 
-    def validate_transaction(self, tx_data: Dict) -> bool:
+
+    def validate_transaction(self, tx_data: Transaction) -> bool:
         """Hybrid transaction validation using QPoS and QDPoS."""
         validator = self.qpos.select_validator()
+        if validator is None: # Handle the case where no validator is selected
+            return False
+
         is_valid = self.state_manager.validate_transaction(tx_data)
         logger.info(
             f"Transaction validated by {validator.get_address()}: "
