@@ -52,7 +52,8 @@ class QuantumProofOfStake:
         wallet.balance -= stake  # Assuming QuantumWallet has a balance attribute
         self.validators[wallet.get_address()] = wallet  # Assuming get_address()
         self.total_staked += stake
-        logger.info(f"Validator {wallet.get_address()} registered with stake {stake} QFC.")
+        logger.info(
+            f"Validator {wallet.get_address()} registered with stake {stake} QFC.")
 
     def select_validator(self) -> QuantumWallet:
         """Select a validator proportional to stake."""
@@ -78,7 +79,8 @@ class QuantumDelegatedProofOfStake:
     def register_delegate(self, holder_address: str, validator_address: str):
         """Register a delegate."""
         self.delegates[holder_address] = validator_address
-        logger.info(f"Delegate {holder_address} supports validator {validator_address}.")
+        logger.info(
+            f"Delegate {holder_address} supports validator {validator_address}.")
 
     def validate_block(self, block_data: str) -> bool:
         """Validate a block."""
@@ -105,7 +107,8 @@ class GreenProofOfWork:
     def register_node(self, node_id: str, renewable_ratio: float):
         """Register a node."""
         self.energy_use[node_id] = renewable_ratio
-        logger.info(f"Node {node_id} registered with renewable ratio {renewable_ratio}.")
+        logger.info(
+            f"Node {node_id} registered with renewable ratio {renewable_ratio}.")
 
     def adjust_rewards(self, base_reward: float) -> Dict[str, float]:
         """Adjust rewards based on renewable usage."""
@@ -134,14 +137,15 @@ class ConsensusManager:
 
         is_valid = self.state_manager.validate_transaction(tx_data)
         logger.info(
-            f"Transaction validated by {validator.get_address()}: {'Success' if is_valid else 'Failure'}."
+            f"Transaction validated by {validator.get_address()}: {
+                'Success' if is_valid else 'Failure'}."
         )
         return is_valid
-
 
     def mine_block(self, block_data: str, miner_id: str, difficulty: int, reward: float):
         """Mine a block using QPOW and GPoW."""
         mined_block = self.qpow.mine_block(block_data, difficulty)
         rewards = self.gpow.adjust_rewards(reward)
         final_reward = rewards.get(miner_id, 0)
-        logger.info(f"Block mined: {mined_block['hash']}, reward to {miner_id}: {final_reward}.")
+        logger.info(
+            f"Block mined: {mined_block['hash']}, reward to {miner_id}: {final_reward}.")
