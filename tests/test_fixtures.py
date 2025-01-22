@@ -3,6 +3,14 @@ from src.core import Blockchain, Transaction, Block
 
 
 @pytest.fixture
+def cleanup_resources():
+    """Clean up resources used during tests."""
+    pass
+
+def common_setup():
+    """Set up common test resources."""
+    pass
+    
 def blockchain():
     """Fixture for setting up a blockchain instance."""
     return Blockchain(
