@@ -12,7 +12,6 @@ qiskit-aer==0.15.1
 qiskit-ibm-runtime==0.34.0
 qiskit-ibm-transpiler==0.10.0
 qiskit-addon-aqc-tensor==0.1.2
-quantcrypt
 libp2p==0.2.1
 requests==2.32.3
 protobuf==5.29.3
