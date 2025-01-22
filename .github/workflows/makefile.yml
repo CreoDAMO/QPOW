@@ -15,74 +15,51 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout code
-      - name: Checkout Code
-        uses: actions/checkout@v3
+    - name: Checkout Code
+      uses: actions/checkout@v3
 
-      # Step 2: Set up Python
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
 
-      # Step 3: Cache pip dependencies
-      - name: Cache pip dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+    - name: Clear Pip Cache
+      run: make clear-cache
 
-      # Step 4: Clean Temporary Files
-      - name: Clean Temporary Files
-        run: |
-          make clean clean-venv
+    - name: Create and Activate Virtual Environment
+      run: |
+        make venv
+        source qpow-venv/bin/activate
 
-      # Step 5: Create and Activate Virtual Environment
-      - name: Set up Virtual Environment
-        run: |
-          make venv
-          source qpow-venv/bin/activate
+    - name: Install Dependencies
+      run: make install install-formatters
 
-      # Step 6: Install Dependencies and Formatters
-      - name: Install Dependencies
-        run: make install install-formatters
+    - name: Lint the Codebase
+      run: make lint
 
-      # Step 7: Lint the Codebase
-      - name: Lint the Codebase
-        run: make lint
+    - name: Format the Codebase
+      run: make format
 
-      # Step 8: Format the Codebase
-      - name: Format the Codebase
-        run: make format
+    - name: Run Tests
+      run: make test
 
-      # Step 9: Run Tests
-      - name: Run Tests
-        run: make test
+    - name: Generate Coverage Report
+      run: make coverage
 
-      # Step 10: Generate Coverage Report
-      - name: Generate Coverage Report
-        run: make coverage
+    - name: Upload Coverage Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: coverage_html
 
-      # Step 11: Upload Coverage Report
-      - name: Upload Coverage Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: coverage_html
+    - name: Generate Documentation
+      run: make docs
 
-      # Step 12: Generate Documentation
-      - name: Generate Documentation
-        run: make docs
+    - name: Upload Documentation
+      uses: actions/upload-artifact@v4
+      with:
+        name: documentation
+        path: docs/html
 
-      # Step 13: Upload Documentation (Optional)
-      - name: Upload Documentation
-        uses: actions/upload-artifact@v4
-        with:
-          name: documentation
-          path: docs/html  # Assuming Doxygen outputs to docs/html
-
-      # Step 14: Final Cleanup
-      - name: Clean Up
-        run: make clean clean-venv
+    - name: Clean Up
+      run: make clean clean-venv
