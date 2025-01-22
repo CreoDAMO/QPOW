@@ -27,7 +27,7 @@ from src.quantum_wallet import QuantumWallet
 from src.quantum_simulator import QuantumSimulator
 from src.quantumfuse_coin import QuantumFuseCoin
 from src.backend_selector import BackendSelector
-from srf.pqc_wrapper import PQCWrapper
+from src.pqc_wrapper import PQCWrapper
 from src.quantum_bridge_wrapper import QuantumBridgeWrapper
 
 # Expose key components for simpler imports in external modules
