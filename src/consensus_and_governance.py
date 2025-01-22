@@ -1,7 +1,7 @@
 from typing import Dict
 import logging
 from src.quantum_wallet import QuantumWallet  # Verify this import path
-from src.state_manager import StateManager, Transaction # Import Transaction
+from src.state_manager import StateManager, Transaction  # Import Transaction
 from src.qdpos_manager import QDPoSManager  # Verify this import path
 import random
 import hashlib
@@ -21,7 +21,7 @@ class QuantumProofOfWork:
     @staticmethod
     def generate_nonce() -> int:
         """Generate a quantum random nonce."""
-        return random.randint(0, 2**32 - 1)  # Replace with QRNG in production
+        return random.randint(0, 2**32 - 1)  # Replace with QRNG in production  (Note extra space)
 
     def validate_nonce(self, block_hash: str, nonce: int, difficulty: int) -> bool:
         """Validate nonce based on difficulty."""
@@ -74,12 +74,13 @@ class QuantumProofOfStake:
 
 
 # -------------------- Quantum Delegated Proof-of-Stake (QDPoS) --------------------
-class QuantumDelegatedProofOfStake:
+class QuantumDelegatedProofOfStake:  # Reduced blank lines here
     """Quantum Delegated Proof-of-Stake (QDPoS) system."""
 
     def __init__(self, state_manager: StateManager):
         self.state_manager = state_manager
-        self.delegates: Dict[str, str] = {}  # Token holders delegating to validators
+        self.delegates: Dict[str, str] = {}  # Token holders delegating to validators  (Note extra space)
+
 
     def register_delegate(self, holder_address: str, validator_address: str):
         """Register a delegate."""
@@ -105,9 +106,8 @@ class QuantumDelegatedProofOfStake:
 
 
 
-
 # -------------------- Green Proof-of-Work (GPoW) --------------------
-class GreenProofOfWork:
+class GreenProofOfWork:  # Reduced blank lines here
     """Green Proof-of-Work (GPoW) system incentivizing renewable energy."""
 
     def __init__(self):
