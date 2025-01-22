@@ -29,21 +29,21 @@ class StateManager:
         """Update the balance for a given address."""
         if address not in self.assets["QFC"]["balances"]:
             self.assets["QFC"]["balances"][address] = 0.0
-            logger.info(f"New address added: {address} with initial balance 0.0.")
+            logger.info(f"New address: {address} with initial balance 0.0.")
 
         self.assets["QFC"]["balances"][address] += amount
-        logger.info(
-            f"Updated balance for {address}:
-            {self.assets['QFC']['balances'][address]}.")
+        logger.info(f"Updated balance for {address}: "
+                    f"{self.assets['QFC']['balances'][address]}.")
 
     def validate_transaction(self, transaction: Transaction) -> bool:
-        """Validate a transaction based on the sender's balance."""
+        """Validate a transaction based on sender's balance."""
         sender_balance = self.assets["QFC"]["balances"].get(transaction.sender, 0.0)
         required_balance = transaction.amount + transaction.fee
 
         if sender_balance < required_balance:
-            logger.warning(f"Transaction validation failed for {transaction.sender}: "
-                           f"Insufficient balance. Required: {required_balance}, "
+            logger.warning("Transaction validation failed for "
+                           f"{transaction.sender}: Insufficient balance. "
+                           f"Required: {required_balance}, "
                            f"Available: {sender_balance}.")
             return False
 
