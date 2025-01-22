@@ -1,7 +1,7 @@
 from typing import Dict
 import logging
 from src.quantum_wallet import QuantumWallet  # Verify this import path
-from src.state_manager import StateManager, Transaction  # Import Transaction
+from src.state_manager import StateManager, Transaction
 from src.qdpos_manager import QDPoSManager  # Verify this import path
 import random
 import hashlib
@@ -21,14 +21,12 @@ class QuantumProofOfWork:
     @staticmethod
     def generate_nonce() -> int:
         """Generate a quantum random nonce."""
-        return random.randint(0, 2**32 - 1)  # Replace with QRNG in production  (Note extra space)
+        return random.randint(0, 2**32 - 1)  # Replace with QRNG in production
 
     def validate_nonce(self, block_hash: str, nonce: int, difficulty: int) -> bool:
         """Validate nonce based on difficulty."""
         target = "0" * difficulty
-        hash_result = hashlib.sha256(
-            f"{block_hash}{nonce}".encode()
-        ).hexdigest()
+        hash_result = hashlib.sha256(f"{block_hash}{nonce}".encode()).hexdigest()
         return hash_result.startswith(target)
 
     def mine_block(self, block_data: str, difficulty: int) -> Dict:
@@ -36,9 +34,7 @@ class QuantumProofOfWork:
         nonce = self.generate_nonce()
         while not self.validate_nonce(block_data, nonce, difficulty):
             nonce = self.generate_nonce()
-        block_hash = hashlib.sha256(
-            f"{block_data}{nonce}".encode()
-        ).hexdigest()
+        block_hash = hashlib.sha256(f"{block_data}{nonce}".encode()).hexdigest()
         logger.info(f"Block mined with nonce {nonce} and hash {block_hash}.")
         return {"hash": block_hash, "nonce": nonce}
 
@@ -54,11 +50,9 @@ class QuantumProofOfStake:
     def register_validator(self, wallet: QuantumWallet, stake: int):
         """Register a validator."""
         wallet.balance -= stake  # Assuming QuantumWallet has a balance attribute
-        self.validators[wallet.get_address()] = wallet  # Assuming get_address() method
+        self.validators[wallet.get_address()] = wallet  # Assuming get_address()
         self.total_staked += stake
-        logger.info(
-            f"Validator {wallet.get_address()} registered with stake {stake} QFC."
-        )
+        logger.info(f"Validator {wallet.get_address()} registered with stake {stake} QFC.")
 
     def select_validator(self) -> QuantumWallet:
         """Select a validator proportional to stake."""
@@ -74,40 +68,35 @@ class QuantumProofOfStake:
 
 
 # -------------------- Quantum Delegated Proof-of-Stake (QDPoS) --------------------
-class QuantumDelegatedProofOfStake:  # Reduced blank lines here
+class QuantumDelegatedProofOfStake:
     """Quantum Delegated Proof-of-Stake (QDPoS) system."""
 
     def __init__(self, state_manager: StateManager):
         self.state_manager = state_manager
-        self.delegates: Dict[str, str] = {}  # Token holders delegating to validators  (Note extra space)
-
+        self.delegates: Dict[str, str] = {}  # Token holders delegating to validators
 
     def register_delegate(self, holder_address: str, validator_address: str):
         """Register a delegate."""
         self.delegates[holder_address] = validator_address
-        logger.info(
-            f"Delegate {holder_address} supports validator {validator_address}."
-        )
+        logger.info(f"Delegate {holder_address} supports validator {validator_address}.")
 
     def validate_block(self, block_data: str) -> bool:
         """Validate a block."""
-        # Handle the case where there are no delegates
-        if not self.delegates:
+        if not self.delegates:  # Handle the case where there are no delegates
             logger.warning("No delegates registered.")
             return False
 
         validator_address = random.choice(list(self.delegates.values()))
         logger.info(f"Block validated by {validator_address}.")
 
-        # Create a dummy transaction for validation.  Adjust as needed
+        # Create a dummy transaction for validation. Adjust as needed
         dummy_transaction = Transaction(sender=validator_address, amount=0, fee=0)
         dummy_transaction.data = block_data  # Add block data to the transaction
         return self.state_manager.validate_transaction(dummy_transaction)
 
 
-
 # -------------------- Green Proof-of-Work (GPoW) --------------------
-class GreenProofOfWork:  # Reduced blank lines here
+class GreenProofOfWork:
     """Green Proof-of-Work (GPoW) system incentivizing renewable energy."""
 
     def __init__(self):
@@ -116,9 +105,7 @@ class GreenProofOfWork:  # Reduced blank lines here
     def register_node(self, node_id: str, renewable_ratio: float):
         """Register a node."""
         self.energy_use[node_id] = renewable_ratio
-        logger.info(
-            f"Node {node_id} registered with renewable ratio {renewable_ratio}."
-        )
+        logger.info(f"Node {node_id} registered with renewable ratio {renewable_ratio}.")
 
     def adjust_rewards(self, base_reward: float) -> Dict[str, float]:
         """Adjust rewards based on renewable usage."""
@@ -139,27 +126,22 @@ class ConsensusManager:
         self.gpow = GreenProofOfWork()
         self.state_manager = state_manager
 
-
     def validate_transaction(self, tx_data: Transaction) -> bool:
         """Hybrid transaction validation using QPoS and QDPoS."""
         validator = self.qpos.select_validator()
-        if validator is None: # Handle the case where no validator is selected
+        if validator is None:  # Handle the case where no validator is selected
             return False
 
         is_valid = self.state_manager.validate_transaction(tx_data)
         logger.info(
-            f"Transaction validated by {validator.get_address()}: "
-            f"{'Success' if is_valid else 'Failure'}."
+            f"Transaction validated by {validator.get_address()}: {'Success' if is_valid else 'Failure'}."
         )
         return is_valid
 
-    def mine_block(
-        self, block_data: str, miner_id: str, difficulty: int, reward: float
-    ):
+
+    def mine_block(self, block_data: str, miner_id: str, difficulty: int, reward: float):
         """Mine a block using QPOW and GPoW."""
         mined_block = self.qpow.mine_block(block_data, difficulty)
         rewards = self.gpow.adjust_rewards(reward)
         final_reward = rewards.get(miner_id, 0)
-        logger.info(
-            f"Block mined: {mined_block['hash']}, reward to {miner_id}: {final_reward}."
-        )
+        logger.info(f"Block mined: {mined_block['hash']}, reward to {miner_id}: {final_reward}.")
