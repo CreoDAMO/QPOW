@@ -1,34 +1,34 @@
 # Import core functionality
-from .core import Blockchain, StateManager, Transaction
+from src.core import Blockchain, StateManager, Transaction
 
 # Import services and management
-from .services import QuantumServices
-from .consensus_and_governance import ConsensusManager
-from .quantum_secure_manager import QuantumSecureManager
-from .quantum_resource_manager import QuantumResourceManager
+from src.services import QuantumServices
+from src.consensus_and_governance import ConsensusManager
+from src.quantum_secure_manager import QuantumSecureManager
+from src.quantum_resource_manager import QuantumResourceManager
 
 # Import contract-related functionality
-from .quantum_smart_contract import QuantumSmartContract
-from .quantum_communication_contract import QuantumCommunicationContract
-from .quantum_governance_contract import QuantumGovernanceContract
-from .quantum_supplychain_contract import QuantumSupplyChainContract
-from .quantum_ai_integration_contract import QuantumAIIntegrationContract
-from .quantum_random_oracle_contract import QuantumRandomOracleContract
-from .quantum_defi_contract import QuantumDefiContract
+from src.quantum_smart_contract import QuantumSmartContract
+from src.quantum_communication_contract import QuantumCommunicationContract
+from src.quantum_governance_contract import QuantumGovernanceContract
+from src.quantum_supplychain_contract import QuantumSupplyChainContract
+from src.quantum_ai_integration_contract import QuantumAIIntegrationContract
+from src.quantum_random_oracle_contract import QuantumRandomOracleContract
+from src.quantum_defi_contract import QuantumDefiContract
 
 # Import quantum infrastructure and environment
-from .quantum_node import QuantumNode, PeerManager, TransactionPropagator
-from .quantum_bridge import QuantumBridge
-from .quantum_interface import QuantumInterface, get_quantum_adapter
-from .fusion_reactor import FusionReactor
+from src.quantum_node import QuantumNode, PeerManager, TransactionPropagator
+from src.quantum_bridge import QuantumBridge
+from src.quantum_interface import QuantumInterface, get_quantum_adapter
+from src.fusion_reactor import FusionReactor
 
 # Import utilities and wrappers
-from .quantum_wallet import QuantumWallet
-from .quantum_simulator import QuantumSimulator
-from .quantumfuse_coin import QuantumFuseCoin
-from .backend_selector import BackendSelector
-from .pqc_wrapper import PQCWrapper
-from .quantum_bridge_wrapper import QuantumBridgeWrapper
+from src.quantum_wallet import QuantumWallet
+from src.quantum_simulator import QuantumSimulator
+from src.quantumfuse_coin import QuantumFuseCoin
+from src.backend_selector import BackendSelector
+from srf.pqc_wrapper import PQCWrapper
+from src.quantum_bridge_wrapper import QuantumBridgeWrapper
 
 # Expose key components for simpler imports in external modules
 __all__ = [
