@@ -33,7 +33,8 @@ class StateManager:
 
         self.assets["QFC"]["balances"][address] += amount
         logger.info(
-            f"Updated balance for {address}: {self.assets['QFC']['balances'][address]}.")
+            f"Updated balance for {address}:
+            {self.assets['QFC']['balances'][address]}.")
 
     def validate_transaction(self, transaction: Transaction) -> bool:
         """Validate a transaction based on the sender's balance."""
