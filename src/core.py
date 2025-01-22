@@ -3,7 +3,7 @@ import hashlib
 import time
 from typing import List, Optional  # Removed unused Dict import
 from pqc_wrapper import PQCWrapper  # Dynamic cryptography wrapper
-from config_selector import BackendSelector  # Dynamic backend selection
+from backend_selector import BackendSelector  # Dynamic backend selection
 
 # Initialize backend configuration
 selector = BackendSelector("config.yaml")
