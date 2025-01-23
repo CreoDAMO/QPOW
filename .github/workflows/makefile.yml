@@ -23,7 +23,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: "3.13.1"
 
       # Step 3: Cache pip dependencies
       - name: Cache pip dependencies
@@ -65,7 +65,7 @@ jobs:
 
       # Step 11: Upload Coverage Report
       - name: Upload Coverage Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4  # Updated to v4
         with:
           name: coverage-report
           path: coverage_html
@@ -76,7 +76,7 @@ jobs:
 
       # Step 13: Upload Documentation (Optional)
       - name: Upload Documentation
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4  # Updated to v4
         with:
           name: documentation
           path: docs/html  # Assuming Doxygen outputs to docs/html
