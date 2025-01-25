@@ -1,4 +1,4 @@
-from pqcrypto.sign.dilithium2 import verify
+from src.pqcrypto._sign.dilithium2 import verify
 from src.quantum_bridge_wrapper import QuantumBridgeWrapper
 from src.quantum_resource_manager import QuantumResourceManager
 import time
