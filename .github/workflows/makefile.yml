@@ -70,7 +70,8 @@ jobs:
         run: make coverage
 
       # Step 12: Upload Coverage Report
-        uses: actions/upload-artifact@v4  # Updated to v4
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage_html
@@ -81,7 +82,7 @@ jobs:
 
       # Step 14: Upload Documentation (Optional)
       - name: Upload Documentation
-        uses: actions/upload-artifact@v4  # Updated to v4
+        uses: actions/upload-artifact@v4
         with:
           name: documentation
           path: docs/html  # Assuming Doxygen outputs to docs/html
